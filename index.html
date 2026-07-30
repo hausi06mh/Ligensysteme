@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#071019">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Liga Studio">
+  <title>Fantasy Liga Studio Elite V31</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="app">
+    <main id="startupFallback" style="max-width:680px;margin:40px auto;padding:20px;font-family:system-ui;color:#eef6ff">
+      <section style="background:#0b1b29;border:1px solid #24445d;border-radius:20px;padding:20px">
+        <h1 style="margin-top:0">Fantasy Liga Elite wird geladen …</h1>
+        <p>Falls dieser Hinweis nach wenigen Sekunden stehen bleibt, lade die Seite einmal neu.</p>
+      </section>
+    </main>
+  </div>
+  <div id="overlay"></div>
+  <div id="toast" class="toast hidden"></div>
+  <div id="contextMenu"></div>
+  <script type="module" src="./app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js", {scope:"./"}).catch(console.error);
+      });
+    }
+  </script>
+</body>
+</html>

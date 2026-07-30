@@ -1,0 +1,8155 @@
+{
+  "version": 1,
+  "activeLeagueId": 1,
+  "activeSeasonId": 1,
+  "leagues": [
+    {
+      "id": 1,
+      "name": "1. Höhere Liga",
+      "country": "Fantasy",
+      "seasons": [
+        {
+          "id": 1,
+          "name": "2026/27",
+          "status": "active",
+          "teamIds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20
+          ],
+          "matches": [],
+          "history": {
+            "championTeamId": null,
+            "finalTable": [],
+            "awards": {}
+          }
+        }
+      ]
+    }
+  ],
+  "teams": [
+    {
+      "id": 1,
+      "name": "Teñala",
+      "short": "TEN",
+      "color": "#7c3aed",
+      "stadium": {
+        "name": "Teñala Stadium",
+        "capacity": 18500,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 1,
+          "teamId": 1,
+          "name": "Milan Kovac",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 20,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 2,
+          "teamId": 1,
+          "name": "Elias Petrov",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 21,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 3,
+          "teamId": 1,
+          "name": "Mateo Bauer",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 22,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 4,
+          "teamId": 1,
+          "name": "Jonas Moretti",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 23,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 5,
+          "teamId": 1,
+          "name": "Leo Santos",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 24,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 6,
+          "teamId": 1,
+          "name": "Nico Berger",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 25,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 7,
+          "teamId": 1,
+          "name": "Emil Costa",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 26,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 8,
+          "teamId": 1,
+          "name": "Adrian Silva",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 27,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 9,
+          "teamId": 1,
+          "name": "Samuel Rossi",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 28,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 10,
+          "teamId": 1,
+          "name": "David Jensen",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 29,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 11,
+          "teamId": 1,
+          "name": "Tobias Klein",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 30,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 12,
+          "teamId": 1,
+          "name": "Felix Weber",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 31,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 13,
+          "teamId": 1,
+          "name": "Leon Marin",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 32,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 14,
+          "teamId": 1,
+          "name": "Gabriel Larsen",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 33,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 15,
+          "teamId": 1,
+          "name": "Marco Meyer",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 34,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 16,
+          "teamId": 1,
+          "name": "Theo Hansen",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 18,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 17,
+          "teamId": 1,
+          "name": "Julian Horvat",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 19,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 18,
+          "teamId": 1,
+          "name": "Anton Varga",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 20,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 19,
+          "teamId": 1,
+          "name": "Luca Ilic",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 21,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 20,
+          "teamId": 1,
+          "name": "Noah Novak",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 22,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 21,
+          "teamId": 1,
+          "name": "Milan Kovac",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 23,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 22,
+          "teamId": 1,
+          "name": "Elias Petrov",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 24,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 23,
+          "teamId": 1,
+          "name": "Mateo Bauer",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 25,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "AS Cappelari",
+      "short": "CAP",
+      "color": "#15803d",
+      "stadium": {
+        "name": "Stadio Comunale di Cappelari",
+        "capacity": 16200,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 24,
+          "teamId": 2,
+          "name": "Elias Meyer",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 21,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 25,
+          "teamId": 2,
+          "name": "Mateo Hansen",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 22,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 26,
+          "teamId": 2,
+          "name": "Jonas Horvat",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 23,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 27,
+          "teamId": 2,
+          "name": "Leo Varga",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 24,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 28,
+          "teamId": 2,
+          "name": "Nico Ilic",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 25,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 29,
+          "teamId": 2,
+          "name": "Emil Novak",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 26,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 30,
+          "teamId": 2,
+          "name": "Adrian Kovac",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 27,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 31,
+          "teamId": 2,
+          "name": "Samuel Petrov",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 28,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 32,
+          "teamId": 2,
+          "name": "David Bauer",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 29,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 33,
+          "teamId": 2,
+          "name": "Tobias Moretti",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 30,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 34,
+          "teamId": 2,
+          "name": "Felix Santos",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 31,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 35,
+          "teamId": 2,
+          "name": "Leon Berger",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 32,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 36,
+          "teamId": 2,
+          "name": "Gabriel Costa",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 33,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 37,
+          "teamId": 2,
+          "name": "Marco Silva",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 34,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 38,
+          "teamId": 2,
+          "name": "Theo Rossi",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 18,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 39,
+          "teamId": 2,
+          "name": "Julian Jensen",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 19,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 40,
+          "teamId": 2,
+          "name": "Anton Klein",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 20,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 41,
+          "teamId": 2,
+          "name": "Luca Weber",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 21,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 42,
+          "teamId": 2,
+          "name": "Noah Marin",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 22,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 43,
+          "teamId": 2,
+          "name": "Milan Larsen",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 23,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 44,
+          "teamId": 2,
+          "name": "Elias Meyer",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 24,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 45,
+          "teamId": 2,
+          "name": "Mateo Hansen",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 25,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 46,
+          "teamId": 2,
+          "name": "Jonas Horvat",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 26,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Marhus CF",
+      "short": "MAR",
+      "color": "#16a34a",
+      "stadium": {
+        "name": "Marhus Stadion",
+        "capacity": 18750,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 47,
+          "teamId": 3,
+          "name": "Mateo Rossi",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 22,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 48,
+          "teamId": 3,
+          "name": "Jonas Jensen",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 23,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 49,
+          "teamId": 3,
+          "name": "Leo Klein",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 24,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 50,
+          "teamId": 3,
+          "name": "Nico Weber",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 25,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 51,
+          "teamId": 3,
+          "name": "Emil Marin",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 26,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 52,
+          "teamId": 3,
+          "name": "Adrian Larsen",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 27,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 53,
+          "teamId": 3,
+          "name": "Samuel Meyer",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 28,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 54,
+          "teamId": 3,
+          "name": "David Hansen",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 29,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 55,
+          "teamId": 3,
+          "name": "Tobias Horvat",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 30,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 56,
+          "teamId": 3,
+          "name": "Felix Varga",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 31,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 57,
+          "teamId": 3,
+          "name": "Leon Ilic",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 32,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 58,
+          "teamId": 3,
+          "name": "Gabriel Novak",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 33,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 59,
+          "teamId": 3,
+          "name": "Marco Kovac",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 34,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 60,
+          "teamId": 3,
+          "name": "Theo Petrov",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 18,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 61,
+          "teamId": 3,
+          "name": "Julian Bauer",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 19,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 62,
+          "teamId": 3,
+          "name": "Anton Moretti",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 20,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 63,
+          "teamId": 3,
+          "name": "Luca Santos",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 21,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 64,
+          "teamId": 3,
+          "name": "Noah Berger",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 22,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 65,
+          "teamId": 3,
+          "name": "Milan Costa",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 23,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 66,
+          "teamId": 3,
+          "name": "Elias Silva",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 24,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 67,
+          "teamId": 3,
+          "name": "Mateo Rossi",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 25,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 68,
+          "teamId": 3,
+          "name": "Jonas Jensen",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 26,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 69,
+          "teamId": 3,
+          "name": "Leo Klein",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 27,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "AK Rükens",
+      "short": "RÜK",
+      "color": "#f97316",
+      "stadium": {
+        "name": "Rükens Arena",
+        "capacity": 18600,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 70,
+          "teamId": 4,
+          "name": "Jonas Bauer",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 23,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 71,
+          "teamId": 4,
+          "name": "Leo Moretti",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 24,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 72,
+          "teamId": 4,
+          "name": "Nico Santos",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 25,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 73,
+          "teamId": 4,
+          "name": "Emil Berger",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 26,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 74,
+          "teamId": 4,
+          "name": "Adrian Costa",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 27,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 75,
+          "teamId": 4,
+          "name": "Samuel Silva",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 28,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 76,
+          "teamId": 4,
+          "name": "David Rossi",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 29,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 77,
+          "teamId": 4,
+          "name": "Tobias Jensen",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 30,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 78,
+          "teamId": 4,
+          "name": "Felix Klein",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 31,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 79,
+          "teamId": 4,
+          "name": "Leon Weber",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 32,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 80,
+          "teamId": 4,
+          "name": "Gabriel Marin",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 33,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 81,
+          "teamId": 4,
+          "name": "Marco Larsen",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 34,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 82,
+          "teamId": 4,
+          "name": "Theo Meyer",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 18,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 83,
+          "teamId": 4,
+          "name": "Julian Hansen",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 19,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 84,
+          "teamId": 4,
+          "name": "Anton Horvat",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 20,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 85,
+          "teamId": 4,
+          "name": "Luca Varga",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 21,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 86,
+          "teamId": 4,
+          "name": "Noah Ilic",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 22,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 87,
+          "teamId": 4,
+          "name": "Milan Novak",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 23,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 88,
+          "teamId": 4,
+          "name": "Elias Kovac",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 24,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 89,
+          "teamId": 4,
+          "name": "Mateo Petrov",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 25,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 90,
+          "teamId": 4,
+          "name": "Jonas Bauer",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 26,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 91,
+          "teamId": 4,
+          "name": "Leo Moretti",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 27,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 92,
+          "teamId": 4,
+          "name": "Nico Santos",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 28,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "AS Brivelle",
+      "short": "BRI",
+      "color": "#b91c1c",
+      "stadium": {
+        "name": "Stadio Comunale di Brivelle",
+        "capacity": 7850,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 93,
+          "teamId": 5,
+          "name": "Leo Horvat",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 24,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 94,
+          "teamId": 5,
+          "name": "Nico Varga",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 25,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 95,
+          "teamId": 5,
+          "name": "Emil Ilic",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 26,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 96,
+          "teamId": 5,
+          "name": "Adrian Novak",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 27,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 97,
+          "teamId": 5,
+          "name": "Samuel Kovac",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 28,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 98,
+          "teamId": 5,
+          "name": "David Petrov",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 29,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 99,
+          "teamId": 5,
+          "name": "Tobias Bauer",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 30,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 100,
+          "teamId": 5,
+          "name": "Felix Moretti",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 31,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 101,
+          "teamId": 5,
+          "name": "Leon Santos",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 32,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 102,
+          "teamId": 5,
+          "name": "Gabriel Berger",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 33,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 103,
+          "teamId": 5,
+          "name": "Marco Costa",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 34,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 104,
+          "teamId": 5,
+          "name": "Theo Silva",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 18,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 105,
+          "teamId": 5,
+          "name": "Julian Rossi",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 19,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 106,
+          "teamId": 5,
+          "name": "Anton Jensen",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 20,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 107,
+          "teamId": 5,
+          "name": "Luca Klein",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 21,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 108,
+          "teamId": 5,
+          "name": "Noah Weber",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 22,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 109,
+          "teamId": 5,
+          "name": "Milan Marin",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 23,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 110,
+          "teamId": 5,
+          "name": "Elias Larsen",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 24,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 111,
+          "teamId": 5,
+          "name": "Mateo Meyer",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 25,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 112,
+          "teamId": 5,
+          "name": "Jonas Hansen",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 26,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 113,
+          "teamId": 5,
+          "name": "Leo Horvat",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 27,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 114,
+          "teamId": 5,
+          "name": "Nico Varga",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 28,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 115,
+          "teamId": 5,
+          "name": "Emil Ilic",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 29,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "FC Putaro",
+      "short": "PUT",
+      "color": "#2563eb",
+      "stadium": {
+        "name": "Stadio del Mare",
+        "capacity": 9250,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 116,
+          "teamId": 6,
+          "name": "Nico Klein",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 25,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 117,
+          "teamId": 6,
+          "name": "Emil Weber",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 26,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 118,
+          "teamId": 6,
+          "name": "Adrian Marin",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 27,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 119,
+          "teamId": 6,
+          "name": "Samuel Larsen",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 28,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 120,
+          "teamId": 6,
+          "name": "David Meyer",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 29,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 121,
+          "teamId": 6,
+          "name": "Tobias Hansen",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 30,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 122,
+          "teamId": 6,
+          "name": "Felix Horvat",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 31,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 123,
+          "teamId": 6,
+          "name": "Leon Varga",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 32,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 124,
+          "teamId": 6,
+          "name": "Gabriel Ilic",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 33,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 125,
+          "teamId": 6,
+          "name": "Marco Novak",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 34,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 126,
+          "teamId": 6,
+          "name": "Theo Kovac",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 18,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 127,
+          "teamId": 6,
+          "name": "Julian Petrov",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 19,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 128,
+          "teamId": 6,
+          "name": "Anton Bauer",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 20,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 129,
+          "teamId": 6,
+          "name": "Luca Moretti",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 21,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 130,
+          "teamId": 6,
+          "name": "Noah Santos",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 22,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 131,
+          "teamId": 6,
+          "name": "Milan Berger",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 23,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 132,
+          "teamId": 6,
+          "name": "Elias Costa",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 24,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 133,
+          "teamId": 6,
+          "name": "Mateo Silva",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 25,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 134,
+          "teamId": 6,
+          "name": "Jonas Rossi",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 26,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 135,
+          "teamId": 6,
+          "name": "Leo Jensen",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 27,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 136,
+          "teamId": 6,
+          "name": "Nico Klein",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 28,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 137,
+          "teamId": 6,
+          "name": "Emil Weber",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 29,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 138,
+          "teamId": 6,
+          "name": "Adrian Marin",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 30,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Korpesti",
+      "short": "KOR",
+      "color": "#a855f7",
+      "stadium": {
+        "name": "Korpesti Arena",
+        "capacity": 28500,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 139,
+          "teamId": 7,
+          "name": "Emil Santos",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 26,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 140,
+          "teamId": 7,
+          "name": "Adrian Berger",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 27,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 141,
+          "teamId": 7,
+          "name": "Samuel Costa",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 28,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 142,
+          "teamId": 7,
+          "name": "David Silva",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 29,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 143,
+          "teamId": 7,
+          "name": "Tobias Rossi",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 30,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 144,
+          "teamId": 7,
+          "name": "Felix Jensen",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 31,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 145,
+          "teamId": 7,
+          "name": "Leon Klein",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 32,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 146,
+          "teamId": 7,
+          "name": "Gabriel Weber",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 33,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 147,
+          "teamId": 7,
+          "name": "Marco Marin",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 34,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 148,
+          "teamId": 7,
+          "name": "Theo Larsen",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 18,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 149,
+          "teamId": 7,
+          "name": "Julian Meyer",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 19,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 150,
+          "teamId": 7,
+          "name": "Anton Hansen",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 20,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 151,
+          "teamId": 7,
+          "name": "Luca Horvat",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 21,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 152,
+          "teamId": 7,
+          "name": "Noah Varga",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 22,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 153,
+          "teamId": 7,
+          "name": "Milan Ilic",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 23,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 154,
+          "teamId": 7,
+          "name": "Elias Novak",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 24,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 155,
+          "teamId": 7,
+          "name": "Mateo Kovac",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 25,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 156,
+          "teamId": 7,
+          "name": "Jonas Petrov",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 26,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 157,
+          "teamId": 7,
+          "name": "Leo Bauer",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 27,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 158,
+          "teamId": 7,
+          "name": "Nico Moretti",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 28,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 159,
+          "teamId": 7,
+          "name": "Emil Santos",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 29,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 160,
+          "teamId": 7,
+          "name": "Adrian Berger",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 30,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 161,
+          "teamId": 7,
+          "name": "Samuel Costa",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 31,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Pochnaš",
+      "short": "POC",
+      "color": "#7e22ce",
+      "stadium": {
+        "name": "Stadion Pochnaš",
+        "capacity": 15280,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 162,
+          "teamId": 8,
+          "name": "Adrian Ilic",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 27,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 163,
+          "teamId": 8,
+          "name": "Samuel Novak",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 28,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 164,
+          "teamId": 8,
+          "name": "David Kovac",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 29,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 165,
+          "teamId": 8,
+          "name": "Tobias Petrov",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 30,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 166,
+          "teamId": 8,
+          "name": "Felix Bauer",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 31,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 167,
+          "teamId": 8,
+          "name": "Leon Moretti",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 32,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 168,
+          "teamId": 8,
+          "name": "Gabriel Santos",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 33,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 169,
+          "teamId": 8,
+          "name": "Marco Berger",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 34,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 170,
+          "teamId": 8,
+          "name": "Theo Costa",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 18,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 171,
+          "teamId": 8,
+          "name": "Julian Silva",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 19,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 172,
+          "teamId": 8,
+          "name": "Anton Rossi",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 20,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 173,
+          "teamId": 8,
+          "name": "Luca Jensen",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 21,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 174,
+          "teamId": 8,
+          "name": "Noah Klein",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 22,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 175,
+          "teamId": 8,
+          "name": "Milan Weber",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 23,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 176,
+          "teamId": 8,
+          "name": "Elias Marin",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 24,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 177,
+          "teamId": 8,
+          "name": "Mateo Larsen",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 25,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 178,
+          "teamId": 8,
+          "name": "Jonas Meyer",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 26,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 179,
+          "teamId": 8,
+          "name": "Leo Hansen",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 27,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 180,
+          "teamId": 8,
+          "name": "Nico Horvat",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 28,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 181,
+          "teamId": 8,
+          "name": "Emil Varga",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 29,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 182,
+          "teamId": 8,
+          "name": "Adrian Ilic",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 30,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 183,
+          "teamId": 8,
+          "name": "Samuel Novak",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 31,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 184,
+          "teamId": 8,
+          "name": "David Kovac",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 32,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Mont Bleaux",
+      "short": "MON",
+      "color": "#1d4ed8",
+      "stadium": {
+        "name": "Mont Bleaux Stadium",
+        "capacity": 22850,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 185,
+          "teamId": 9,
+          "name": "Samuel Marin",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 28,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 186,
+          "teamId": 9,
+          "name": "David Larsen",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 29,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 187,
+          "teamId": 9,
+          "name": "Tobias Meyer",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 30,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 188,
+          "teamId": 9,
+          "name": "Felix Hansen",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 31,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 189,
+          "teamId": 9,
+          "name": "Leon Horvat",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 32,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 190,
+          "teamId": 9,
+          "name": "Gabriel Varga",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 33,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 191,
+          "teamId": 9,
+          "name": "Marco Ilic",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 34,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 192,
+          "teamId": 9,
+          "name": "Theo Novak",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 18,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 193,
+          "teamId": 9,
+          "name": "Julian Kovac",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 19,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 194,
+          "teamId": 9,
+          "name": "Anton Petrov",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 20,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 195,
+          "teamId": 9,
+          "name": "Luca Bauer",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 21,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 196,
+          "teamId": 9,
+          "name": "Noah Moretti",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 22,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 197,
+          "teamId": 9,
+          "name": "Milan Santos",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 23,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 198,
+          "teamId": 9,
+          "name": "Elias Berger",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 24,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 199,
+          "teamId": 9,
+          "name": "Mateo Costa",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 25,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 200,
+          "teamId": 9,
+          "name": "Jonas Silva",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 26,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 201,
+          "teamId": 9,
+          "name": "Leo Rossi",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 27,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 202,
+          "teamId": 9,
+          "name": "Nico Jensen",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 28,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 203,
+          "teamId": 9,
+          "name": "Emil Klein",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 29,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 204,
+          "teamId": 9,
+          "name": "Adrian Weber",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 30,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 205,
+          "teamId": 9,
+          "name": "Samuel Marin",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 31,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 206,
+          "teamId": 9,
+          "name": "David Larsen",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 32,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 207,
+          "teamId": 9,
+          "name": "Tobias Meyer",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 33,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Boichê",
+      "short": "BOI",
+      "color": "#166534",
+      "stadium": {
+        "name": "Boichê Stadium",
+        "capacity": 12900,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 208,
+          "teamId": 10,
+          "name": "David Costa",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 29,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 209,
+          "teamId": 10,
+          "name": "Tobias Silva",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 30,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 210,
+          "teamId": 10,
+          "name": "Felix Rossi",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 31,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 211,
+          "teamId": 10,
+          "name": "Leon Jensen",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 32,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 212,
+          "teamId": 10,
+          "name": "Gabriel Klein",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 33,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 213,
+          "teamId": 10,
+          "name": "Marco Weber",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 34,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 214,
+          "teamId": 10,
+          "name": "Theo Marin",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 18,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 215,
+          "teamId": 10,
+          "name": "Julian Larsen",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 19,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 216,
+          "teamId": 10,
+          "name": "Anton Meyer",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 20,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 217,
+          "teamId": 10,
+          "name": "Luca Hansen",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 21,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 218,
+          "teamId": 10,
+          "name": "Noah Horvat",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 22,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 219,
+          "teamId": 10,
+          "name": "Milan Varga",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 23,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 220,
+          "teamId": 10,
+          "name": "Elias Ilic",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 24,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 221,
+          "teamId": 10,
+          "name": "Mateo Novak",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 25,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 222,
+          "teamId": 10,
+          "name": "Jonas Kovac",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 26,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 223,
+          "teamId": 10,
+          "name": "Leo Petrov",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 27,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 224,
+          "teamId": 10,
+          "name": "Nico Bauer",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 28,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 225,
+          "teamId": 10,
+          "name": "Emil Moretti",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 29,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 226,
+          "teamId": 10,
+          "name": "Adrian Santos",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 30,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 227,
+          "teamId": 10,
+          "name": "Samuel Berger",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 31,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 228,
+          "teamId": 10,
+          "name": "David Costa",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 32,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 229,
+          "teamId": 10,
+          "name": "Tobias Silva",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 33,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 230,
+          "teamId": 10,
+          "name": "Felix Rossi",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 34,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Dínamo Bácsbokod",
+      "short": "BÁC",
+      "color": "#dc2626",
+      "stadium": {
+        "name": "Bácsbokod Stadion",
+        "capacity": 7200,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 231,
+          "teamId": 11,
+          "name": "Tobias Kovac",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 30,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 232,
+          "teamId": 11,
+          "name": "Felix Petrov",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 31,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 233,
+          "teamId": 11,
+          "name": "Leon Bauer",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 32,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 234,
+          "teamId": 11,
+          "name": "Gabriel Moretti",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 33,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 235,
+          "teamId": 11,
+          "name": "Marco Santos",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 34,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 236,
+          "teamId": 11,
+          "name": "Theo Berger",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 18,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 237,
+          "teamId": 11,
+          "name": "Julian Costa",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 19,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 238,
+          "teamId": 11,
+          "name": "Anton Silva",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 20,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 239,
+          "teamId": 11,
+          "name": "Luca Rossi",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 21,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 240,
+          "teamId": 11,
+          "name": "Noah Jensen",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 22,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 241,
+          "teamId": 11,
+          "name": "Milan Klein",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 23,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 242,
+          "teamId": 11,
+          "name": "Elias Weber",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 24,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 243,
+          "teamId": 11,
+          "name": "Mateo Marin",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 25,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 244,
+          "teamId": 11,
+          "name": "Jonas Larsen",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 26,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 245,
+          "teamId": 11,
+          "name": "Leo Meyer",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 27,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 246,
+          "teamId": 11,
+          "name": "Nico Hansen",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 28,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 247,
+          "teamId": 11,
+          "name": "Emil Horvat",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 29,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 248,
+          "teamId": 11,
+          "name": "Adrian Varga",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 30,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 249,
+          "teamId": 11,
+          "name": "Samuel Ilic",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 31,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 250,
+          "teamId": 11,
+          "name": "David Novak",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 32,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 251,
+          "teamId": 11,
+          "name": "Tobias Kovac",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 33,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 252,
+          "teamId": 11,
+          "name": "Felix Petrov",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 34,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 253,
+          "teamId": 11,
+          "name": "Leon Bauer",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 18,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "SSV Kaisserberg",
+      "short": "KAI",
+      "color": "#d97706",
+      "stadium": {
+        "name": "Kaisserberg Arena",
+        "capacity": 14500,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 254,
+          "teamId": 12,
+          "name": "Felix Meyer",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 31,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 255,
+          "teamId": 12,
+          "name": "Leon Hansen",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 32,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 256,
+          "teamId": 12,
+          "name": "Gabriel Horvat",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 33,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 257,
+          "teamId": 12,
+          "name": "Marco Varga",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 34,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 258,
+          "teamId": 12,
+          "name": "Theo Ilic",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 18,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 259,
+          "teamId": 12,
+          "name": "Julian Novak",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 19,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 260,
+          "teamId": 12,
+          "name": "Anton Kovac",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 20,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 261,
+          "teamId": 12,
+          "name": "Luca Petrov",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 21,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 262,
+          "teamId": 12,
+          "name": "Noah Bauer",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 22,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 263,
+          "teamId": 12,
+          "name": "Milan Moretti",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 23,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 264,
+          "teamId": 12,
+          "name": "Elias Santos",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 24,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 265,
+          "teamId": 12,
+          "name": "Mateo Berger",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 25,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 266,
+          "teamId": 12,
+          "name": "Jonas Costa",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 26,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 267,
+          "teamId": 12,
+          "name": "Leo Silva",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 27,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 268,
+          "teamId": 12,
+          "name": "Nico Rossi",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 28,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 269,
+          "teamId": 12,
+          "name": "Emil Jensen",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 29,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 270,
+          "teamId": 12,
+          "name": "Adrian Klein",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 30,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 271,
+          "teamId": 12,
+          "name": "Samuel Weber",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 31,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 272,
+          "teamId": 12,
+          "name": "David Marin",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 32,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 273,
+          "teamId": 12,
+          "name": "Tobias Larsen",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 33,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 274,
+          "teamId": 12,
+          "name": "Felix Meyer",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 34,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 275,
+          "teamId": 12,
+          "name": "Leon Hansen",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 18,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 276,
+          "teamId": 12,
+          "name": "Gabriel Horvat",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 19,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Morac United",
+      "short": "MOR",
+      "color": "#991b1b",
+      "stadium": {
+        "name": "Black Panther Stadium",
+        "capacity": 34000,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 277,
+          "teamId": 13,
+          "name": "Leon Rossi",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 32,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 278,
+          "teamId": 13,
+          "name": "Gabriel Jensen",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 33,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 279,
+          "teamId": 13,
+          "name": "Marco Klein",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 34,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 280,
+          "teamId": 13,
+          "name": "Theo Weber",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 18,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 281,
+          "teamId": 13,
+          "name": "Julian Marin",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 19,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 282,
+          "teamId": 13,
+          "name": "Anton Larsen",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 20,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 283,
+          "teamId": 13,
+          "name": "Luca Meyer",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 21,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 284,
+          "teamId": 13,
+          "name": "Noah Hansen",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 22,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 285,
+          "teamId": 13,
+          "name": "Milan Horvat",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 23,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 286,
+          "teamId": 13,
+          "name": "Elias Varga",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 24,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 287,
+          "teamId": 13,
+          "name": "Mateo Ilic",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 25,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 288,
+          "teamId": 13,
+          "name": "Jonas Novak",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 26,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 289,
+          "teamId": 13,
+          "name": "Leo Kovac",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 27,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 290,
+          "teamId": 13,
+          "name": "Nico Petrov",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 28,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 291,
+          "teamId": 13,
+          "name": "Emil Bauer",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 29,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 292,
+          "teamId": 13,
+          "name": "Adrian Moretti",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 30,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 293,
+          "teamId": 13,
+          "name": "Samuel Santos",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 31,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 294,
+          "teamId": 13,
+          "name": "David Berger",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 32,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 295,
+          "teamId": 13,
+          "name": "Tobias Costa",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 33,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 296,
+          "teamId": 13,
+          "name": "Felix Silva",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 34,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 297,
+          "teamId": 13,
+          "name": "Leon Rossi",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 18,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 298,
+          "teamId": 13,
+          "name": "Gabriel Jensen",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 19,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 299,
+          "teamId": 13,
+          "name": "Marco Klein",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 20,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Chisana",
+      "short": "CHI",
+      "color": "#7c3aed",
+      "stadium": {
+        "name": "Chisana Stadium",
+        "capacity": 30250,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 300,
+          "teamId": 14,
+          "name": "Gabriel Bauer",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 33,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 301,
+          "teamId": 14,
+          "name": "Marco Moretti",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 34,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 302,
+          "teamId": 14,
+          "name": "Theo Santos",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 18,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 303,
+          "teamId": 14,
+          "name": "Julian Berger",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 19,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 304,
+          "teamId": 14,
+          "name": "Anton Costa",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 20,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 305,
+          "teamId": 14,
+          "name": "Luca Silva",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 21,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 306,
+          "teamId": 14,
+          "name": "Noah Rossi",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 22,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 307,
+          "teamId": 14,
+          "name": "Milan Jensen",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 23,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 308,
+          "teamId": 14,
+          "name": "Elias Klein",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 24,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 309,
+          "teamId": 14,
+          "name": "Mateo Weber",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 25,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 310,
+          "teamId": 14,
+          "name": "Jonas Marin",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 26,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 311,
+          "teamId": 14,
+          "name": "Leo Larsen",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 27,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 312,
+          "teamId": 14,
+          "name": "Nico Meyer",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 28,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 313,
+          "teamId": 14,
+          "name": "Emil Hansen",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 29,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 314,
+          "teamId": 14,
+          "name": "Adrian Horvat",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 30,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 315,
+          "teamId": 14,
+          "name": "Samuel Varga",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 31,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 316,
+          "teamId": 14,
+          "name": "David Ilic",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 32,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 317,
+          "teamId": 14,
+          "name": "Tobias Novak",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 33,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 318,
+          "teamId": 14,
+          "name": "Felix Kovac",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 34,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 319,
+          "teamId": 14,
+          "name": "Leon Petrov",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 18,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 320,
+          "teamId": 14,
+          "name": "Gabriel Bauer",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 19,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 321,
+          "teamId": 14,
+          "name": "Marco Moretti",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 20,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 322,
+          "teamId": 14,
+          "name": "Theo Santos",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 21,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "AFC Dunmere Town",
+      "short": "DUN",
+      "color": "#1e3a8a",
+      "stadium": {
+        "name": "Dunmere Stadium",
+        "capacity": 4250,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 323,
+          "teamId": 15,
+          "name": "Marco Horvat",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 34,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 324,
+          "teamId": 15,
+          "name": "Theo Varga",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 18,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 325,
+          "teamId": 15,
+          "name": "Julian Ilic",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 19,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 326,
+          "teamId": 15,
+          "name": "Anton Novak",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 20,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 327,
+          "teamId": 15,
+          "name": "Luca Kovac",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 21,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 328,
+          "teamId": 15,
+          "name": "Noah Petrov",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 22,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 329,
+          "teamId": 15,
+          "name": "Milan Bauer",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 23,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 330,
+          "teamId": 15,
+          "name": "Elias Moretti",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 24,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 331,
+          "teamId": 15,
+          "name": "Mateo Santos",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 25,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 332,
+          "teamId": 15,
+          "name": "Jonas Berger",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 26,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 333,
+          "teamId": 15,
+          "name": "Leo Costa",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 27,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 334,
+          "teamId": 15,
+          "name": "Nico Silva",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 28,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 335,
+          "teamId": 15,
+          "name": "Emil Rossi",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 29,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 336,
+          "teamId": 15,
+          "name": "Adrian Jensen",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 30,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 337,
+          "teamId": 15,
+          "name": "Samuel Klein",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 31,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 338,
+          "teamId": 15,
+          "name": "David Weber",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 32,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 339,
+          "teamId": 15,
+          "name": "Tobias Marin",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 33,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 340,
+          "teamId": 15,
+          "name": "Felix Larsen",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 34,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 341,
+          "teamId": 15,
+          "name": "Leon Meyer",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 18,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 342,
+          "teamId": 15,
+          "name": "Gabriel Hansen",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 19,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 343,
+          "teamId": 15,
+          "name": "Marco Horvat",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 20,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 344,
+          "teamId": 15,
+          "name": "Theo Varga",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 21,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 345,
+          "teamId": 15,
+          "name": "Julian Ilic",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 22,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "FC San Lireno",
+      "short": "SAN",
+      "color": "#92400e",
+      "stadium": {
+        "name": "Stadio San Lireno",
+        "capacity": 14000,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 346,
+          "teamId": 16,
+          "name": "Theo Klein",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 18,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 347,
+          "teamId": 16,
+          "name": "Julian Weber",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 19,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 348,
+          "teamId": 16,
+          "name": "Anton Marin",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 20,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 349,
+          "teamId": 16,
+          "name": "Luca Larsen",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 21,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 350,
+          "teamId": 16,
+          "name": "Noah Meyer",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 22,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 351,
+          "teamId": 16,
+          "name": "Milan Hansen",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 23,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 352,
+          "teamId": 16,
+          "name": "Elias Horvat",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 24,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 353,
+          "teamId": 16,
+          "name": "Mateo Varga",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 25,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 354,
+          "teamId": 16,
+          "name": "Jonas Ilic",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 26,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 355,
+          "teamId": 16,
+          "name": "Leo Novak",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 27,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 356,
+          "teamId": 16,
+          "name": "Nico Kovac",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 28,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 357,
+          "teamId": 16,
+          "name": "Emil Petrov",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 29,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 358,
+          "teamId": 16,
+          "name": "Adrian Bauer",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 30,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 359,
+          "teamId": 16,
+          "name": "Samuel Moretti",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 31,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 360,
+          "teamId": 16,
+          "name": "David Santos",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 32,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 361,
+          "teamId": 16,
+          "name": "Tobias Berger",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 33,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 362,
+          "teamId": 16,
+          "name": "Felix Costa",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 34,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 363,
+          "teamId": 16,
+          "name": "Leon Silva",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 18,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 364,
+          "teamId": 16,
+          "name": "Gabriel Rossi",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 19,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 365,
+          "teamId": 16,
+          "name": "Marco Jensen",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 20,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 366,
+          "teamId": 16,
+          "name": "Theo Klein",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 21,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 367,
+          "teamId": 16,
+          "name": "Julian Weber",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 22,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 368,
+          "teamId": 16,
+          "name": "Anton Marin",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 23,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "FK Lydfjord",
+      "short": "LYD",
+      "color": "#0e7490",
+      "stadium": {
+        "name": "Lydfjord Stadion",
+        "capacity": 8000,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 369,
+          "teamId": 17,
+          "name": "Julian Santos",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 19,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 370,
+          "teamId": 17,
+          "name": "Anton Berger",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 20,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 371,
+          "teamId": 17,
+          "name": "Luca Costa",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 21,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 372,
+          "teamId": 17,
+          "name": "Noah Silva",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 22,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 373,
+          "teamId": 17,
+          "name": "Milan Rossi",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 23,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 374,
+          "teamId": 17,
+          "name": "Elias Jensen",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 24,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 375,
+          "teamId": 17,
+          "name": "Mateo Klein",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 25,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 376,
+          "teamId": 17,
+          "name": "Jonas Weber",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 26,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 377,
+          "teamId": 17,
+          "name": "Leo Marin",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 27,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 378,
+          "teamId": 17,
+          "name": "Nico Larsen",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 28,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 379,
+          "teamId": 17,
+          "name": "Emil Meyer",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 29,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 380,
+          "teamId": 17,
+          "name": "Adrian Hansen",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 30,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 381,
+          "teamId": 17,
+          "name": "Samuel Horvat",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 31,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 382,
+          "teamId": 17,
+          "name": "David Varga",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 32,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 383,
+          "teamId": 17,
+          "name": "Tobias Ilic",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 33,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 384,
+          "teamId": 17,
+          "name": "Felix Novak",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 34,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 385,
+          "teamId": 17,
+          "name": "Leon Kovac",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 18,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 386,
+          "teamId": 17,
+          "name": "Gabriel Petrov",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 19,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 387,
+          "teamId": 17,
+          "name": "Marco Bauer",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 20,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 388,
+          "teamId": 17,
+          "name": "Theo Moretti",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 21,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 389,
+          "teamId": 17,
+          "name": "Julian Santos",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 22,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 390,
+          "teamId": 17,
+          "name": "Anton Berger",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 23,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 391,
+          "teamId": 17,
+          "name": "Luca Costa",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 24,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "name": "FC Moorlat",
+      "short": "MOO",
+      "color": "#f97316",
+      "stadium": {
+        "name": "Moorlat Stadium",
+        "capacity": 9850,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 392,
+          "teamId": 18,
+          "name": "Anton Ilic",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 20,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 393,
+          "teamId": 18,
+          "name": "Luca Novak",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 21,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 394,
+          "teamId": 18,
+          "name": "Noah Kovac",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 22,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 395,
+          "teamId": 18,
+          "name": "Milan Petrov",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 23,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 396,
+          "teamId": 18,
+          "name": "Elias Bauer",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 24,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 397,
+          "teamId": 18,
+          "name": "Mateo Moretti",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 25,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 398,
+          "teamId": 18,
+          "name": "Jonas Santos",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 26,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 399,
+          "teamId": 18,
+          "name": "Leo Berger",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 27,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 400,
+          "teamId": 18,
+          "name": "Nico Costa",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 28,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 401,
+          "teamId": 18,
+          "name": "Emil Silva",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 29,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 402,
+          "teamId": 18,
+          "name": "Adrian Rossi",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 30,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 403,
+          "teamId": 18,
+          "name": "Samuel Jensen",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 31,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 404,
+          "teamId": 18,
+          "name": "David Klein",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 32,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 405,
+          "teamId": 18,
+          "name": "Tobias Weber",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 33,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 406,
+          "teamId": 18,
+          "name": "Felix Marin",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 34,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 407,
+          "teamId": 18,
+          "name": "Leon Larsen",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 18,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 408,
+          "teamId": 18,
+          "name": "Gabriel Meyer",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 19,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 409,
+          "teamId": 18,
+          "name": "Marco Hansen",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 20,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 410,
+          "teamId": 18,
+          "name": "Theo Horvat",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 21,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 411,
+          "teamId": 18,
+          "name": "Julian Varga",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 22,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 412,
+          "teamId": 18,
+          "name": "Anton Ilic",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 23,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 413,
+          "teamId": 18,
+          "name": "Luca Novak",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 24,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 414,
+          "teamId": 18,
+          "name": "Noah Kovac",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 25,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Sekström",
+      "short": "SEK",
+      "color": "#be123c",
+      "stadium": {
+        "name": "Sekström Ground",
+        "capacity": 16000,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 415,
+          "teamId": 19,
+          "name": "Luca Marin",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 21,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 416,
+          "teamId": 19,
+          "name": "Noah Larsen",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 22,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 417,
+          "teamId": 19,
+          "name": "Milan Meyer",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 23,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 418,
+          "teamId": 19,
+          "name": "Elias Hansen",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 24,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 419,
+          "teamId": 19,
+          "name": "Mateo Horvat",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 25,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 420,
+          "teamId": 19,
+          "name": "Jonas Varga",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 26,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 421,
+          "teamId": 19,
+          "name": "Leo Ilic",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 27,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 422,
+          "teamId": 19,
+          "name": "Nico Novak",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 28,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 423,
+          "teamId": 19,
+          "name": "Emil Kovac",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 29,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 424,
+          "teamId": 19,
+          "name": "Adrian Petrov",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 30,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 425,
+          "teamId": 19,
+          "name": "Samuel Bauer",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 31,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 426,
+          "teamId": 19,
+          "name": "David Moretti",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 32,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 427,
+          "teamId": 19,
+          "name": "Tobias Santos",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 33,
+          "rating": 61,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 428,
+          "teamId": 19,
+          "name": "Felix Berger",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 34,
+          "rating": 63,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 429,
+          "teamId": 19,
+          "name": "Leon Costa",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 18,
+          "rating": 65,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 430,
+          "teamId": 19,
+          "name": "Gabriel Silva",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 19,
+          "rating": 67,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 431,
+          "teamId": 19,
+          "name": "Marco Rossi",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 20,
+          "rating": 69,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 432,
+          "teamId": 19,
+          "name": "Theo Jensen",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 21,
+          "rating": 71,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 433,
+          "teamId": 19,
+          "name": "Julian Klein",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 22,
+          "rating": 73,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 434,
+          "teamId": 19,
+          "name": "Anton Weber",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 23,
+          "rating": 75,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 435,
+          "teamId": 19,
+          "name": "Luca Marin",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 24,
+          "rating": 77,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 436,
+          "teamId": 19,
+          "name": "Noah Larsen",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 25,
+          "rating": 79,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 437,
+          "teamId": 19,
+          "name": "Milan Meyer",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 26,
+          "rating": 81,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Accrington Stanley",
+      "short": "ACC",
+      "color": "#dc2626",
+      "stadium": {
+        "name": "Wham Stadium",
+        "capacity": 16000,
+        "image": ""
+      },
+      "logo": "",
+      "players": [
+        {
+          "id": 438,
+          "teamId": 20,
+          "name": "Noah Costa",
+          "shirtNumber": 1,
+          "position": "GK",
+          "age": 22,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 439,
+          "teamId": 20,
+          "name": "Milan Silva",
+          "shirtNumber": 2,
+          "position": "RB",
+          "age": 23,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 440,
+          "teamId": 20,
+          "name": "Elias Rossi",
+          "shirtNumber": 3,
+          "position": "CB",
+          "age": 24,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 441,
+          "teamId": 20,
+          "name": "Mateo Jensen",
+          "shirtNumber": 4,
+          "position": "CB",
+          "age": 25,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 442,
+          "teamId": 20,
+          "name": "Jonas Klein",
+          "shirtNumber": 5,
+          "position": "LB",
+          "age": 26,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 443,
+          "teamId": 20,
+          "name": "Leo Weber",
+          "shirtNumber": 6,
+          "position": "DM",
+          "age": 27,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 444,
+          "teamId": 20,
+          "name": "Nico Marin",
+          "shirtNumber": 7,
+          "position": "CM",
+          "age": 28,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 445,
+          "teamId": 20,
+          "name": "Emil Larsen",
+          "shirtNumber": 8,
+          "position": "AM",
+          "age": 29,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 446,
+          "teamId": 20,
+          "name": "Adrian Meyer",
+          "shirtNumber": 9,
+          "position": "RW",
+          "age": 30,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 447,
+          "teamId": 20,
+          "name": "Samuel Hansen",
+          "shirtNumber": 10,
+          "position": "ST",
+          "age": 31,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 448,
+          "teamId": 20,
+          "name": "David Horvat",
+          "shirtNumber": 11,
+          "position": "LW",
+          "age": 32,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 449,
+          "teamId": 20,
+          "name": "Tobias Varga",
+          "shirtNumber": 12,
+          "position": "GK",
+          "age": 33,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 450,
+          "teamId": 20,
+          "name": "Felix Ilic",
+          "shirtNumber": 13,
+          "position": "CB",
+          "age": 34,
+          "rating": 62,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 451,
+          "teamId": 20,
+          "name": "Leon Novak",
+          "shirtNumber": 14,
+          "position": "CM",
+          "age": 18,
+          "rating": 64,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 452,
+          "teamId": 20,
+          "name": "Gabriel Kovac",
+          "shirtNumber": 15,
+          "position": "ST",
+          "age": 19,
+          "rating": 66,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 453,
+          "teamId": 20,
+          "name": "Marco Petrov",
+          "shirtNumber": 16,
+          "position": "RB",
+          "age": 20,
+          "rating": 68,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 454,
+          "teamId": 20,
+          "name": "Theo Bauer",
+          "shirtNumber": 17,
+          "position": "LB",
+          "age": 21,
+          "rating": 70,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 455,
+          "teamId": 20,
+          "name": "Julian Moretti",
+          "shirtNumber": 18,
+          "position": "DM",
+          "age": 22,
+          "rating": 72,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 456,
+          "teamId": 20,
+          "name": "Anton Santos",
+          "shirtNumber": 19,
+          "position": "RW",
+          "age": 23,
+          "rating": 74,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 457,
+          "teamId": 20,
+          "name": "Luca Berger",
+          "shirtNumber": 20,
+          "position": "LW",
+          "age": 24,
+          "rating": 76,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 458,
+          "teamId": 20,
+          "name": "Noah Costa",
+          "shirtNumber": 21,
+          "position": "ST",
+          "age": 25,
+          "rating": 78,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 459,
+          "teamId": 20,
+          "name": "Milan Silva",
+          "shirtNumber": 22,
+          "position": "CB",
+          "age": 26,
+          "rating": 80,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        },
+        {
+          "id": 460,
+          "teamId": 20,
+          "name": "Elias Rossi",
+          "shirtNumber": 23,
+          "position": "CM",
+          "age": 27,
+          "rating": 60,
+          "nationality": "Fantasy",
+          "stats": {
+            "apps": 0,
+            "goals": 0,
+            "assists": 0,
+            "yellow": 0,
+            "red": 0
+          }
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "theme": "dark",
+    "pointsWin": 3,
+    "pointsDraw": 1,
+    "showMovement": true
+  }
+}
