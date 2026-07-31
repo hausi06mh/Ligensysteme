@@ -1,4 +1,4 @@
-const CACHE="fantasy-liga-v33-1-bank-github-1";
+const CACHE="fantasy-liga-v34-perfect-github-2";
 const ASSETS=[
   "./","./index.html","./styles.css","./seed.json","./manifest.webmanifest",
   "./app.js","./playerUniverse.js","./managerWorld.js","./stabilityCareer.js","./store.js","./ui.js","./standings.js",

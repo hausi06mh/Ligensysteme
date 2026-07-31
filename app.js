@@ -344,7 +344,7 @@ function render(){
   el("#app").innerHTML=`
     <div class="shell">
       <header class="topbar"><div class="topbar-inner">
-        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V32</span></div></div>
+        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V33.1</span></div></div>
         <div class="top-actions"><span id="saveStateIndicator" class="small muted">Gespeichert</span><button id="commandPaletteButton" class="theme-toggle" aria-label="Schnellmenü">⌘</button><button id="themeToggle" class="theme-toggle" aria-label="Theme wechseln">${state().settings.theme==="light"?"🌙":"☀️"}</button><select class="selector" id="leagueSelector">
           ${s.leagues.map(x=>`<option value="${x.id}" ${x.id===l.id?"selected":""}>${x.name}</option>`).join("")}
         </select></div>
@@ -1004,6 +1004,7 @@ async function finishMatch(matchId){
     await saveState({label:"Spiel beendet",throwOnError:true});
     toast(`Endstand gespeichert: ${visibleMatchScore(m)}`);
     openMatch(matchId);
+    setTimeout(()=>openCelebration(matchId),420);
   }catch(error){
     Object.keys(m).forEach(key=>delete m[key]);
     Object.assign(m,previous);
@@ -1052,34 +1053,161 @@ function weatherDetails(m){
   const options=[{icon:"☀️",label:"Klar",temp:18},{icon:"⛅",label:"Leicht bewölkt",temp:15},{icon:"☁️",label:"Bewölkt",temp:12},{icon:"🌧️",label:"Leichter Regen",temp:10},{icon:"🌬️",label:"Windig",temp:13}];
   const w=options[seed%options.length];return {...w,temp:w.temp+(seed%7)-3,night};
 }
-function fanSceneDataUri(teamObj,mood="warmup"){
-  const color=teamColor(teamObj),accent="#ffffff",name=String(teamObj?.short||teamObj?.name||"HOME").replace(/[<>&]/g,"");
-  const seed=hashText(`${teamObj?.id}-${mood}`),people=[];
-  for(let i=0;i<70;i++){const x=8+(i%14)*28+(seed+i*11)%9,y=52+Math.floor(i/14)*25+(seed+i*7)%7,r=5+(i%3);people.push(`<circle cx="${x}" cy="${y}" r="${r}" fill="${i%3===0?accent:color}"/><rect x="${x-r}" y="${y+r-1}" width="${r*2}" height="${r*2.2}" rx="3" fill="${i%4===0?color:'#263647'}"/>`)}
-  const banner=mood==="goal"?"TOR!":mood==="final"?"DANKE TEAM":name;
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="820" height="360" viewBox="0 0 420 190"><defs><linearGradient id="g" x2="0" y2="1"><stop stop-color="#071520"/><stop offset="1" stop-color="#142b3d"/></linearGradient><filter id="gl"><feGaussianBlur stdDeviation="5"/></filter></defs><rect width="420" height="190" fill="url(#g)"/><ellipse cx="210" cy="40" rx="170" ry="28" fill="${color}" opacity=".20" filter="url(#gl)"/><path d="M0 62 Q210 22 420 62 V190 H0Z" fill="#0c1b28"/><g>${people.join('')}</g><rect x="72" y="120" width="276" height="38" rx="7" fill="${color}" stroke="#fff" stroke-width="2"/><text x="210" y="146" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="900" font-size="21">${banner}</text><path d="M30 20 L95 45 L30 68Z" fill="${color}"/><path d="M390 20 L325 45 L390 68Z" fill="${color}"/></svg>`;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+function deterministicAttendance(m,homeTeam){
+  const cap=Math.max(500,Number(homeTeam?.stadium?.capacity||12000));
+  const rows=standingsAt(state(),Math.max(0,Number(m.matchday||1)-1));
+  const by=new Map(rows.map((r,i)=>[Number(r.id),{...r,rank:i+1}]));
+  const hr=by.get(Number(m.homeId))?.rank||Math.ceil((rows.length||20)/2);
+  const ar=by.get(Number(m.awayId))?.rank||Math.ceil((rows.length||20)/2);
+  const n=Math.max(2,rows.length||20),seed=(hashText(`${m.id}-${m.date}-${m.homeId}-${m.awayId}`)%1000)/1000;
+  const strengthAppeal=clamp((teamAverage(team(m.homeId))+teamAverage(team(m.awayId))-122)/110,-.05,.13);
+  const tableAppeal=clamp(((n+1-hr)+(n+1-ar))/(n*2)*.18,.03,.18);
+  const special=isDerbyMatch(m)?.12:(hr<=4&&ar<=4?.08:0);
+  const weather=weatherDetails(m);const weatherPenalty=weather.label.includes('Regen')?.07:weather.label==='Windig'?.04:0;
+  const fill=clamp(.60+strengthAppeal+tableAppeal+special+seed*.14-weatherPenalty,.48,1);
+  return Math.min(cap,Math.round(cap*fill));
+}
+function deterministicReferee(m){
+  const refs=["Leon Richter","Mika Hartmann","Jonas Winter","Tobias Kern","David Falk","Emil Berger","Marco Feldmann","Nico Seidel","Florian Brandt","Lukas Stein","Jan Vollmer","Daniel Vogt","Oliver Reimann","Simon Krüger","Patrick Neumann","Felix Adler","Robert Lenz","Bastian König","Maximilian Frank","Julian Wolf"];
+  return refs[hashText(`${m.id}-${m.matchday}-${m.homeId}-${m.awayId}`)%refs.length];
 }
 function chantFor(teamObj,phase="before"){
-  const name=teamObj?.short||teamObj?.name||"Unser Team";const sets={before:[`${name}! ${name}! Vorwärts, immer weiter!`,`Oh ${name}, wir stehen hinter dir!`,`Heimkurve laut – gemeinsam für ${name}!`],goal:[`Tor für ${name} – das ganze Stadion springt!`,`Hier regiert ${name}!`,`Und wieder hallt es durch die Kurve: ${name}!`],final:[`Wir sind stolz auf euch – ${name}!`,`Nie allein, gemeinsam heim!`,`Noch lange nach Abpfiff singt die Kurve weiter.`]};
+  const name=teamObj?.short||teamObj?.name||"Unser Team";
+  const sets={
+    before:[`${name}! ${name}! Vorwärts, immer weiter!`,`Oh ${name}, wir stehen hinter dir!`,`Heimkurve laut – gemeinsam für ${name}!`,`Auf geht's ${name}, kämpfen und siegen!`,`Für unsere Farben, für unseren Verein – ${name}!`],
+    goal:[`Tor für ${name}! Das ganze Stadion springt!`,`Hier regiert ${name}!`,`Und wieder hallt es durch die Kurve: ${name}!`,`Oh wie ist das schön – ${name} trifft!`],
+    final:[`Wir sind stolz auf euch – ${name}!`,`Nie allein, gemeinsam heim!`,`Noch lange nach Abpfiff singt die Kurve weiter.`,`Für immer ${name}, egal was auch geschieht!`]
+  };
   const list=sets[phase]||sets.before;return list[hashText(`${teamObj?.id}-${phase}`)%list.length];
 }
 function atmosphereBlock(m){
-  const h=team(m.homeId),w=weatherDetails(m),cap=Number(h.stadium?.capacity||0),att=Number(m.attendance||0),fill=cap?Math.round(att/cap*100):0,n=tableNarrative(m);
-  const mood=m.status==="played"?"final":"warmup";
-  return `<section class="card atmosphere-card"><div class="fan-visual"><img src="${fanSceneDataUri(h,mood)}" alt="Fans von ${h.name}"><div><span>${n.kind}</span><b>${chantFor(h,m.status==="played"?"final":"before")}</b></div></div><div class="atmosphere-grid"><div><span>🏟️ Stadion</span><b>${h.stadium?.name||"Stadion"}</b></div><div><span>👥 Zuschauer</span><b>${att.toLocaleString("de-DE")} · ${fill}%</b></div><div><span>${w.icon} Wetter</span><b>${m.weather||w.label} · ${w.temp} °C</b></div><div><span>🧑‍⚖️ Schiedsrichter</span><b>${m.referee||"Wird angesetzt"}</b></div></div><div class="press-note"><span>📰 ${m.status==="played"?"Nach dem Spiel":"Vor dem Spiel"}</span><b>${m.status==="played"?postMatchHeadline(m):n.before}</b></div><button class="btn crowd-audio-btn" data-play-chant="${h.id}">🔊 Fangesang abspielen</button></section>`;
+  const h=team(m.homeId),w=weatherDetails(m),cap=Math.max(500,Number(h.stadium?.capacity||12000));
+  const att=Number(m.attendance||deterministicAttendance(m,h)),fill=Math.min(100,Math.round(att/cap*100)),n=tableNarrative(m);
+  const phase=m.status==="played"?"final":"before",stadiumImage=h.stadium?.image||"";
+  const imageStyle=stadiumImage?`background-image:linear-gradient(180deg,rgba(2,8,14,.05),rgba(2,8,14,.88)),url('${stadiumImage}');background-size:cover;background-position:${h.stadiumPosX??50}% ${h.stadiumPosY??50}%`:``;
+  return `<section class="card atmosphere-card">
+    <div class="stadium-atmosphere-hero" style="${imageStyle}">
+      <div class="stadium-live-badge">${w.night?"🌙 FLUTLICHT":"🏟️ SPIELTAG"}</div>
+      <div class="stadium-atmosphere-copy"><span>${n.kind}</span><b>${h.stadium?.name||"Stadion"}</b><small>${chantFor(h,phase)}</small></div>
+      <div class="crowd-strip" aria-hidden="true">${Array.from({length:26},(_,i)=>`<i style="--i:${i};--c:${i%3===0?'#fff':teamColor(h)}"></i>`).join("")}</div>
+    </div>
+    <div class="atmosphere-grid"><div><span>🏟️ Stadion</span><b>${h.stadium?.name||"Stadion"}</b></div><div><span>👥 Zuschauer</span><b>${att.toLocaleString("de-DE")} · ${fill}%</b></div><div><span>${w.icon} Wetter</span><b>${m.weather||w.label} · ${m.temperature??w.temp} °C</b></div><div><span>🧑‍⚖️ Schiedsrichter</span><b>${m.referee||deterministicReferee(m)}</b></div></div>
+    <div class="press-note"><span>📰 ${m.status==="played"?"Nach dem Spiel":"Vor dem Spiel"}</span><b>${m.status==="played"?postMatchHeadline(m):n.before}</b></div>
+    <button class="btn crowd-audio-btn" data-play-chant="${h.id}">🔊 Kurve & Fangesang hören</button>
+    ${m.status==="played"?`<button class="btn primary celebration-open-btn" data-open-celebration="${m.id}">🎬 Schlussfeier im Stadion ansehen</button>`:""}
+    <div class="audio-note">Ton startet erst nach Antippen – Lautstärke am iPhone bitte einschalten.</div>
+  </section>`;
 }
 
-function playCrowdChant(teamObj){
+let activeCrowdAudio=null;
+async function playCrowdChant(teamObj){
   try{
-    const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)return toast("Audio wird auf diesem Gerät nicht unterstützt");
-    const ctx=new AudioCtx(),master=ctx.createGain();master.gain.setValueAtTime(.0001,ctx.currentTime);master.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+.08);master.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+4.8);master.connect(ctx.destination);
-    const seed=hashText(teamObj?.id||1),base=105+(seed%36);
-    for(let i=0;i<5;i++){const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=i%2?"triangle":"sawtooth";osc.frequency.setValueAtTime(base*(1+(i%3)*.12),ctx.currentTime);gain.gain.setValueAtTime(.0001,ctx.currentTime);for(let k=0;k<8;k++){const t=ctx.currentTime+k*.55+i*.025;gain.gain.linearRampToValueAtTime(.07/(i+1),t+.08);gain.gain.exponentialRampToValueAtTime(.0001,t+.42)}osc.connect(gain);gain.connect(master);osc.start();osc.stop(ctx.currentTime+4.7)}
-    const buffer=ctx.createBuffer(1,ctx.sampleRate*4.8,ctx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(.22+Math.sin(i/ctx.sampleRate*Math.PI*4)*.07);const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),ng=ctx.createGain();noise.buffer=buffer;filter.type="lowpass";filter.frequency.value=850;ng.gain.value=.045;noise.connect(filter);filter.connect(ng);ng.connect(master);noise.start();
-    setTimeout(()=>ctx.close(),5200);toast(chantFor(teamObj,"before"));
-  }catch(error){toast("Fangesang konnte nicht abgespielt werden")}
+    if(activeCrowdAudio?.stop)activeCrowdAudio.stop();
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtx){toast("Audio wird auf diesem Gerät nicht unterstützt");return}
+    const ctx=new AudioCtx();await ctx.resume();
+    const now=ctx.currentTime,master=ctx.createGain();master.gain.setValueAtTime(.0001,now);master.gain.exponentialRampToValueAtTime(.34,now+.12);master.gain.setValueAtTime(.34,now+4.5);master.gain.exponentialRampToValueAtTime(.0001,now+6.2);master.connect(ctx.destination);
+    const noiseBuffer=ctx.createBuffer(1,ctx.sampleRate*6.3,ctx.sampleRate),d=noiseBuffer.getChannelData(0);
+    for(let i=0;i<d.length;i++){const wave=Math.sin(i/ctx.sampleRate*Math.PI*3.3)*.16;d[i]=(Math.random()*2-1)*(.32+wave)}
+    const crowd=ctx.createBufferSource(),low=ctx.createBiquadFilter(),cg=ctx.createGain();crowd.buffer=noiseBuffer;low.type="lowpass";low.frequency.value=1250;cg.gain.value=.30;crowd.connect(low);low.connect(cg);cg.connect(master);crowd.start(now);
+    const seed=hashText(teamObj?.id||1),root=150+(seed%45);
+    for(let voice=0;voice<9;voice++){
+      const osc=ctx.createOscillator(),g=ctx.createGain();osc.type=voice%3===0?"square":"sawtooth";osc.frequency.value=root*(1+(voice%4)*.08);g.gain.value=.0001;
+      for(let k=0;k<10;k++){const t=now+.2+k*.55+(voice%3)*.035;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.035/(1+voice*.22),t+.07);g.gain.exponentialRampToValueAtTime(.0001,t+.38)}
+      osc.connect(g);g.connect(master);osc.start(now);osc.stop(now+6.1)
+    }
+    const chant=chantFor(teamObj,"before");
+    if("speechSynthesis" in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(chant);u.lang="de-DE";u.rate=.92;u.pitch=.78;u.volume=1;setTimeout(()=>window.speechSynthesis.speak(u),180)}
+    let stopped=false;activeCrowdAudio={stop(){if(stopped)return;stopped=true;try{window.speechSynthesis?.cancel();crowd.stop();ctx.close()}catch{}}};
+    setTimeout(()=>{if(!stopped){stopped=true;ctx.close().catch(()=>{})}},6600);
+    toast(`🔊 ${chant}`);
+  }catch(error){console.error(error);toast("Ton konnte nicht gestartet werden – bitte Stummmodus und Lautstärke prüfen")}
 }
+
+function celebrationProfile(m){
+  const h=team(m.homeId),a=team(m.awayId),hg=Number(m.homeGoals||0),ag=Number(m.awayGoals||0);
+  const winner=hg>ag?h:ag>hg?a:null;
+  const side=winner?.id===h.id?"home":winner?"away":"draw";
+  const derby=isDerbyMatch(m),margin=Math.abs(hg-ag),seed=hashText(`${m.id}-${winner?.id||0}-${hg}-${ag}`);
+  const intensity=winner?(derby||margin>=3?"wild":margin===1?"tense":"strong"):"calm";
+  const variants={
+    wild:["Kurvenbeben","Derby-Ekstase","Fahnenmeer","Trommelsturm"],
+    tense:["Erlösender Jubel","Gemeinsam vor der Kurve","Letzter Gesang","Sieg im Flutlicht"],
+    strong:["Siegesfeier","Mannschaft und Fans","Heimkurve in Bewegung","Abpfiff-Party"],
+    calm:["Applaus nach Abpfiff","Gemeinsam bis zum Schluss","Respekt von den Rängen","Ruhiger Ausklang"]
+  };
+  const list=variants[intensity];
+  return {h,a,winner,side,derby,margin,intensity,title:list[seed%list.length],seed};
+}
+function celebrationChant(teamObj,seed,intensity){
+  const name=teamObj?.short||teamObj?.name||"Unser Verein";
+  const chants=[
+    `Oh ${name}, oh ${name}, wir stehen immer hinter dir!`,
+    `${name}! ${name}! Kämpfen und siegen!`,
+    `Für die Farben, für die Stadt – ${name} gibt niemals auf!`,
+    `Schal nach oben, alle mit – ${name}, unser Verein!`,
+    `Hier regiert ${name} – singt es laut durch die Nacht!`,
+    `Gemeinsam vorwärts, Schritt für Schritt – ${name} nimmt uns alle mit!`
+  ];
+  return chants[(seed+(intensity==="wild"?2:0))%chants.length];
+}
+function celebrationSceneHtml(m){
+  const c=celebrationProfile(m),home=c.h,focus=c.winner||home;
+  const image=home?.stadium?.image||"";
+  const pos=`${home?.stadiumPosX??50}% ${home?.stadiumPosY??50}%`;
+  const primary=teamColor(focus),secondary="#f4f7fa";
+  const win=c.winner;
+  const headline=win?`${win.name} feiert ${c.side==="away"?"vor dem Gästeblock":"mit der Heimkurve"}`:"Applaus von den Rängen";
+  const sub=win?celebrationChant(win,c.seed,c.intensity):"Beide Mannschaften verabschieden sich von den Fans.";
+  const crowdCount=c.side==="away"?34:64;
+  const flags=Array.from({length:c.side==="away"?5:9},(_,i)=>`<i class="cinematic-flag f${i%4}" style="--delay:${(i*.17).toFixed(2)}s;--x:${8+(i*83/Math.max(1,(c.side==="away"?4:8))).toFixed(1)}%;--flag:${i%3===0?secondary:primary}"></i>`).join("");
+  const fans=Array.from({length:crowdCount},(_,i)=>`<i class="cinematic-fan" style="--i:${i};--shirt:${i%4===0?secondary:primary};--delay:${((i%11)*.04).toFixed(2)}s"></i>`).join("");
+  const players=win?Array.from({length:11},(_,i)=>`<i class="cinematic-player" style="--i:${i};--kit:${primary};--delay:${(i*.045).toFixed(2)}s"></i>`).join(""):"";
+  const drums=win?`<div class="cinematic-drums"><i></i><i></i><i></i></div>`:"";
+  return `<div class="celebration-cinema ${c.side} ${c.intensity}" style="--club:${primary};--club2:${secondary}">
+    <div class="cinematic-stadium" style="background-image:linear-gradient(180deg,rgba(1,6,10,.04),rgba(1,6,10,.42) 48%,rgba(1,6,10,.96)),url('${image}');background-position:${pos}"></div>
+    <div class="cinematic-lights"></div><div class="cinematic-flash flash-a"></div><div class="cinematic-flash flash-b"></div>
+    <div class="cinematic-away-label">${c.side==="away"?"GÄSTEBLOCK":"HEIMKURVE"}</div>
+    <div class="cinematic-flags">${flags}</div>
+    <div class="cinematic-crowd ${c.side==="away"?"away-block":""}">${fans}</div>
+    ${drums}<div class="cinematic-pitch">${players}</div>
+    <div class="cinematic-copy"><span>${c.derby?"DERBY · ":""}${c.title}</span><h2>${headline}</h2><p>${sub}</p></div>
+    <div class="cinematic-controls"><button class="btn primary" data-start-celebration-audio="${m.id}">🔊 Ton & Gesang starten</button><button class="btn" data-replay-celebration="${m.id}">↻ Szene wiederholen</button><button class="btn" data-close-celebration>Schließen</button></div>
+  </div>`;
+}
+let activeCelebrationAudio=null;
+function stopCelebrationAudio(){try{activeCelebrationAudio?.stop?.()}catch{}activeCelebrationAudio=null;try{window.speechSynthesis?.cancel?.()}catch{}}
+async function playCelebrationAudio(m){
+  const c=celebrationProfile(m),club=c.winner||c.h;
+  try{
+    stopCelebrationAudio();
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return toast("Audio wird auf diesem Gerät nicht unterstützt");
+    const ctx=new AC();await ctx.resume();
+    const now=ctx.currentTime,duration=c.intensity==="wild"?12:c.intensity==="calm"?7:9.5;
+    const master=ctx.createGain();master.gain.setValueAtTime(.0001,now);master.gain.exponentialRampToValueAtTime(c.side==="away"?.52:.68,now+.12);master.gain.setValueAtTime(c.side==="away"?.52:.68,now+duration-.8);master.gain.exponentialRampToValueAtTime(.0001,now+duration);master.connect(ctx.destination);
+    const buffer=ctx.createBuffer(2,Math.ceil(ctx.sampleRate*duration),ctx.sampleRate);
+    for(let ch=0;ch<2;ch++){const d=buffer.getChannelData(ch);let smooth=0;for(let i=0;i<d.length;i++){smooth=smooth*.93+(Math.random()*2-1)*.07;const swell=.62+.25*Math.sin(i/ctx.sampleRate*Math.PI*(c.intensity==="wild"?1.7:1.05));d[i]=smooth*swell}}
+    const crowd=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),cg=ctx.createGain();crowd.buffer=buffer;filter.type="bandpass";filter.frequency.value=c.side==="away"?780:1050;filter.Q.value=.55;cg.gain.value=c.side==="away"?.48:.62;crowd.connect(filter);filter.connect(cg);cg.connect(master);crowd.start(now);
+    const beatPatterns=[[0,.52,1.04,1.56],[0,.44,.88,1.32,1.76],[0,.62,1.24],[0,.36,.72,1.44]];
+    const pattern=beatPatterns[c.seed%beatPatterns.length],bar=c.intensity==="wild"?1.8:2.15;
+    for(let base=0;base<duration;base+=bar){for(const off of pattern){const t=now+base+off;if(t>now+duration-.2)continue;const osc=ctx.createOscillator(),g=ctx.createGain();osc.type="sine";osc.frequency.setValueAtTime(92+(c.seed%19),t);osc.frequency.exponentialRampToValueAtTime(46,t+.16);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(c.intensity==="wild"?.52:.38,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+.23);osc.connect(g);g.connect(master);osc.start(t);osc.stop(t+.25)}}
+    const chantRoot=145+(c.seed%40);for(let barStart=.25;barStart<duration-1;barStart+=bar){for(let v=0;v<(c.side==="away"?4:8);v++){const o=ctx.createOscillator(),g=ctx.createGain();o.type=v%3===0?"square":"sawtooth";o.frequency.value=chantRoot*(1+(v%4)*.055);const t=now+barStart+(v%2)*.035;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.032/(1+v*.12),t+.08);g.gain.setValueAtTime(.025/(1+v*.12),t+.48);g.gain.exponentialRampToValueAtTime(.0001,t+.82);o.connect(g);g.connect(master);o.start(t);o.stop(t+.86)}}
+    if("speechSynthesis" in window){const text=celebrationChant(club,c.seed,c.intensity),utter=new SpeechSynthesisUtterance(text);utter.lang="de-DE";utter.rate=.82;utter.pitch=.62;utter.volume=1;setTimeout(()=>{try{window.speechSynthesis.speak(utter)}catch{}},550)}
+    let stopped=false;activeCelebrationAudio={stop(){if(stopped)return;stopped=true;try{crowd.stop();ctx.close()}catch{};try{window.speechSynthesis?.cancel()}catch{}}};
+    setTimeout(()=>{if(!stopped){stopped=true;ctx.close().catch(()=>{})}},(duration+.3)*1000);
+  }catch(e){console.error(e);toast("Ton konnte nicht gestartet werden. Bitte Medienlautstärke einschalten.")}
+}
+function bindCelebrationActions(m){
+  document.querySelectorAll("[data-start-celebration-audio]").forEach(b=>b.onclick=()=>playCelebrationAudio(m));
+  document.querySelectorAll("[data-replay-celebration]").forEach(b=>b.onclick=()=>{const scene=b.closest('.celebration-cinema');scene?.classList.remove('replay');void scene?.offsetWidth;scene?.classList.add('replay')});
+  document.querySelectorAll("[data-close-celebration]").forEach(b=>b.onclick=()=>{stopCelebrationAudio();b.closest('.celebration-overlay')?.remove()});
+}
+function openCelebration(mOrId){
+  const m=typeof mOrId==="object"?mOrId:season()?.matches?.find(x=>x.id===Number(mOrId));if(!m||m.status!=="played")return;
+  stopCelebrationAudio();document.querySelector('.celebration-overlay')?.remove();
+  const wrap=document.createElement('div');wrap.className='celebration-overlay';wrap.innerHTML=celebrationSceneHtml(m);document.body.appendChild(wrap);bindCelebrationActions(m);
+}
+
 function matchOverview(m){
   const h=team(m.homeId),motm=m.motmPlayerId?playerById(m.motmPlayerId)?.name:"–";
   const s=m.statistics||{};
@@ -1465,7 +1593,7 @@ async function simulateMatch(matchId){
     await saveState({label:"Realistische Spielsimulation",throwOnError:true});
     toast(`${h.short||h.name} ${hg}:${ag} ${a.short||a.name} simuliert`);
     render();
-    setTimeout(()=>openMatch(matchId),80);
+    setTimeout(()=>{openMatch(matchId);setTimeout(()=>openCelebration(matchId),420)},80);
   }catch(error){
     console.error("Simulation fehlgeschlagen:",error);
     Object.keys(m).forEach(key=>delete m[key]);
@@ -1670,6 +1798,7 @@ function editMatchView(m){
 function bindMatchActions(m){
   bindLineupDrag(m);
   document.querySelectorAll("[data-play-chant]").forEach(button=>button.onclick=()=>playCrowdChant(team(Number(button.dataset.playChant))));
+  document.querySelectorAll("[data-open-celebration]").forEach(button=>button.onclick=()=>openCelebration(Number(button.dataset.openCelebration)));
   const add=el("#addEvent");if(add)add.onclick=()=>openEventEditor(m.id);
   document.querySelectorAll("[data-delete-event]").forEach(b=>b.onclick=()=>{m.events=m.events.filter(e=>e.id!==Number(b.dataset.deleteEvent));if(m.scoreMode!=="manual")syncMatchScoreFromEvents(m);rebuildPlayerStats();saveState({label:"Ereignis gelöscht"});openMatch(m.id);});
   const sm=el("#saveMatchEdit");if(sm)sm.onclick=()=>{
