@@ -935,3 +935,12 @@ details summary{cursor:pointer;padding:10px 0;font-weight:700}
 .goal-bench-player span{grid-area:pos;font-size:9px;color:var(--muted);justify-self:start}.goal-bench-player b{grid-area:num;font-size:15px;justify-self:end}.goal-bench-player small{grid-area:name;font-size:10px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .goal-bench-player.selected{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent);background:color-mix(in srgb,var(--accent) 18%,rgba(255,255,255,.05))}
 @media(max-width:640px){.goal-picker-bench-list{grid-template-columns:repeat(3,minmax(0,1fr))}.goal-bench-player{min-height:64px;padding:7px 5px}.goal-picker-bench-title{align-items:flex-start;flex-direction:column;gap:2px}}
+
+/* V32 Komplett-Fix: manuelle Team-Startelf und kompletter Restkader */
+.team-default-lineup-summary{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}
+.team-default-lineup-summary h3{margin:3px 0}.team-default-lineup-summary p{margin:0;color:var(--muted);font-size:12px}
+.default-lineup-sheet{padding-bottom:100px}.default-lineup-pitch{margin-top:12px}.default-lineup-slot{cursor:pointer}
+.default-squad-player.is-in-xi{border-color:#35d07f;background:rgba(53,208,127,.16);box-shadow:0 0 0 2px rgba(53,208,127,.12)}
+.default-squad-list{max-height:360px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+.sticky-lineup-actions{position:sticky;bottom:0;z-index:5;margin-top:16px;padding:12px;background:rgba(3,14,24,.96);border-top:1px solid var(--line);backdrop-filter:blur(12px)}
+@media(max-width:640px){.team-default-lineup-summary{align-items:stretch;flex-direction:column}.default-lineup-sheet{padding-bottom:120px}.default-squad-list{max-height:430px}}

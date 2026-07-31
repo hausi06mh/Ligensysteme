@@ -217,10 +217,10 @@ function upgradeState(){
           m.lineups.away=[...(awayTeam.defaultLineup||chooseLineup(awayTeam).map(p=>p.id))].slice(0,11);
         }
         if(homeTeam&&(!Array.isArray(m.lineups.homeBench)||!m.lineups.homeBench.length)){
-          m.lineups.homeBench=sortPlayersByPosition(homeTeam.players||[]).filter(p=>!m.lineups.home.includes(p.id)).slice(0,9).map(p=>p.id);
+          m.lineups.homeBench=fullBenchIds(homeTeam,m.lineups.home,m.lineups.homeBench);
         }
         if(awayTeam&&(!Array.isArray(m.lineups.awayBench)||!m.lineups.awayBench.length)){
-          m.lineups.awayBench=sortPlayersByPosition(awayTeam.players||[]).filter(p=>!m.lineups.away.includes(p.id)).slice(0,9).map(p=>p.id);
+          m.lineups.awayBench=fullBenchIds(awayTeam,m.lineups.away,m.lineups.awayBench);
         }
         m.notes ||= "";
         m.attendance ||= 0;
@@ -938,7 +938,7 @@ function openScheduleSheet(){
 
     const pairs=roundRobin(season().teamIds,el("#scheduleMode").value==="double");
     const start=el("#scheduleStart").value||new Date().toISOString().slice(0,10),time=el("#scheduleTime").value||"15:30";
-    season().matches=pairs.map((p,i)=>({id:i+1,matchday:p.matchday,homeId:p.homeId,awayId:p.awayId,date:dateForRound(start,p.matchday),time,status:"scheduled",homeGoals:0,awayGoals:0,lineups:{home:[...(team(Number(el("#mHome").value))?.defaultLineup||[])].slice(0,11),away:[...(team(Number(el("#mAway").value))?.defaultLineup||[])].slice(0,11),homeBench:sortPlayersByPosition(team(Number(el("#mHome").value))?.players||[]).filter(p=>!(team(Number(el("#mHome").value))?.defaultLineup||[]).includes(p.id)).slice(0,9).map(p=>p.id),awayBench:sortPlayersByPosition(team(Number(el("#mAway").value))?.players||[]).filter(p=>!(team(Number(el("#mAway").value))?.defaultLineup||[]).includes(p.id)).slice(0,9).map(p=>p.id)},events:[],notes:"",attendance:0,referee:"",weather:"",motmPlayerId:null}));
+    season().matches=pairs.map((p,i)=>({id:i+1,matchday:p.matchday,homeId:p.homeId,awayId:p.awayId,date:dateForRound(start,p.matchday),time,status:"scheduled",homeGoals:0,awayGoals:0,lineups:{home:[...(team(Number(el("#mHome").value))?.defaultLineup||[])].slice(0,11),away:[...(team(Number(el("#mAway").value))?.defaultLineup||[])].slice(0,11),homeBench:fullBenchIds(team(Number(el("#mHome").value)),team(Number(el("#mHome").value))?.defaultLineup||[]),awayBench:fullBenchIds(team(Number(el("#mAway").value)),team(Number(el("#mAway").value))?.defaultLineup||[])},events:[],notes:"",attendance:0,referee:"",weather:"",motmPlayerId:null}));
     await saveState();
     closeOverlay();
     render();
@@ -1076,6 +1076,14 @@ function positionOrder(p){
 }
 function sortPlayersByPosition(players){
   return [...(players||[])].sort((a,b)=>positionOrder(a)-positionOrder(b)||Number(b.rating||0)-Number(a.rating||0)||String(a.name||"").localeCompare(String(b.name||""),"de"));
+}
+function fullBenchIds(teamObj,startIds,existingIds=[]){
+  const start=new Set((startIds||[]).map(Number));
+  const valid=new Set((teamObj?.players||[]).map(p=>Number(p.id)));
+  const ordered=[];
+  for(const id of existingIds||[]){const n=Number(id);if(valid.has(n)&&!start.has(n)&&!ordered.includes(n))ordered.push(n);}
+  for(const p of sortPlayersByPosition(teamObj?.players||[])){const n=Number(p.id);if(!start.has(n)&&!ordered.includes(n))ordered.push(n);}
+  return ordered;
 }
 function positionFit(p,slot){
   const pos=normalizedPos(p);
@@ -1268,8 +1276,8 @@ async function simulateMatch(matchId){
     m.lineups={
       home:hXI.map(p=>p.id).filter(Number.isFinite),
       away:aXI.map(p=>p.id).filter(Number.isFinite),
-      homeBench:h.players.filter(p=>!hXI.some(x=>x.id===p.id)).slice(0,9).map(p=>p.id).filter(Number.isFinite),
-      awayBench:a.players.filter(p=>!aXI.some(x=>x.id===p.id)).slice(0,9).map(p=>p.id).filter(Number.isFinite)
+      homeBench:fullBenchIds(h,hXI.map(x=>x.id)),
+      awayBench:fullBenchIds(a,aXI.map(x=>x.id))
     };
 
     const hs=Number(teamAverage(h))||65,as=Number(teamAverage(a))||65;
@@ -1622,8 +1630,8 @@ function openEventEditor(matchId){
   const awayXI=(m.lineups?.away||[]).length===11?m.lineups.away:chooseLineup(awayTeam).map(p=>p.id);
   m.lineups ||= {home:[],away:[],homeBench:[],awayBench:[]};
   m.lineups.home=homeXI;m.lineups.away=awayXI;
-  if(!m.lineups.homeBench?.length)m.lineups.homeBench=sortPlayersByPosition(homeTeam.players||[]).filter(p=>!homeXI.includes(p.id)).slice(0,9).map(p=>p.id);
-  if(!m.lineups.awayBench?.length)m.lineups.awayBench=sortPlayersByPosition(awayTeam.players||[]).filter(p=>!awayXI.includes(p.id)).slice(0,9).map(p=>p.id);
+  m.lineups.homeBench=fullBenchIds(homeTeam,homeXI,m.lineups.homeBench);
+  m.lineups.awayBench=fullBenchIds(awayTeam,awayXI,m.lineups.awayBench);
   let selectedTeamId=m.homeId,selectedScorerId=null,selectedAssistId=null;
   const renderPicker=()=>{
     const selectedTeam=team(selectedTeamId),isHome=selectedTeamId===m.homeId;
@@ -1758,9 +1766,35 @@ function teamSquad(t){
   const sorted=sortPlayersByPosition(t.players),used=new Set();
   const sections=groups.map(([label,positions])=>{const players=sorted.filter(p=>positions.includes(normalizedPos(p)));players.forEach(p=>used.add(p.id));if(!players.length)return "";return `<section class="squad-position-group"><h4>${label}</h4><div class="player-list">${players.map(p=>playerRow(p)).join("")}</div></section>`;}).join("");
   const other=sorted.filter(p=>!used.has(p.id));
-  return `<div class="actions"><button id="addPlayer" class="btn primary">+ Spieler</button><button id="saveDefaultLineup" class="btn secondary">Standardelf automatisch setzen</button></div>${sections}${other.length?`<section class="squad-position-group"><h4>Weitere Positionen</h4><div class="player-list">${other.map(p=>playerRow(p)).join("")}</div></section>`:""}`;
+  const xi=(t.defaultLineup||[]).map(id=>t.players.find(p=>p.id===id)).filter(Boolean);
+  return `<div class="card team-default-lineup-summary"><div><span class="eyebrow">Gespeicherte Aufstellung</span><h3>${t.defaultFormation||"4-3-2-1"} · ${xi.length}/11 Spieler</h3><p>${xi.length===11?"Diese Elf wird automatisch für neue Spiele verwendet.":"Bitte lege eine vollständige Startelf fest."}</p></div><button id="editDefaultLineup" class="btn primary">Startaufstellung manuell festlegen</button></div><div class="actions"><button id="addPlayer" class="btn secondary">+ Spieler</button><button id="saveDefaultLineup" class="btn ghost">Automatisch vorschlagen</button></div>${sections}${other.length?`<section class="squad-position-group"><h4>Weitere Positionen</h4><div class="player-list">${other.map(p=>playerRow(p)).join("")}</div></section>`:""}`;
 }
-function bindTeamSquad(t){const add=el("#addPlayer");if(add)add.onclick=()=>openPlayerEditor(t.id,null);const auto=el("#saveDefaultLineup");if(auto)auto.onclick=async()=>{t.defaultLineup=[];chooseLineup(t);await saveState({label:"Standardelf gespeichert"});toast("Positionsgerechte 4-2-3-1-Standardelf gespeichert");};document.querySelectorAll("[data-player]").forEach(r=>r.onclick=()=>openPlayerEditor(t.id,Number(r.dataset.player)));}
+function bindTeamSquad(t){
+  const add=el("#addPlayer");if(add)add.onclick=()=>openPlayerEditor(t.id,null);
+  const edit=el("#editDefaultLineup");if(edit)edit.onclick=()=>openDefaultLineupEditor(t.id);
+  const auto=el("#saveDefaultLineup");if(auto)auto.onclick=async()=>{t.defaultLineup=[];chooseLineup(t);t.defaultFormation="4-3-2-1";await saveState({label:"Standardelf vorgeschlagen"});toast("4-3-2-1 wurde vorgeschlagen – du kannst sie manuell ändern");openTeam(t.id);};
+  document.querySelectorAll("[data-player]").forEach(r=>r.onclick=()=>openPlayerEditor(t.id,Number(r.dataset.player)));
+}
+function openDefaultLineupEditor(teamId){
+  const t=team(teamId);
+  if(!t)return;
+  let selected=(Array.isArray(t.defaultLineup)?t.defaultLineup:[]).filter(id=>t.players.some(p=>p.id===id)).slice(0,11);
+  if(selected.length!==11)selected=chooseLineup(t).map(p=>p.id).slice(0,11);
+  while(selected.length<11)selected.push(null);
+  let activeSlot=0;
+  const draw=()=>{
+    const selectedSet=new Set(selected.filter(Boolean));
+    const pitch=selected.map((id,index)=>{const p=id?t.players.find(x=>x.id===id):null;return `<button type="button" class="goal-player default-lineup-slot ${activeSlot===index?"selected":""}" data-default-slot="${index}" style="--slot:${index}"><span class="goal-player-pos">${formationSlotLabel(index)}</span><b>${p?.shirtNumber||"+"}</b><small>${p?.name||"Spieler wählen"}</small></button>`}).join("");
+    const roster=sortPlayersByPosition(t.players||[]).map(p=>`<button type="button" class="goal-bench-player default-squad-player ${selectedSet.has(p.id)?"is-in-xi":""}" data-default-player="${p.id}"><span>${p.position||"SP"}</span><b>${p.shirtNumber||"–"}</b><small>${p.name}</small></button>`).join("");
+    el("#overlay").innerHTML=`<div class="modal"><div class="sheet default-lineup-sheet"><div class="sheet-head"><div><div class="eyebrow">${t.name}</div><h2>Startaufstellung festlegen</h2><p class="subtitle">4-3-2-1 · Tippe zuerst eine Position und danach den gewünschten Spieler.</p></div><button class="iconbtn" id="close">×</button></div><div class="goal-picker-pitch default-lineup-pitch">${pitch}</div><div class="goal-picker-bench"><div class="goal-picker-bench-title"><b>Kompletter Mannschaftskader</b><span>${t.players.length} Spieler · grün markiert = Startelf</span></div><div class="goal-picker-bench-list default-squad-list">${roster}</div></div><div class="actions sticky-lineup-actions"><button id="saveManualLineup" class="btn primary">Startelf speichern</button><button id="autoManualLineup" class="btn secondary">Automatisch neu wählen</button></div></div></div>`;
+    el("#close").onclick=()=>openTeam(teamId);
+    document.querySelectorAll("[data-default-slot]").forEach(btn=>btn.onclick=()=>{activeSlot=Number(btn.dataset.defaultSlot);draw();});
+    document.querySelectorAll("[data-default-player]").forEach(btn=>btn.onclick=()=>{const pid=Number(btn.dataset.defaultPlayer);const oldIndex=selected.indexOf(pid);if(oldIndex>=0&&oldIndex!==activeSlot){const displaced=selected[activeSlot];selected[oldIndex]=displaced||null;}selected[activeSlot]=pid;activeSlot=Math.min(10,activeSlot+1);draw();});
+    el("#autoManualLineup").onclick=()=>{t.defaultLineup=[];selected=chooseLineup(t).map(p=>p.id).slice(0,11);while(selected.length<11)selected.push(null);activeSlot=0;draw();};
+    el("#saveManualLineup").onclick=async()=>{const ids=selected.filter(Boolean);if(ids.length!==11||new Set(ids).size!==11)return toast("Bitte 11 verschiedene Spieler auswählen");t.defaultFormation="4-3-2-1";t.defaultLineup=[...ids];for(const m of season().matches||[]){if(m.status==="played")continue;m.lineups||={home:[],away:[],homeBench:[],awayBench:[]};if(m.homeId===t.id){m.lineups.home=[...ids];m.lineups.homeBench=fullBenchIds(t,ids,m.lineups.homeBench);}if(m.awayId===t.id){m.lineups.away=[...ids];m.lineups.awayBench=fullBenchIds(t,ids,m.lineups.awayBench);}}await saveState({label:"Startaufstellung manuell gespeichert"});toast("Startelf gespeichert – alle übrigen Spieler sind auswählbar");openTeam(teamId);};
+  };
+  draw();
+}
 function topTeamPlayers(t){return `<div class="card"><h3>Top-Spieler</h3>${t.players.slice().sort((a,b)=>b.stats.goals-a.stats.goals).slice(0,8).map(p=>`<div class="player-row"><div class="player-num">${p.shirtNumber}</div><div><b>${p.name}</b><div class="player-pos">${p.position}</div></div><span>⚽ ${p.stats.goals} · 🎯 ${p.stats.assists}</span></div>`).join("")}</div>`}
 function openPlayerEditor(teamId,playerId){
   const t=team(teamId),p=playerId?t.players.find(x=>x.id===playerId):{name:"",shirtNumber:t.players.length+1,position:"ST",age:20,rating:60,nationality:"Fantasy",preferredFoot:"Rechts",value:1000000,contractUntil:season().name};
