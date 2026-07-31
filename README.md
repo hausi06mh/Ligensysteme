@@ -1,5 +1,3 @@
-# Fantasy Liga Elite V31 – GitHub Pages (flache Struktur)
+# Fantasy Liga Elite V32 – komplett
 
-Alle Dateien gehören direkt in das Hauptverzeichnis des Repositories. Es gibt absichtlich keine Unterordner, damit der Upload auf dem iPhone die Pfade nicht zerstört.
-
-GitHub Pages: Settings → Pages → Deploy from a branch → main → /(root).
+Enthält die V32-Simulation, manuelle Toreingabe über die 4-3-2-1-Aufstellung sowie auswählbare Ersatzspieler. Wird ein Bankspieler als Torschütze oder Vorlagengeber gewählt, erzeugt die App automatisch eine passende Einwechslung im Live-Ticker.

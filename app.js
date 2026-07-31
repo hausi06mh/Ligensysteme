@@ -186,7 +186,10 @@ function upgradeState(){
   for(const t of s.teams){
     t.finance ||= defaultFinance(t);
     t.aiEnabled ??= true;
-    t.defaultFormation ||= "4-2-3-1";
+    if(t.defaultFormation!=="4-3-2-1"){
+      t.defaultFormation="4-3-2-1";
+      t.defaultLineup=[];
+    }
     chooseLineup(t);
     recalcWages(t);
   }
@@ -341,7 +344,7 @@ function render(){
   el("#app").innerHTML=`
     <div class="shell">
       <header class="topbar"><div class="topbar-inner">
-        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V29</span></div></div>
+        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V32</span></div></div>
         <div class="top-actions"><span id="saveStateIndicator" class="small muted">Gespeichert</span><button id="commandPaletteButton" class="theme-toggle" aria-label="Schnellmenü">⌘</button><button id="themeToggle" class="theme-toggle" aria-label="Theme wechseln">${state().settings.theme==="light"?"🌙":"☀️"}</button><select class="selector" id="leagueSelector">
           ${s.leagues.map(x=>`<option value="${x.id}" ${x.id===l.id?"selected":""}>${x.name}</option>`).join("")}
         </select></div>
@@ -996,6 +999,7 @@ async function finishMatch(matchId){
     m.status="played";
     m.simulated=false;
     generateEstimatedMatchDetails(m,{refresh:true});
+    generateManualTimeline(m);
     rebuildPlayerStats();
     await saveState({label:"Spiel beendet",throwOnError:true});
     toast(`Endstand gespeichert: ${visibleMatchScore(m)}`);
@@ -1085,7 +1089,8 @@ function chooseLineup(t){
   const savedIds=Array.isArray(t.defaultLineup)?t.defaultLineup:[];
   const saved=savedIds.map(id=>pool.find(p=>p.id===id)).filter(Boolean);
   if(saved.length===11)return saved;
-  const slots=["TW","RV","IV","IV","LV","ZDM","ZM","RM","ZOM","LM","ST"];
+  // V32: feste 4-3-2-1-Grundordnung: Viererkette, drei zentrale Mittelfeldspieler, zwei offensive Halbräume, eine Spitze.
+  const slots=["TW","RV","IV","IV","LV","ZDM","ZM","ZM","ZOM","ZOM","ST"];
   const chosen=[];
   for(const slot of slots){
     const candidates=pool.filter(p=>!chosen.some(x=>x.id===p.id));
@@ -1093,7 +1098,7 @@ function chooseLineup(t){
     if(pick)chosen.push(pick);
   }
   while(chosen.length<Math.min(11,pool.length)){const next=pool.filter(p=>!chosen.some(x=>x.id===p.id)).sort((a,b)=>Number(b.rating||0)-Number(a.rating||0))[0];if(!next)break;chosen.push(next);}
-  t.defaultFormation=t.defaultFormation||"4-2-3-1";t.defaultLineup=chosen.map(p=>p.id);return chosen;
+  t.defaultFormation=t.defaultFormation||"4-3-2-1";t.defaultLineup=chosen.map(p=>p.id);return chosen;
 }
 function addSimEvent(m,type,minute,player,assist=null,addedTime=0){
   if(!player)return;
@@ -1170,6 +1175,47 @@ function generateEstimatedMatchDetails(m,{refresh=false,preserveDetails=false}={
     }
   }
 }
+function generateManualTimeline(m){
+  if(!m||m.simulated)return;
+  const goals=(m.events||[]).filter(isGoalEvent).map(e=>({...e}));
+  const manualSubs=(m.events||[]).filter(e=>e.type==="sub"&&e.manual).map(e=>({...e}));
+  const h=team(m.homeId),a=team(m.awayId);
+  const hXI=(m.lineups?.home||[]).map(playerById).filter(Boolean).length?m.lineups.home.map(playerById).filter(Boolean):chooseLineup(h);
+  const aXI=(m.lineups?.away||[]).map(playerById).filter(Boolean).length?m.lineups.away.map(playerById).filter(Boolean):chooseLineup(a);
+  m.lineups ||= {home:[],away:[],homeBench:[],awayBench:[]};
+  if(!m.lineups.home?.length)m.lineups.home=hXI.map(p=>p.id);
+  if(!m.lineups.away?.length)m.lineups.away=aXI.map(p=>p.id);
+  const stats=m.statistics||{};
+  const seed=seededFraction(m.id,m.matchday,m.homeGoals,m.awayGoals,goals.length,"manual-v32");
+  let serial=0;
+  const minute=(min=2,max=89)=>{
+    serial++;
+    return clamp(Math.round(min+seededFraction(m.id,serial,seed)*Math.max(1,max-min)),min,max);
+  };
+  const generated=[];
+  const add=(type,side,at=minute(),weight=()=>1)=>{
+    const squad=side==="home"?hXI:aXI;
+    const player=weightedPick(squad,weight);
+    if(player)generated.push({id:0,type,minute:at,addedTime:0,playerId:player.id,assistId:null,playerOutId:null,generated:true});
+  };
+  const cardTotal=clamp(Math.round(2+seed*3+(Number(stats.foulsHome||10)+Number(stats.foulsAway||10))/13),2,7);
+  for(let i=0;i<cardTotal;i++){
+    const side=seededFraction(m.id,"card",i)<.5?"home":"away";
+    const redRoll=seededFraction(m.id,"red",i);
+    add(redRoll<.035?"red":redRoll<.075?"secondYellow":"yellow",side,minute(12,88),p=>playerPositionGroup(p)==="DEF"?2.3:playerPositionGroup(p)==="MID"?1.6:.7);
+  }
+  const cornersH=clamp(Number(stats.cornersHome||0),0,12),cornersA=clamp(Number(stats.cornersAway||0),0,12);
+  for(let i=0;i<Math.min(cornersH,7);i++)add("corner","home",minute(3,89),p=>playerPositionGroup(p)==="AM"?2.2:playerPositionGroup(p)==="MID"?1.6:1);
+  for(let i=0;i<Math.min(cornersA,7);i++)add("corner","away",minute(3,89),p=>playerPositionGroup(p)==="AM"?2.2:playerPositionGroup(p)==="MID"?1.6:1);
+  const extra=clamp(Math.round(4+seed*5+(Number(m.homeGoals||0)+Number(m.awayGoals||0))),4,11);
+  const types=["chance","save","post"];
+  for(let i=0;i<extra;i++)add(types[Math.floor(seededFraction(m.id,"narrative",i)*types.length)],seededFraction(m.id,"side",i)<.52?"home":"away",minute(4,89),p=>playerPositionGroup(p)==="ST"?2.4:playerPositionGroup(p)==="AM"?1.9:1);
+  const anchor=hXI[0]||aXI[0];
+  if(anchor){generated.push({id:0,type:"halftime",minute:45,addedTime:0,playerId:anchor.id,assistId:null,playerOutId:null,generated:true});generated.push({id:0,type:"fulltime",minute:90,addedTime:0,playerId:anchor.id,assistId:null,playerOutId:null,generated:true});}
+  m.events=[...goals,...manualSubs,...generated].sort((x,y)=>(x.minute+(x.addedTime||0)/100)-(y.minute+(y.addedTime||0)/100));
+  m.events.forEach((e,i)=>e.id=i+1);
+}
+
 function simulationSeasonContext(homeId,awayId,matchday){
   const dayBefore=Math.max(0,Number(matchday||1)-1);
   const rows=standingsAt(state(),dayBefore);
@@ -1218,7 +1264,7 @@ async function simulateMatch(matchId){
     if(!hXI.length||!aXI.length)throw new Error("Keine gültige Aufstellung verfügbar");
 
     m.events=[];
-    h.defaultLineup=hXI.map(p=>p.id).filter(Number.isFinite);a.defaultLineup=aXI.map(p=>p.id).filter(Number.isFinite);h.defaultFormation=h.defaultFormation||"4-2-3-1";a.defaultFormation=a.defaultFormation||"4-2-3-1";
+    h.defaultLineup=hXI.map(p=>p.id).filter(Number.isFinite);a.defaultLineup=aXI.map(p=>p.id).filter(Number.isFinite);h.defaultFormation=h.defaultFormation||"4-3-2-1";a.defaultFormation=a.defaultFormation||"4-3-2-1";
     m.lineups={
       home:hXI.map(p=>p.id).filter(Number.isFinite),
       away:aXI.map(p=>p.id).filter(Number.isFinite),
@@ -1231,14 +1277,15 @@ async function simulateMatch(matchId){
     const formH=weightedFormScore(h.id,context.dayBefore);
     const formA=weightedFormScore(a.id,context.dayBefore);
 
-    // V30: Grundstärke ist der wichtigste Faktor. Form und bisheriger Saisonverlauf verschieben die Chancen spürbar,
-    // dürfen einen klaren Qualitätsunterschied aber nicht beliebig umdrehen.
+    // V32: Jeder Stärkepunkt ist sichtbar. Grundstärke dominiert; Form und Tabelle dürfen verschieben,
+    // aber einen Qualitätsunterschied nur bei klarer Saisonleistung wirklich ausgleichen.
     const ratingGap=clamp(hs-as,-8,8);
     const formGap=clamp(formH-formA,-1,1);
     const seasonGap=clamp(context.seasonGap,-1,1);
-    const upsetSwing=randomNormal()*.20;
-    let baseHome=1.44+ratingGap*.085+formGap*.24+seasonGap*.34+upsetSwing+.16;
-    let baseAway=1.22-ratingGap*.078-formGap*.22-seasonGap*.31-upsetSwing;
+    const upsetSwing=randomNormal()*.12;
+    const homeAdvantage=.09;
+    let baseHome=1.34+homeAdvantage+ratingGap*.18+formGap*.16+seasonGap*.24+upsetSwing;
+    let baseAway=1.30-ratingGap*.17-formGap*.15-seasonGap*.22-upsetSwing;
     const openMatch=Math.random()<.085;
     const blowoutMatch=!openMatch&&Math.random()<.026;
     const defensiveMatch=!openMatch&&!blowoutMatch&&Math.random()<.205;
@@ -1348,7 +1395,7 @@ function lineupView(m){
     const cards=ids=>ids.map(id=>playerById(id)).filter(Boolean).map(p=>lineupPlayerCard(p,side)).join("");
     const unusedCards=unused.map(p=>lineupPlayerCard(p,side)).join("");
     return `<section class="card lineup-board" data-lineup-board="${side}">
-      <div class="section-head"><div><h3>${t.name}</h3><span class="subtitle">${t.defaultFormation||"4-2-3-1"} · positionsgerecht</span></div>${badge(t)}</div>
+      <div class="section-head"><div><h3>${t.name}</h3><span class="subtitle">${t.defaultFormation||"4-3-2-1"} · positionsgerecht</span></div>${badge(t)}</div>
       <div class="lineup-zone pitch-zone" data-lineup-zone="${side}">
         <div class="lineup-zone-title"><b>Startelf</b><span>${startIds.length}/11</span></div>
         <div class="lineup-player-list">${cards(startIds)||`<div class="lineup-empty">Spieler hierher ziehen</div>`}</div>
@@ -1479,7 +1526,7 @@ function eventsView(m){
       <div class="ticker-current-score"><b>${visibleMatchScore(m)}</b><span>${m.status==="played"?"ABPFIFF":m.status==="live"?"LIVE":"SPIELVORBEREITUNG"}</span></div>
       <div class="ticker-team">${badge(a)}<span>${a.short}</span></div>
     </div>
-    <div class="section-head ticker-head"><div><h3>Live-Ticker</h3><span class="subtitle">Neueste Meldung oben · ${events.length} Einträge</span></div><button id="addEvent" class="btn primary">+ Ereignis eintragen</button></div>
+    <div class="section-head ticker-head"><div><h3>Live-Ticker</h3><span class="subtitle">Neueste Meldung oben · ${events.length} Einträge</span></div><button id="addEvent" class="btn primary">+ Tor eintragen</button></div>
     <div class="event-timeline">${events.length?events.map(e=>{
       const et=eventTeam(e,m),player=playerById(e.playerId),assist=e.assistId?playerById(e.assistId):null,out=e.playerOutId?playerById(e.playerOutId):null;
       const goalScore=isGoalEvent(e)?`<span class="event-score">${scoreAtEvent.get(e.id)||""}</span>`:"";
@@ -1538,75 +1585,90 @@ function bindMatchActions(m){
     if(hg<0||ag<0)return toast("Tore dürfen nicht negativ sein");
     pushUndo("Partie bearbeitet");
     m.status=el("#editStatus").value;
-    m.scoreMode=el("#editScoreMode").value;m.matchday=Number(el("#editDay").value);m.date=el("#editDate").value;m.time=el("#editTime").value;if(m.scoreMode==="manual"){m.homeGoals=hg;m.awayGoals=ag}else{syncMatchScoreFromEvents(m)};m.attendance=Number(el("#editAttendance").value);m.referee=el("#editReferee").value;m.weather=el("#editWeather").value;m.motmPlayerId=el("#editMotm").value?Number(el("#editMotm").value):null;m.notes=el("#editNotes").value;if(m.status==="played"&&!m.simulated)generateEstimatedMatchDetails(m,{refresh:true,preserveDetails:true});rebuildPlayerStats();saveState({label:"Partie gespeichert"});closeOverlay();render();toast("Partie gespeichert");};
+    m.scoreMode=el("#editScoreMode").value;m.matchday=Number(el("#editDay").value);m.date=el("#editDate").value;m.time=el("#editTime").value;if(m.scoreMode==="manual"){m.homeGoals=hg;m.awayGoals=ag}else{syncMatchScoreFromEvents(m)};m.attendance=Number(el("#editAttendance").value);m.referee=el("#editReferee").value;m.weather=el("#editWeather").value;m.motmPlayerId=el("#editMotm").value?Number(el("#editMotm").value):null;m.notes=el("#editNotes").value;if(m.status==="played"&&!m.simulated){generateEstimatedMatchDetails(m,{refresh:true,preserveDetails:true});generateManualTimeline(m);}rebuildPlayerStats();saveState({label:"Partie gespeichert"});closeOverlay();render();toast("Partie gespeichert");};
   const dm=el("#deleteMatch");if(dm)dm.onclick=()=>{if(confirm("Partie löschen?")){season().matches=season().matches.filter(x=>x.id!==m.id);rebuildPlayerStats();saveState({label:"Partie gelöscht"});closeOverlay();render();}};
+}
+function formationSlotLabel(index){
+  return ["TW","RV","IV","IV","LV","ZDM","ZM","ZM","ZOM","ZOM","ST"][index]||"SP";
+}
+function goalPickerPitch(teamObj,lineupIds,benchIds,side,selectedId=null,assistMode=false){
+  const ids=(lineupIds||[]).slice(0,11);
+  const players=ids.map(playerById).filter(Boolean);
+  const bench=(benchIds||[]).map(playerById).filter(Boolean);
+  const mode=assistMode?"assist":"scorer";
+  return `<section class="goal-picker-team"><div class="goal-picker-head">${badge(teamObj)}<div><b>${teamObj.name}</b><span>4-3-2-1 · ${assistMode?"Vorlagengeber":"Torschütze"}</span></div></div><div class="goal-picker-pitch" data-pick-side="${side}" data-pick-mode="${mode}">${players.map((p,index)=>`<button type="button" class="goal-player ${Number(selectedId)===p.id?"selected":""}" data-goal-player="${p.id}" data-goal-side="${side}" data-goal-mode="${mode}" data-player-origin="start" style="--slot:${index}"><span class="goal-player-pos">${formationSlotLabel(index)}</span><b>${p.shirtNumber||"–"}</b><small>${p.name}</small></button>`).join("")}</div><div class="goal-picker-bench"><div class="goal-picker-bench-title"><b>Ersatzbank</b><span>Auch Einwechselspieler auswählbar</span></div><div class="goal-picker-bench-list">${bench.map(p=>`<button type="button" class="goal-bench-player ${Number(selectedId)===p.id?"selected":""}" data-goal-player="${p.id}" data-goal-side="${side}" data-goal-mode="${mode}" data-player-origin="bench"><span>${p.position||"SP"}</span><b>${p.shirtNumber||"–"}</b><small>${p.name}</small></button>`).join("")||`<div class="empty">Keine Bankspieler verfügbar.</div>`}</div></div></section>`;
+}
+function ensureGoalSubstitution(m,side,playerId,goalMinute){
+  const startKey=side,benchKey=`${side}Bench`;
+  const startIds=m.lineups?.[startKey]||[],benchIds=m.lineups?.[benchKey]||[];
+  if(!benchIds.includes(playerId))return;
+  const already=(m.events||[]).some(e=>e.type==="sub"&&Number(e.playerId)===Number(playerId));
+  if(already)return;
+  const candidateIds=startIds.filter(id=>Number(id)!==Number(playerId));
+  const incoming=playerById(playerId);
+  const sameGroup=candidateIds.filter(id=>playerPositionGroup(playerById(id))===playerPositionGroup(incoming));
+  const pool=sameGroup.length?sameGroup:candidateIds;
+  if(!pool.length)return;
+  const outId=pool[Math.floor(seededFraction(m.id,playerId,goalMinute,"auto-sub-v32")*pool.length)];
+  const latest=Math.max(1,Number(goalMinute||1)-1);
+  const earliest=Math.max(1,Math.min(latest,Number(goalMinute||1)-18));
+  const subMinute=Math.max(1,Math.min(latest,Math.round(earliest+seededFraction(m.id,playerId,"sub-minute")*Math.max(1,latest-earliest))));
+  m.events.push({id:nextId(m.events),minute:subMinute,addedTime:0,type:"sub",playerId:Number(playerId),assistId:null,playerOutId:Number(outId),manual:true,autoGeneratedSub:true});
 }
 function openEventEditor(matchId){
   const m=season().matches.find(x=>x.id===matchId);
-  const players=[...team(m.homeId).players,...team(m.awayId).players];
   const homeTeam=team(m.homeId),awayTeam=team(m.awayId);
-  const opts=[
-    `<optgroup label="${homeTeam.name}">${homeTeam.players.map(p=>`<option value="${p.id}">${p.shirtNumber} · ${p.name} · ${p.position}</option>`).join("")}</optgroup>`,
-    `<optgroup label="${awayTeam.name}">${awayTeam.players.map(p=>`<option value="${p.id}">${p.shirtNumber} · ${p.name} · ${p.position}</option>`).join("")}</optgroup>`
-  ].join("");
-  el("#overlay").innerHTML=`<div class="modal"><div class="sheet"><div class="sheet-head"><h2>Ereignis</h2><button class="iconbtn" id="close">×</button></div>
+  const homeXI=(m.lineups?.home||[]).length===11?m.lineups.home:chooseLineup(homeTeam).map(p=>p.id);
+  const awayXI=(m.lineups?.away||[]).length===11?m.lineups.away:chooseLineup(awayTeam).map(p=>p.id);
+  m.lineups ||= {home:[],away:[],homeBench:[],awayBench:[]};
+  m.lineups.home=homeXI;m.lineups.away=awayXI;
+  if(!m.lineups.homeBench?.length)m.lineups.homeBench=sortPlayersByPosition(homeTeam.players||[]).filter(p=>!homeXI.includes(p.id)).slice(0,9).map(p=>p.id);
+  if(!m.lineups.awayBench?.length)m.lineups.awayBench=sortPlayersByPosition(awayTeam.players||[]).filter(p=>!awayXI.includes(p.id)).slice(0,9).map(p=>p.id);
+  let selectedTeamId=m.homeId,selectedScorerId=null,selectedAssistId=null;
+  const renderPicker=()=>{
+    const selectedTeam=team(selectedTeamId),isHome=selectedTeamId===m.homeId;
+    const ids=isHome?homeXI:awayXI,benchIds=isHome?m.lineups.homeBench:m.lineups.awayBench;
+    const root=el("#goalPitchPicker");if(!root)return;
+    root.innerHTML=`${goalPickerPitch(selectedTeam,ids,benchIds,selectedTeamId,selectedScorerId,false)}<div class="goal-picker-divider"><b>Vorlage auswählen</b><span>optional · Startelf oder Bank</span></div>${goalPickerPitch(selectedTeam,ids,benchIds,selectedTeamId,selectedAssistId,true)}`;
+    root.querySelectorAll("[data-goal-player]").forEach(button=>button.onclick=()=>{
+      const id=Number(button.dataset.goalPlayer);
+      if(button.dataset.goalMode==="scorer"){
+        selectedScorerId=id;
+        if(selectedAssistId===id)selectedAssistId=null;
+      }else selectedAssistId=selectedAssistId===id?null:id;
+      renderPicker();
+    });
+  };
+  el("#overlay").innerHTML=`<div class="modal"><div class="sheet goal-entry-sheet"><div class="sheet-head"><div><div class="eyebrow">Manuelle Eingabe</div><h2>Tor eintragen</h2></div><button class="iconbtn" id="close">×</button></div>
+    <p class="goal-entry-note">Du trägst nur Tor, Minute, Torschütze und Vorlage ein. Karten, Ecken und weitere Spielszenen erstellt die App beim Spielende automatisch.</p>
     <div class="team-key">
-      <button type="button" class="team-filter active" data-event-team="${m.homeId}">${badge(team(m.homeId))}<b>${team(m.homeId).name}</b></button>
-      <button type="button" class="team-filter" data-event-team="${m.awayId}">${badge(team(m.awayId))}<b>${team(m.awayId).name}</b></button>
+      <button type="button" class="team-filter active" data-event-team="${m.homeId}">${badge(homeTeam)}<b>${homeTeam.name}</b></button>
+      <button type="button" class="team-filter" data-event-team="${m.awayId}">${badge(awayTeam)}<b>${awayTeam.name}</b></button>
     </div>
-    <div class="form-grid">
-      <div class="field"><label>Minute</label><input id="evMinute" type="number" min="1" max="130" value="1"></div>
-      <div class="field"><label>Nachspielzeit</label><input id="evAdded" type="number" min="0" max="20" value="0"></div>
-      <div class="field"><label>Typ</label><select id="evType">
-        <option value="goal">Tor</option><option value="penalty">Elfmeter</option><option value="missedPenalty">Elfmeter verschossen</option>
-        <option value="ownGoal">Eigentor</option><option value="disallowedGoal">Tor aberkannt</option>
-        <option value="yellow">Gelbe Karte</option><option value="secondYellow">Gelb-Rot</option><option value="red">Rote Karte</option>
-        <option value="sub">Wechsel</option><option value="injury">Verletzung</option>
-      </select></div>
-      <div class="field"><label>Spieler</label><select id="evPlayer">${opts}</select></div>
-      <div class="field"><label>Vorlage</label><select id="evAssist"><option value="">Keine</option>${opts}</select></div>
-      <div class="field"><label>Bei Wechsel: Spieler raus</label><select id="evPlayerOut"><option value="">Keiner</option>${opts}</select></div>
-    </div>
-    <button id="saveEvent" class="btn primary" style="width:100%;margin-top:14px">Speichern</button>
+    <div class="form-grid compact-goal-fields"><div class="field"><label>Minute</label><input id="evMinute" type="number" min="1" max="130" value="1"></div><div class="field"><label>Nachspielzeit</label><input id="evAdded" type="number" min="0" max="20" value="0"></div><div class="field"><label>Torart</label><select id="evType"><option value="goal">Tor aus dem Spiel</option><option value="penalty">Elfmeter</option><option value="ownGoal">Eigentor</option></select></div></div>
+    <div id="goalPitchPicker"></div>
+    <button id="saveEvent" class="btn primary" style="width:100%;margin-top:14px">Tor speichern</button>
   </div></div>`;
   el("#close").onclick=()=>openMatch(matchId);
-  const eventPlayerSelect=el("#evPlayer"),eventAssistSelect=el("#evAssist"),eventOutSelect=el("#evPlayerOut");
-  const filterTeamOptions=teamId=>{
-    const selectedTeam=team(Number(teamId));
-    const options=selectedTeam.players.map(p=>`<option value="${p.id}">${p.shirtNumber} · ${p.name} · ${p.position}</option>`).join("");
-    eventPlayerSelect.innerHTML=options;
-    eventAssistSelect.innerHTML=`<option value="">Keine</option>${options}`;
-    eventOutSelect.innerHTML=`<option value="">Keiner</option>${options}`;
-  };
   document.querySelectorAll("[data-event-team]").forEach(button=>button.onclick=()=>{
-    document.querySelectorAll("[data-event-team]").forEach(x=>x.classList.remove("active"));
-    button.classList.add("active");
-    filterTeamOptions(button.dataset.eventTeam);
+    document.querySelectorAll("[data-event-team]").forEach(x=>x.classList.remove("active"));button.classList.add("active");
+    selectedTeamId=Number(button.dataset.eventTeam);selectedScorerId=null;selectedAssistId=null;renderPicker();
   });
-  filterTeamOptions(m.homeId);
-  const updateEventFields=()=>{
-    const type=el("#evType").value;
-    const assistField=el("#evAssist")?.closest(".field");
-    const outField=el("#evPlayerOut")?.closest(".field");
-    if(assistField)assistField.classList.toggle("hidden",!["goal","penalty"].includes(type));
-    if(outField)outField.classList.toggle("hidden",type!=="sub");
-  };
-  el("#evType").onchange=updateEventFields;
-  updateEventFields();
+  renderPicker();
   el("#saveEvent").onclick=()=>{
-    const minute=Number(el("#evMinute").value);
-    const addedTime=Number(el("#evAdded").value||0);
-    const playerId=Number(el("#evPlayer").value);
-    const assistId=el("#evAssist").value?Number(el("#evAssist").value):null;
-    const playerOutId=el("#evPlayerOut").value?Number(el("#evPlayerOut").value):null;
+    const minute=Number(el("#evMinute").value),addedTime=Number(el("#evAdded").value||0),type=el("#evType").value;
     if(minute<1||minute>130)return toast("Minute muss zwischen 1 und 130 liegen");
     if(addedTime<0||addedTime>20)return toast("Nachspielzeit muss zwischen 0 und 20 liegen");
-    if(assistId===playerId)return toast("Torschütze und Vorlagengeber müssen verschieden sein");
-    if(el("#evType").value==="sub"&&!playerOutId)return toast("Beim Wechsel bitte Spieler raus wählen");
-    pushUndo("Ereignis eingetragen");
-    m.events.push({id:nextId(m.events),minute,addedTime,type:el("#evType").value,playerId,assistId,playerOutId});
-    if(m.scoreMode!=="manual")syncMatchScoreFromEvents(m);
-    rebuildPlayerStats();saveState();openMatch(matchId);
+    if(!selectedScorerId)return toast("Bitte den Torschützen direkt auf dem Spielfeld auswählen");
+    if(selectedAssistId===selectedScorerId)return toast("Torschütze und Vorlagengeber müssen verschieden sein");
+    pushUndo("Tor eingetragen");
+    m.scoreMode="events";m.simulated=false;
+    m.events=(m.events||[]).filter(e=>!e.generated);
+    const side=selectedTeamId===m.homeId?"home":"away";
+    ensureGoalSubstitution(m,side,selectedScorerId,minute);
+    if(type!=="ownGoal"&&selectedAssistId)ensureGoalSubstitution(m,side,selectedAssistId,minute);
+    m.events.push({id:nextId(m.events),minute,addedTime,type,playerId:selectedScorerId,assistId:type==="ownGoal"?null:selectedAssistId,playerOutId:null,manual:true});
+    syncMatchScoreFromEvents(m);rebuildPlayerStats();saveState({label:"Tor eingetragen"});openMatch(matchId);
   };
 }
 function rebuildPlayerStats(){
