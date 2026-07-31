@@ -1011,13 +1011,82 @@ async function finishMatch(matchId){
     toast("Spiel konnte nicht gespeichert werden.");
   }
 }
+
+function teamColor(teamObj){
+  const c=String(teamObj?.color||"#e93555").trim();
+  return /^#[0-9a-f]{3,8}$/i.test(c)?c:"#e93555";
+}
+function hashText(value){let h=2166136261;for(const ch of String(value||"")){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return Math.abs(h>>>0)}
+function teamRivalId(teamObj){
+  const ids=activeTeams().map(t=>Number(t.id)).sort((a,b)=>a-b);if(ids.length<2)return null;
+  const i=ids.indexOf(Number(teamObj?.id));return i<0?null:ids[i%2===0?Math.min(i+1,ids.length-1):i-1];
+}
+function isDerbyMatch(m){return teamRivalId(team(m.homeId))===Number(m.awayId)||teamRivalId(team(m.awayId))===Number(m.homeId)}
+function daysBetween(a,b){if(!a||!b)return 99;const x=new Date(a),y=new Date(b);if(Number.isNaN(+x)||Number.isNaN(+y))return 99;return Math.abs((x-y)/86400000)}
+function fatigueScore(teamId,m){
+  const previous=season().matches.filter(x=>x.id!==m.id&&x.status==="played"&&(x.homeId===teamId||x.awayId===teamId)&&x.date&&m.date&&new Date(x.date)<=new Date(m.date)).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+  const d=previous?daysBetween(previous.date,m.date):99;return d<=2?1:d<=3?.72:d<=4?.38:0;
+}
+function tableNarrative(m){
+  const rows=standingsAt(state(),Math.max(0,Number(m.matchday||1)-1));const by=new Map(rows.map((r,i)=>[Number(r.id),{...r,rank:i+1}]));
+  const h=by.get(Number(m.homeId)),a=by.get(Number(m.awayId)),n=rows.length||20;
+  if(isDerbyMatch(m))return {kind:"Derby",before:"Heute zählt mehr als nur die Tabelle – das Derby elektrisiert beide Fanlager."};
+  if(h&&a&&h.rank<=4&&a.rank<=4)return {kind:"Topspiel des Spieltags",before:`Der ${h.rank}. empfängt den ${a.rank}. – ein direktes Duell um die Spitze.`};
+  if(h&&a&&h.rank>=n-4&&a.rank>=n-4)return {kind:"Abstiegskracher",before:"Beide Mannschaften brauchen dringend Punkte im Kampf um den Klassenerhalt."};
+  if(h&&a&&Math.abs(h.rank-a.rank)>=8)return {kind:"Favorit gegen Außenseiter",before:"Die Rollen sind klar verteilt, doch der Außenseiter hofft auf den großen Coup."};
+  return {kind:"Ligaspiel",before:"Beide Teams wollen ihren Saisontrend bestätigen und wichtige Punkte sammeln."};
+}
+function postMatchHeadline(m){
+  const h=team(m.homeId),a=team(m.awayId),hs=teamAverage(h),as=teamAverage(a),hg=Number(m.homeGoals||0),ag=Number(m.awayGoals||0);
+  const rows=standingsAt(state(),Math.max(0,Number(m.matchday||1)-1));const by=new Map(rows.map((r,i)=>[Number(r.id),i+1]));
+  const winner=hg>ag?h:ag>hg?a:null,loser=hg>ag?a:ag>hg?h:null;
+  if(!winner)return "Punkteteilung nach einem umkämpften Spiel.";
+  if((winner.id===h.id?hs:as)+1.5<(loser.id===h.id?hs:as))return `${winner.name} sorgt für eine echte Überraschung.`;
+  if(by.get(loser.id)===1)return "Der Tabellenführer patzt überraschend.";
+  if(Math.abs(hg-ag)>=3)return `${winner.name} setzt ein deutliches Ausrufezeichen.`;
+  const red=(m.events||[]).some(e=>["red","secondYellow"].includes(e.type));if(red)return "Ein Platzverweis kippt den Spielverlauf entscheidend.";
+  return `${winner.name} setzt sich in einem engen Spiel durch.`;
+}
+function weatherDetails(m){
+  const seed=hashText(`${m.id}-${m.date}-${m.time}`),night=Number(String(m.time||"15:30").slice(0,2))>=18;
+  const options=[{icon:"☀️",label:"Klar",temp:18},{icon:"⛅",label:"Leicht bewölkt",temp:15},{icon:"☁️",label:"Bewölkt",temp:12},{icon:"🌧️",label:"Leichter Regen",temp:10},{icon:"🌬️",label:"Windig",temp:13}];
+  const w=options[seed%options.length];return {...w,temp:w.temp+(seed%7)-3,night};
+}
+function fanSceneDataUri(teamObj,mood="warmup"){
+  const color=teamColor(teamObj),accent="#ffffff",name=String(teamObj?.short||teamObj?.name||"HOME").replace(/[<>&]/g,"");
+  const seed=hashText(`${teamObj?.id}-${mood}`),people=[];
+  for(let i=0;i<70;i++){const x=8+(i%14)*28+(seed+i*11)%9,y=52+Math.floor(i/14)*25+(seed+i*7)%7,r=5+(i%3);people.push(`<circle cx="${x}" cy="${y}" r="${r}" fill="${i%3===0?accent:color}"/><rect x="${x-r}" y="${y+r-1}" width="${r*2}" height="${r*2.2}" rx="3" fill="${i%4===0?color:'#263647'}"/>`)}
+  const banner=mood==="goal"?"TOR!":mood==="final"?"DANKE TEAM":name;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="820" height="360" viewBox="0 0 420 190"><defs><linearGradient id="g" x2="0" y2="1"><stop stop-color="#071520"/><stop offset="1" stop-color="#142b3d"/></linearGradient><filter id="gl"><feGaussianBlur stdDeviation="5"/></filter></defs><rect width="420" height="190" fill="url(#g)"/><ellipse cx="210" cy="40" rx="170" ry="28" fill="${color}" opacity=".20" filter="url(#gl)"/><path d="M0 62 Q210 22 420 62 V190 H0Z" fill="#0c1b28"/><g>${people.join('')}</g><rect x="72" y="120" width="276" height="38" rx="7" fill="${color}" stroke="#fff" stroke-width="2"/><text x="210" y="146" text-anchor="middle" fill="#fff" font-family="Arial" font-weight="900" font-size="21">${banner}</text><path d="M30 20 L95 45 L30 68Z" fill="${color}"/><path d="M390 20 L325 45 L390 68Z" fill="${color}"/></svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+function chantFor(teamObj,phase="before"){
+  const name=teamObj?.short||teamObj?.name||"Unser Team";const sets={before:[`${name}! ${name}! Vorwärts, immer weiter!`,`Oh ${name}, wir stehen hinter dir!`,`Heimkurve laut – gemeinsam für ${name}!`],goal:[`Tor für ${name} – das ganze Stadion springt!`,`Hier regiert ${name}!`,`Und wieder hallt es durch die Kurve: ${name}!`],final:[`Wir sind stolz auf euch – ${name}!`,`Nie allein, gemeinsam heim!`,`Noch lange nach Abpfiff singt die Kurve weiter.`]};
+  const list=sets[phase]||sets.before;return list[hashText(`${teamObj?.id}-${phase}`)%list.length];
+}
+function atmosphereBlock(m){
+  const h=team(m.homeId),w=weatherDetails(m),cap=Number(h.stadium?.capacity||0),att=Number(m.attendance||0),fill=cap?Math.round(att/cap*100):0,n=tableNarrative(m);
+  const mood=m.status==="played"?"final":"warmup";
+  return `<section class="card atmosphere-card"><div class="fan-visual"><img src="${fanSceneDataUri(h,mood)}" alt="Fans von ${h.name}"><div><span>${n.kind}</span><b>${chantFor(h,m.status==="played"?"final":"before")}</b></div></div><div class="atmosphere-grid"><div><span>🏟️ Stadion</span><b>${h.stadium?.name||"Stadion"}</b></div><div><span>👥 Zuschauer</span><b>${att.toLocaleString("de-DE")} · ${fill}%</b></div><div><span>${w.icon} Wetter</span><b>${m.weather||w.label} · ${w.temp} °C</b></div><div><span>🧑‍⚖️ Schiedsrichter</span><b>${m.referee||"Wird angesetzt"}</b></div></div><div class="press-note"><span>📰 ${m.status==="played"?"Nach dem Spiel":"Vor dem Spiel"}</span><b>${m.status==="played"?postMatchHeadline(m):n.before}</b></div><button class="btn crowd-audio-btn" data-play-chant="${h.id}">🔊 Fangesang abspielen</button></section>`;
+}
+
+function playCrowdChant(teamObj){
+  try{
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)return toast("Audio wird auf diesem Gerät nicht unterstützt");
+    const ctx=new AudioCtx(),master=ctx.createGain();master.gain.setValueAtTime(.0001,ctx.currentTime);master.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+.08);master.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+4.8);master.connect(ctx.destination);
+    const seed=hashText(teamObj?.id||1),base=105+(seed%36);
+    for(let i=0;i<5;i++){const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=i%2?"triangle":"sawtooth";osc.frequency.setValueAtTime(base*(1+(i%3)*.12),ctx.currentTime);gain.gain.setValueAtTime(.0001,ctx.currentTime);for(let k=0;k<8;k++){const t=ctx.currentTime+k*.55+i*.025;gain.gain.linearRampToValueAtTime(.07/(i+1),t+.08);gain.gain.exponentialRampToValueAtTime(.0001,t+.42)}osc.connect(gain);gain.connect(master);osc.start();osc.stop(ctx.currentTime+4.7)}
+    const buffer=ctx.createBuffer(1,ctx.sampleRate*4.8,ctx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(.22+Math.sin(i/ctx.sampleRate*Math.PI*4)*.07);const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),ng=ctx.createGain();noise.buffer=buffer;filter.type="lowpass";filter.frequency.value=850;ng.gain.value=.045;noise.connect(filter);filter.connect(ng);ng.connect(master);noise.start();
+    setTimeout(()=>ctx.close(),5200);toast(chantFor(teamObj,"before"));
+  }catch(error){toast("Fangesang konnte nicht abgespielt werden")}
+}
 function matchOverview(m){
   const h=team(m.homeId),motm=m.motmPlayerId?playerById(m.motmPlayerId)?.name:"–";
   const s=m.statistics||{};
   const homeConversion=s.shotsHome?Number(m.homeGoals||0)/s.shotsHome*100:0;
   const awayConversion=s.shotsAway?Number(m.awayGoals||0)/s.shotsAway*100:0;
   const sourceChip=m.simulated?`<span class="chip simulation-chip">Simulation</span>`:m.statisticsSource==="estimated"?`<span class="chip estimated-chip">Statistiken geschätzt</span>`:"";
-  return `<section class="card match-overview-card"><div class="match-meta centered"><span class="chip">${fmtDate(m.date)}</span><span class="chip">${m.time||"--:--"}</span><span class="chip">${h.stadium.name}</span><span class="chip">${Number(m.attendance||0).toLocaleString("de-DE")} / ${Number(h.stadium?.capacity||0).toLocaleString("de-DE")} Plätze · ${h.stadium?.capacity?Math.round(Number(m.attendance||0)/Number(h.stadium.capacity)*100):0}%</span>${sourceChip}</div></section>
+  return `${atmosphereBlock(m)}<section class="card match-overview-card"><div class="match-meta centered"><span class="chip">${fmtDate(m.date)}</span><span class="chip">${m.time||"--:--"}</span><span class="chip">${h.stadium.name}</span><span class="chip">${Number(m.attendance||0).toLocaleString("de-DE")} / ${Number(h.stadium?.capacity||0).toLocaleString("de-DE")} Plätze · ${h.stadium?.capacity?Math.round(Number(m.attendance||0)/Number(h.stadium.capacity)*100):0}%</span>${sourceChip}</div></section>
   <section class="card"><div class="section-head"><div><h3>Spielstatistik</h3><span class="subtitle">${m.statisticsSource==="estimated"?"Automatisch aus Ergebnis, Ereignissen und Teamstärken abgeleitet":"Vollständiger Spielbericht"}</span></div></div>
     ${matchStatBar("Ballbesitz",s.possessionHome??50,s.possessionAway??50,"%")}
     ${matchStatBar("Schüsse",s.shotsHome??0,s.shotsAway??0)}
@@ -1290,10 +1359,16 @@ async function simulateMatch(matchId){
     const ratingGap=clamp(hs-as,-8,8);
     const formGap=clamp(formH-formA,-1,1);
     const seasonGap=clamp(context.seasonGap,-1,1);
-    const upsetSwing=randomNormal()*.12;
-    const homeAdvantage=.09;
-    let baseHome=1.34+homeAdvantage+ratingGap*.18+formGap*.16+seasonGap*.24+upsetSwing;
-    let baseAway=1.30-ratingGap*.17-formGap*.15-seasonGap*.22-upsetSwing;
+    const derby=isDerbyMatch(m);
+    const fatigueH=fatigueScore(h.id,m),fatigueA=fatigueScore(a.id,m);
+    const fatigueGap=fatigueA-fatigueH;
+    const leaderH=context.home.rank===1?.06:0,leaderA=context.away.rank===1?.06:0;
+    const relegationH=context.home.rank>=Math.max(2,activeTeams().length-3)?.035:0,relegationA=context.away.rank>=Math.max(2,activeTeams().length-3)?.035:0;
+    const upsetSwing=randomNormal()*(derby?.09:.07);
+    const homeAdvantage=.075;
+    let baseHome=1.30+homeAdvantage+ratingGap*.235+formGap*.15+seasonGap*.22+fatigueGap*.17+leaderH+relegationH+upsetSwing;
+    let baseAway=1.26-ratingGap*.225-formGap*.14-seasonGap*.20-fatigueGap*.16+leaderA+relegationA-upsetSwing;
+    if(derby){baseHome=(baseHome+1.27)*.5;baseAway=(baseAway+1.24)*.5;}
     const openMatch=Math.random()<.085;
     const blowoutMatch=!openMatch&&Math.random()<.026;
     const defensiveMatch=!openMatch&&!blowoutMatch&&Math.random()<.205;
@@ -1320,6 +1395,9 @@ async function simulateMatch(matchId){
       usedMinutes.add(x);
       return x;
     };
+    const starH=Math.max(...hXI.map(p=>Number(p.rating||60))),starA=Math.max(...aXI.map(p=>Number(p.rating||60)));
+    if(starH-starA>=4&&Math.random()<.16)hg=Math.min(8,hg+1);
+    if(starA-starH>=4&&Math.random()<.16)ag=Math.min(8,ag+1);
     for(let i=0;i<hg;i++){
       const scorer=pickScorer(hXI);
       if(scorer)addSimEvent(m,Math.random()<.11?"penalty":"goal",minute(),scorer,pickAssist(hXI,scorer));
@@ -1337,6 +1415,11 @@ async function simulateMatch(matchId){
         addSimEvent(m,type,minute(),player);
       }
     }
+    const redEvents=m.events.filter(e=>["red","secondYellow"].includes(e.type));
+    const redHome=redEvents.filter(e=>playerById(e.playerId)?.teamId===h.id||h.players.some(p=>p.id===e.playerId)).length;
+    const redAway=redEvents.filter(e=>playerById(e.playerId)?.teamId===a.id||a.players.some(p=>p.id===e.playerId)).length;
+    if(redHome>redAway&&Math.random()<.58){const scorer=pickScorer(aXI);if(scorer){ag=Math.min(8,ag+1);addSimEvent(m,"goal",minute(),scorer,pickAssist(aXI,scorer));}}
+    if(redAway>redHome&&Math.random()<.58){const scorer=pickScorer(hXI);if(scorer){hg=Math.min(8,hg+1);addSimEvent(m,"goal",minute(),scorer,pickAssist(hXI,scorer));}}
     if(Math.random()<.24){const side=Math.random()<.5?hXI:aXI;const injured=weightedPick(side,()=>1);if(injured)addSimEvent(m,"injury",minute(),injured);}
     const narrativeCount=clamp(poisson(7.5),4,15),narrativeTypes=["chance","save","post","corner"];
     for(let i=0;i<narrativeCount;i++){const side=Math.random()<.53?hXI:aXI;const actor=weightedPick(side,p=>playerPositionGroup(p)==="GK"?.35:playerPositionGroup(p)==="ST"?2.2:1);if(actor)addSimEvent(m,narrativeTypes[Math.floor(Math.random()*narrativeTypes.length)],minute(),actor);}
@@ -1366,12 +1449,12 @@ async function simulateMatch(matchId){
       homeStrength:Number(hs.toFixed(1)),awayStrength:Number(as.toFixed(1)),
       strengthGap:Number(ratingGap.toFixed(2)),formGap:Number(formGap.toFixed(3)),
       seasonGap:Number(seasonGap.toFixed(3)),tableEvidence:Number(context.evidence.toFixed(3)),
-      tableDay:context.dayBefore
+      tableDay:context.dayBefore,derby:isDerbyMatch(m),fatigueHome:Number(fatigueScore(h.id,m).toFixed(2)),fatigueAway:Number(fatigueScore(a.id,m).toFixed(2))
     };
     const capacity=Math.max(0,Number(h.stadium?.capacity||12000));
     {const tableAppeal=clamp((hs+as-120)/180,-.08,.16);const rivalry=Math.random()<.08?.08:0;const fill=clamp(.62+tableAppeal+rivalry+Math.random()*.23,.42,1);m.attendance=Math.min(capacity,Math.round(capacity*fill));}
     m.referee=["Leon Richter","Mika Hartmann","Jonas Winter","Tobias Kern","David Falk","Emil Berger"][Math.floor(Math.random()*6)];
-    m.weather=["Klar","Leicht bewölkt","Bewölkt","Leichter Regen","Flutlichtabend"][Math.floor(Math.random()*5)];
+    {const wd=weatherDetails(m);m.weather=wd.night&&Math.random()<.45?`Flutlicht · ${wd.label}`:wd.label;m.temperature=wd.temp;}
     const goalEvents=m.events.filter(e=>["goal","penalty"].includes(e.type));
     const motmEvent=goalEvents.length?weightedPick(goalEvents,e=>1+(e.assistId?0.3:0)):null;
     const motmPlayer=motmEvent?playerById(motmEvent.playerId):weightedPick([...hXI,...aXI],p=>Number(p.rating||60));
@@ -1586,6 +1669,7 @@ function editMatchView(m){
 }
 function bindMatchActions(m){
   bindLineupDrag(m);
+  document.querySelectorAll("[data-play-chant]").forEach(button=>button.onclick=()=>playCrowdChant(team(Number(button.dataset.playChant))));
   const add=el("#addEvent");if(add)add.onclick=()=>openEventEditor(m.id);
   document.querySelectorAll("[data-delete-event]").forEach(b=>b.onclick=()=>{m.events=m.events.filter(e=>e.id!==Number(b.dataset.deleteEvent));if(m.scoreMode!=="manual")syncMatchScoreFromEvents(m);rebuildPlayerStats();saveState({label:"Ereignis gelöscht"});openMatch(m.id);});
   const sm=el("#saveMatchEdit");if(sm)sm.onclick=()=>{
