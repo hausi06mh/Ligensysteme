@@ -344,7 +344,7 @@ function render(){
   el("#app").innerHTML=`
     <div class="shell">
       <header class="topbar"><div class="topbar-inner">
-        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V35</span></div></div>
+        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V36</span></div></div>
         <div class="top-actions"><span id="saveStateIndicator" class="small muted">Gespeichert</span><button id="commandPaletteButton" class="theme-toggle" aria-label="Schnellmenü">⌘</button><button id="themeToggle" class="theme-toggle" aria-label="Theme wechseln">${state().settings.theme==="light"?"🌙":"☀️"}</button><select class="selector" id="leagueSelector">
           ${s.leagues.map(x=>`<option value="${x.id}" ${x.id===l.id?"selected":""}>${x.name}</option>`).join("")}
         </select></div>
@@ -1158,39 +1158,40 @@ function celebrationSceneHtml(m){
   const weather=weatherDetails(m),att=Number(m.attendance||deterministicAttendance(m,home));
   const cap=Math.max(500,Number(home?.stadium?.capacity||12000)),fill=Math.min(100,Math.round(att/cap*100));
   const events=(m.events||[]).filter(e=>e.type==="goal").slice().sort((a,b)=>Number(a.minute||0)-Number(b.minute||0));
-  const goals=events.slice(-4).map(e=>{
+  const goalRows=events.map(e=>{
     const side=Number(e.teamId)===Number(m.homeId)?home:away;
     const pl=playerById(e.playerId)?.name||e.playerName||"Torschütze";
-    return `<div class="tv-goal-row"><span>${Number(e.minute||0)}'</span><b>${side.short}</b><em>⚽ ${pl}</em></div>`;
-  }).join("")||`<div class="tv-goal-row"><span>90'</span><b>ABPFIFF</b><em>Das Spiel ist beendet.</em></div>`;
+    return `<div class="broadcast-report-row"><b>${Number(e.minute||0)}'</b><span>${side.short}</span><em>${pl}</em></div>`;
+  }).join("")||`<div class="broadcast-report-empty">Keine Tore in diesem Spiel.</div>`;
   const headline=winner
-    ? (c.side==="away"?`${winner.name} entführt die Punkte`: `${winner.name} gewinnt im eigenen Stadion`)
-    : `Punkteteilung im ${home.stadium?.name||"Stadion"}`;
-  const kicker=c.derby?"DERBY · SCHLUSSPFIFF":c.intensity==="wild"?"AUSRUFEZEICHEN · SCHLUSSPFIFF":"ENDSTAND · SCHLUSSPFIFF";
+    ? (c.side==="away"?`${winner.name} gewinnt auswärts.`:`${winner.name} behält die Punkte zuhause.`)
+    : `Kein Sieger im ${home.stadium?.name||"Stadion"}.`;
   const post=postMatchHeadline(m);
   const possession=m.statistics?`${m.statistics.possessionHome||50} : ${m.statistics.possessionAway||50}`:"—";
   const shots=m.statistics?`${m.statistics.shotsHome||0} : ${m.statistics.shotsAway||0}`:"—";
-  return `<div class="celebration-cinema tv-broadcast ${c.side} ${c.intensity}">
-    <div class="cinematic-stadium tv-stadium" style="background-image:url('${image}');background-position:${pos}"></div>
-    <div class="tv-vignette"></div><div class="tv-scanline"></div><div class="tv-camera-flare flare-one"></div><div class="tv-camera-flare flare-two"></div>
-    <header class="tv-topbar"><span class="tv-live-dot"></span><b>FANTASY LIGA LIVE</b><em>${weather.night?"FLUTLICHT":"SPIELTAG"}</em></header>
-    <div class="tv-scorebug">
-      <div class="tv-team home">${badge(home)}<b>${home.short}</b></div>
-      <strong>${Number(m.homeGoals||0)} : ${Number(m.awayGoals||0)}</strong>
-      <div class="tv-team away">${badge(away)}<b>${away.short}</b></div>
-      <span>ENDE</span>
+  const corners=m.statistics?`${m.statistics.cornersHome||0} : ${m.statistics.cornersAway||0}`:"—";
+  return `<div class="celebration-cinema broadcast-clean ${c.side} ${c.intensity}">
+    <div class="cinematic-stadium broadcast-stadium" style="background-image:url('${image}');background-position:${pos}"></div>
+    <div class="broadcast-shade"></div><div class="broadcast-light"></div>
+    <header class="broadcast-top"><span>FANTASY LIGA LIVE</span><b>${weather.night?"FLUTLICHT":"LIVE AUS DEM STADION"}</b></header>
+    <div class="broadcast-score">
+      <div>${badge(home)}<span>${home.short}</span></div>
+      <strong>${Number(m.homeGoals||0)}–${Number(m.awayGoals||0)}</strong>
+      <div>${badge(away)}<span>${away.short}</span></div>
+      <small>ABPFIFF</small>
     </div>
-    <div class="tv-result-panel">
-      <span>${kicker}</span><h2>${headline}</h2><p>${post}</p>
-      <div class="tv-match-meta"><b>🏟️ ${home.stadium?.name||"Stadion"}</b><b>👥 ${att.toLocaleString("de-DE")} · ${fill}%</b><b>${weather.icon} ${weather.label} · ${weather.temp} °C</b></div>
+    <div class="broadcast-caption">
+      <span>90'+ · SCHLUSSPFIFF</span>
+      <h2>${headline}</h2>
+      <p>${post}</p>
     </div>
-    <div class="tv-bottom-deck">
-      <div class="tv-stat-card"><span>BALLBESITZ</span><b>${possession}</b></div>
-      <div class="tv-stat-card"><span>SCHÜSSE</span><b>${shots}</b></div>
-      <div class="tv-goals">${goals}</div>
+    <div class="broadcast-meta">🏟️ ${home.stadium?.name||"Stadion"} &nbsp;·&nbsp; 👥 ${att.toLocaleString("de-DE")} (${fill} %) &nbsp;·&nbsp; ${weather.icon} ${weather.label}, ${weather.temp} °C</div>
+    <div class="broadcast-report" hidden>
+      <div class="broadcast-report-head"><div><span>SPIELBERICHT</span><h3>${home.short} ${Number(m.homeGoals||0)}–${Number(m.awayGoals||0)} ${away.short}</h3></div><button class="broadcast-report-close" type="button">×</button></div>
+      <div class="broadcast-report-stats"><div><span>Ballbesitz</span><b>${possession}</b></div><div><span>Schüsse</span><b>${shots}</b></div><div><span>Ecken</span><b>${corners}</b></div></div>
+      <div class="broadcast-report-goals"><h4>Tore</h4>${goalRows}</div>
     </div>
-    <div class="tv-ticker"><b>${winner?`${winner.short} FEIERT DEN ${c.derby?"DERBYSIEG":"SPIELSIEG"}`:"BEIDE TEAMS TEILEN DIE PUNKTE"}</b><span>${chantFor(winner||home,"final")}</span></div>
-    <div class="cinematic-controls tv-controls"><button class="btn primary" data-replay-celebration="${m.id}">↻ TV-Sequenz wiederholen</button><button class="btn" data-close-celebration>Schließen</button></div>
+    <div class="cinematic-controls broadcast-controls"><button class="btn primary" data-open-broadcast-report>Spielbericht öffnen</button><button class="btn" data-replay-celebration="${m.id}">Sequenz wiederholen</button><button class="btn" data-close-celebration>Schließen</button></div>
   </div>`;
 }
 let activeCelebrationAudio=null;
@@ -1218,6 +1219,8 @@ async function playCelebrationAudio(m){
 function bindCelebrationActions(m){
   document.querySelectorAll("[data-replay-celebration]").forEach(b=>b.onclick=()=>{const scene=b.closest('.celebration-cinema');scene?.classList.remove('replay');void scene?.offsetWidth;scene?.classList.add('replay')});
   document.querySelectorAll("[data-close-celebration]").forEach(b=>b.onclick=()=>{stopCelebrationAudio();b.closest('.celebration-overlay')?.remove()});
+  document.querySelectorAll("[data-open-broadcast-report]").forEach(b=>b.onclick=()=>{const scene=b.closest('.celebration-cinema');const report=scene?.querySelector('.broadcast-report');if(report)report.hidden=false});
+  document.querySelectorAll(".broadcast-report-close").forEach(b=>b.onclick=()=>{const report=b.closest('.broadcast-report');if(report)report.hidden=true});
 }
 function openCelebration(mOrId){
   const m=typeof mOrId==="object"?mOrId:season()?.matches?.find(x=>x.id===Number(mOrId));if(!m||m.status!=="played")return;
