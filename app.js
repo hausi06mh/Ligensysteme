@@ -344,7 +344,7 @@ function render(){
   el("#app").innerHTML=`
     <div class="shell">
       <header class="topbar"><div class="topbar-inner">
-        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V33.1</span></div></div>
+        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V35</span></div></div>
         <div class="top-actions"><span id="saveStateIndicator" class="small muted">Gespeichert</span><button id="commandPaletteButton" class="theme-toggle" aria-label="Schnellmenü">⌘</button><button id="themeToggle" class="theme-toggle" aria-label="Theme wechseln">${state().settings.theme==="light"?"🌙":"☀️"}</button><select class="selector" id="leagueSelector">
           ${s.leagues.map(x=>`<option value="${x.id}" ${x.id===l.id?"selected":""}>${x.name}</option>`).join("")}
         </select></div>
@@ -1152,27 +1152,45 @@ function celebrationChant(teamObj,seed,intensity){
   return chants[(seed+(intensity==="wild"?2:0))%chants.length];
 }
 function celebrationSceneHtml(m){
-  const c=celebrationProfile(m),home=c.h,focus=c.winner||home;
+  const c=celebrationProfile(m),home=c.h,away=c.a,winner=c.winner;
   const image=home?.stadium?.image||"";
   const pos=`${home?.stadiumPosX??50}% ${home?.stadiumPosY??50}%`;
-  const primary=teamColor(focus),secondary="#f4f7fa";
-  const win=c.winner;
-  const headline=win?`${win.name} feiert ${c.side==="away"?"vor dem Gästeblock":"mit der Heimkurve"}`:"Applaus von den Rängen";
-  const sub=win?celebrationChant(win,c.seed,c.intensity):"Beide Mannschaften verabschieden sich von den Fans.";
-  const crowdCount=c.side==="away"?34:64;
-  const flags=Array.from({length:c.side==="away"?5:9},(_,i)=>`<i class="cinematic-flag f${i%4}" style="--delay:${(i*.17).toFixed(2)}s;--x:${8+(i*83/Math.max(1,(c.side==="away"?4:8))).toFixed(1)}%;--flag:${i%3===0?secondary:primary}"></i>`).join("");
-  const fans=Array.from({length:crowdCount},(_,i)=>`<i class="cinematic-fan" style="--i:${i};--shirt:${i%4===0?secondary:primary};--delay:${((i%11)*.04).toFixed(2)}s"></i>`).join("");
-  const players=win?Array.from({length:11},(_,i)=>`<i class="cinematic-player" style="--i:${i};--kit:${primary};--delay:${(i*.045).toFixed(2)}s"></i>`).join(""):"";
-  const drums=win?`<div class="cinematic-drums"><i></i><i></i><i></i></div>`:"";
-  return `<div class="celebration-cinema ${c.side} ${c.intensity}" style="--club:${primary};--club2:${secondary}">
-    <div class="cinematic-stadium" style="background-image:linear-gradient(180deg,rgba(1,6,10,.04),rgba(1,6,10,.42) 48%,rgba(1,6,10,.96)),url('${image}');background-position:${pos}"></div>
-    <div class="cinematic-lights"></div><div class="cinematic-flash flash-a"></div><div class="cinematic-flash flash-b"></div>
-    <div class="cinematic-away-label">${c.side==="away"?"GÄSTEBLOCK":"HEIMKURVE"}</div>
-    <div class="cinematic-flags">${flags}</div>
-    <div class="cinematic-crowd ${c.side==="away"?"away-block":""}">${fans}</div>
-    ${drums}<div class="cinematic-pitch">${players}</div>
-    <div class="cinematic-copy"><span>${c.derby?"DERBY · ":""}${c.title}</span><h2>${headline}</h2><p>${sub}</p></div>
-    <div class="cinematic-controls"><button class="btn primary" data-start-celebration-audio="${m.id}">🔊 Ton & Gesang starten</button><button class="btn" data-replay-celebration="${m.id}">↻ Szene wiederholen</button><button class="btn" data-close-celebration>Schließen</button></div>
+  const weather=weatherDetails(m),att=Number(m.attendance||deterministicAttendance(m,home));
+  const cap=Math.max(500,Number(home?.stadium?.capacity||12000)),fill=Math.min(100,Math.round(att/cap*100));
+  const events=(m.events||[]).filter(e=>e.type==="goal").slice().sort((a,b)=>Number(a.minute||0)-Number(b.minute||0));
+  const goals=events.slice(-4).map(e=>{
+    const side=Number(e.teamId)===Number(m.homeId)?home:away;
+    const pl=playerById(e.playerId)?.name||e.playerName||"Torschütze";
+    return `<div class="tv-goal-row"><span>${Number(e.minute||0)}'</span><b>${side.short}</b><em>⚽ ${pl}</em></div>`;
+  }).join("")||`<div class="tv-goal-row"><span>90'</span><b>ABPFIFF</b><em>Das Spiel ist beendet.</em></div>`;
+  const headline=winner
+    ? (c.side==="away"?`${winner.name} entführt die Punkte`: `${winner.name} gewinnt im eigenen Stadion`)
+    : `Punkteteilung im ${home.stadium?.name||"Stadion"}`;
+  const kicker=c.derby?"DERBY · SCHLUSSPFIFF":c.intensity==="wild"?"AUSRUFEZEICHEN · SCHLUSSPFIFF":"ENDSTAND · SCHLUSSPFIFF";
+  const post=postMatchHeadline(m);
+  const possession=m.statistics?`${m.statistics.possessionHome||50} : ${m.statistics.possessionAway||50}`:"—";
+  const shots=m.statistics?`${m.statistics.shotsHome||0} : ${m.statistics.shotsAway||0}`:"—";
+  return `<div class="celebration-cinema tv-broadcast ${c.side} ${c.intensity}">
+    <div class="cinematic-stadium tv-stadium" style="background-image:url('${image}');background-position:${pos}"></div>
+    <div class="tv-vignette"></div><div class="tv-scanline"></div><div class="tv-camera-flare flare-one"></div><div class="tv-camera-flare flare-two"></div>
+    <header class="tv-topbar"><span class="tv-live-dot"></span><b>FANTASY LIGA LIVE</b><em>${weather.night?"FLUTLICHT":"SPIELTAG"}</em></header>
+    <div class="tv-scorebug">
+      <div class="tv-team home">${badge(home)}<b>${home.short}</b></div>
+      <strong>${Number(m.homeGoals||0)} : ${Number(m.awayGoals||0)}</strong>
+      <div class="tv-team away">${badge(away)}<b>${away.short}</b></div>
+      <span>ENDE</span>
+    </div>
+    <div class="tv-result-panel">
+      <span>${kicker}</span><h2>${headline}</h2><p>${post}</p>
+      <div class="tv-match-meta"><b>🏟️ ${home.stadium?.name||"Stadion"}</b><b>👥 ${att.toLocaleString("de-DE")} · ${fill}%</b><b>${weather.icon} ${weather.label} · ${weather.temp} °C</b></div>
+    </div>
+    <div class="tv-bottom-deck">
+      <div class="tv-stat-card"><span>BALLBESITZ</span><b>${possession}</b></div>
+      <div class="tv-stat-card"><span>SCHÜSSE</span><b>${shots}</b></div>
+      <div class="tv-goals">${goals}</div>
+    </div>
+    <div class="tv-ticker"><b>${winner?`${winner.short} FEIERT DEN ${c.derby?"DERBYSIEG":"SPIELSIEG"}`:"BEIDE TEAMS TEILEN DIE PUNKTE"}</b><span>${chantFor(winner||home,"final")}</span></div>
+    <div class="cinematic-controls tv-controls"><button class="btn primary" data-replay-celebration="${m.id}">↻ TV-Sequenz wiederholen</button><button class="btn" data-close-celebration>Schließen</button></div>
   </div>`;
 }
 let activeCelebrationAudio=null;
@@ -1198,7 +1216,6 @@ async function playCelebrationAudio(m){
   }catch(e){console.error(e);toast("Ton konnte nicht gestartet werden. Bitte Medienlautstärke einschalten.")}
 }
 function bindCelebrationActions(m){
-  document.querySelectorAll("[data-start-celebration-audio]").forEach(b=>b.onclick=()=>playCelebrationAudio(m));
   document.querySelectorAll("[data-replay-celebration]").forEach(b=>b.onclick=()=>{const scene=b.closest('.celebration-cinema');scene?.classList.remove('replay');void scene?.offsetWidth;scene?.classList.add('replay')});
   document.querySelectorAll("[data-close-celebration]").forEach(b=>b.onclick=()=>{stopCelebrationAudio();b.closest('.celebration-overlay')?.remove()});
 }
