@@ -1080,6 +1080,36 @@ function chantFor(teamObj,phase="before"){
   };
   const list=sets[phase]||sets.before;return list[hashText(`${teamObj?.id}-${phase}`)%list.length];
 }
+
+function ensureTeamFanMedia(t){
+  t.fanMedia ||= {homeWin:[],awayWin:[],draw:[],generic:[],chants:[],goal:[]};
+  for(const k of ["homeWin","awayWin","draw","generic","chants","goal"]) if(!Array.isArray(t.fanMedia[k]))t.fanMedia[k]=[];
+  return t.fanMedia;
+}
+function fanMediaChoice(m){
+  const h=team(m.homeId),a=team(m.awayId),hg=Number(m.homeGoals||0),ag=Number(m.awayGoals||0);
+  const winner=hg>ag?h:ag>hg?a:null;
+  const owner=winner||h, media=ensureTeamFanMedia(owner), seed=hashText(`${m.id}-${hg}-${ag}-${owner.id}`);
+  let pool=[];
+  if(!winner)pool=media.draw;
+  else if(winner.id===h.id)pool=media.homeWin;
+  else pool=media.awayWin;
+  if(!pool?.length)pool=media.generic||[];
+  const video=pool.length?pool[seed%pool.length]:null;
+  const chants=media.chants||[], chant=chants.length?chants[(seed>>2)%chants.length]:null;
+  return {owner,video,chant,winner,side:!winner?"draw":winner.id===h.id?"home":"away"};
+}
+async function hydrateCelebrationMedia(scene,m){
+  const choice=fanMediaChoice(m),video=scene?.querySelector('[data-real-fan-video]'),audioBtn=scene?.querySelector('[data-real-fan-audio]');
+  if(video&&choice.video){
+    const url=await fanMediaUrl(choice.video);if(url){video.src=url;video.hidden=false;scene.classList.add('has-real-video');video.play().catch(()=>{});}
+  }
+  if(audioBtn){
+    if(choice.chant){audioBtn.hidden=false;audioBtn.onclick=async()=>{const url=await fanMediaUrl(choice.chant);if(!url)return toast("Audiodatei wurde nicht gefunden");stopCelebrationAudio();const audio=new Audio(url);audio.loop=true;audio.volume=choice.side==="away"?.72:.92;activeCelebrationAudio={stop(){audio.pause();audio.currentTime=0}};try{await audio.play();audioBtn.textContent="🔇 Gesang stoppen";audioBtn.onclick=()=>{stopCelebrationAudio();audioBtn.textContent="🔊 Fangesang starten"}}catch{toast("Ton konnte nicht gestartet werden. Bitte Stummmodus prüfen.")}};
+    }else audioBtn.hidden=true;
+  }
+}
+
 function atmosphereBlock(m){
   const h=team(m.homeId),w=weatherDetails(m),cap=Math.max(500,Number(h.stadium?.capacity||12000));
   const att=Number(m.attendance||deterministicAttendance(m,h)),fill=Math.min(100,Math.round(att/cap*100)),n=tableNarrative(m);
@@ -1155,6 +1185,7 @@ function celebrationSceneHtml(m){
   const c=celebrationProfile(m),home=c.h,away=c.a,winner=c.winner;
   const image=home?.stadium?.image||"";
   const pos=`${home?.stadiumPosX??50}% ${home?.stadiumPosY??50}%`;
+  const mediaChoice=fanMediaChoice(m);
   const weather=weatherDetails(m),att=Number(m.attendance||deterministicAttendance(m,home));
   const cap=Math.max(500,Number(home?.stadium?.capacity||12000)),fill=Math.min(100,Math.round(att/cap*100));
   const events=(m.events||[]).filter(e=>e.type==="goal").slice().sort((a,b)=>Number(a.minute||0)-Number(b.minute||0));
@@ -1170,8 +1201,9 @@ function celebrationSceneHtml(m){
   const possession=m.statistics?`${m.statistics.possessionHome||50} : ${m.statistics.possessionAway||50}`:"—";
   const shots=m.statistics?`${m.statistics.shotsHome||0} : ${m.statistics.shotsAway||0}`:"—";
   const corners=m.statistics?`${m.statistics.cornersHome||0} : ${m.statistics.cornersAway||0}`:"—";
-  return `<div class="celebration-cinema broadcast-clean ${c.side} ${c.intensity}">
+  return `<div class="celebration-cinema broadcast-clean real-media-scene ${c.side} ${c.intensity}">
     <div class="cinematic-stadium broadcast-stadium" style="background-image:url('${image}');background-position:${pos}"></div>
+    <video class="real-fan-video" data-real-fan-video playsinline muted autoplay loop hidden></video>
     <div class="broadcast-shade"></div><div class="broadcast-light"></div>
     <header class="broadcast-top"><span>FANTASY LIGA LIVE</span><b>${weather.night?"FLUTLICHT":"LIVE AUS DEM STADION"}</b></header>
     <div class="broadcast-score">
@@ -1191,7 +1223,7 @@ function celebrationSceneHtml(m){
       <div class="broadcast-report-stats"><div><span>Ballbesitz</span><b>${possession}</b></div><div><span>Schüsse</span><b>${shots}</b></div><div><span>Ecken</span><b>${corners}</b></div></div>
       <div class="broadcast-report-goals"><h4>Tore</h4>${goalRows}</div>
     </div>
-    <div class="cinematic-controls broadcast-controls"><button class="btn primary" data-open-broadcast-report>Spielbericht öffnen</button><button class="btn" data-replay-celebration="${m.id}">Sequenz wiederholen</button><button class="btn" data-close-celebration>Schließen</button></div>
+    <div class="cinematic-controls broadcast-controls"><button class="btn primary" data-open-broadcast-report>Spielbericht öffnen</button><button class="btn real-audio-button" data-real-fan-audio hidden>🔊 Fangesang starten</button><button class="btn" data-replay-celebration="${m.id}">Sequenz wiederholen</button><button class="btn" data-close-celebration>Schließen</button></div>
   </div>`;
 }
 let activeCelebrationAudio=null;
@@ -1225,7 +1257,7 @@ function bindCelebrationActions(m){
 function openCelebration(mOrId){
   const m=typeof mOrId==="object"?mOrId:season()?.matches?.find(x=>x.id===Number(mOrId));if(!m||m.status!=="played")return;
   stopCelebrationAudio();document.querySelector('.celebration-overlay')?.remove();
-  const wrap=document.createElement('div');wrap.className='celebration-overlay';wrap.innerHTML=celebrationSceneHtml(m);document.body.appendChild(wrap);bindCelebrationActions(m);
+  const wrap=document.createElement('div');wrap.className='celebration-overlay';wrap.innerHTML=celebrationSceneHtml(m);document.body.appendChild(wrap);bindCelebrationActions(m);hydrateCelebrationMedia(wrap,m).catch(console.error);
 }
 
 function matchOverview(m){
@@ -2068,11 +2100,14 @@ function openTeamEditor(id){
     stadium:{name:"",capacity:0,image:""},
     logo:"",logoScale:100,logoPosX:50,logoPosY:50,
     stadiumZoom:100,stadiumPosX:50,stadiumPosY:50,
+    fanMedia:{homeWin:[],awayWin:[],draw:[],generic:[],chants:[],goal:[]},
     players:[]
   };
 
+  ensureTeamFanMedia(t);
   let pendingLogo=teamEditorDraft?.id===id ? teamEditorDraft.logo : (t.logo||"");
   let pendingStadium=teamEditorDraft?.id===id ? teamEditorDraft.stadium : (t.stadium?.image||"");
+  let pendingFanMedia=teamEditorDraft?.id===id ? teamEditorDraft.fanMedia : JSON.parse(JSON.stringify(t.fanMedia));
 
   el("#overlay").innerHTML=`<div class="modal"><div class="sheet team-editor-sheet">
     <div class="sheet-head">
@@ -2116,6 +2151,19 @@ function openTeamEditor(id){
       ${pendingStadium?`<button class="btn ghost" id="removeStadiumImage">Stadionbild entfernen</button>`:""}
     </div>
 
+
+    <div class="image-editor-section fan-media-editor">
+      <div class="image-editor-head"><div><h3>Reale Fanszenen & Fangesänge</h3><p>Lade echte kurze Videos und Audiodateien hoch. Sie bleiben lokal auf deinem Gerät und landen nicht im Backup.</p></div></div>
+      <div class="fan-media-upload-grid">
+        <label class="fan-media-upload"><b>Heimsieg-Videos</b><span>${pendingFanMedia.homeWin.length} gespeichert</span><input id="fanHomeWin" type="file" accept="video/mp4,video/webm,video/quicktime" multiple></label>
+        <label class="fan-media-upload"><b>Auswärtssieg-Videos</b><span>${pendingFanMedia.awayWin.length} gespeichert</span><input id="fanAwayWin" type="file" accept="video/mp4,video/webm,video/quicktime" multiple></label>
+        <label class="fan-media-upload"><b>Unentschieden-Videos</b><span>${pendingFanMedia.draw.length} gespeichert</span><input id="fanDraw" type="file" accept="video/mp4,video/webm,video/quicktime" multiple></label>
+        <label class="fan-media-upload"><b>Allgemeine Fanvideos</b><span>${pendingFanMedia.generic.length} gespeichert</span><input id="fanGeneric" type="file" accept="video/mp4,video/webm,video/quicktime" multiple></label>
+        <label class="fan-media-upload"><b>Fangesänge / Trommeln</b><span>${pendingFanMedia.chants.length} gespeichert</span><input id="fanChants" type="file" accept="audio/*" multiple></label>
+      </div>
+      <div class="fan-media-list">${Object.entries(pendingFanMedia).filter(([k])=>k!=="goal").flatMap(([kind,items])=>items.map(item=>`<button type="button" class="fan-media-chip" data-remove-fan-media="${kind}:${item.id}">${item.name||kind} <span>×</span></button>`)).join("")||`<div class="muted">Noch keine echten Medien hinterlegt. Ohne Upload bleibt die normale Stadion-TV-Sequenz aktiv.</div>`}</div>
+    </div>
+
     <div class="actions sticky-editor-actions">
       <button id="saveTeam" class="btn primary">Team speichern</button>
       ${id?`<button id="deleteTeam" class="btn danger">Aus Liga entfernen</button>`:""}
@@ -2140,7 +2188,7 @@ function openTeamEditor(id){
       console.error(error);
       toast(error.message||"Logo konnte nicht verarbeitet werden");
     }
-    teamEditorDraft={id,logo:pendingLogo,stadium:pendingStadium};
+    teamEditorDraft={id,logo:pendingLogo,stadium:pendingStadium,fanMedia:pendingFanMedia};
     openTeamEditor(id);
   };
 
@@ -2160,21 +2208,42 @@ function openTeamEditor(id){
       console.error(error);
       toast(error.message||"Stadionbild konnte nicht verarbeitet werden");
     }
-    teamEditorDraft={id,logo:pendingLogo,stadium:pendingStadium};
+    teamEditorDraft={id,logo:pendingLogo,stadium:pendingStadium,fanMedia:pendingFanMedia};
     openTeamEditor(id);
   };
 
   const removeLogo=el("#removeLogo");
   if(removeLogo)removeLogo.onclick=()=>{
-    teamEditorDraft={id,logo:"",stadium:pendingStadium};
+    teamEditorDraft={id,logo:"",stadium:pendingStadium,fanMedia:pendingFanMedia};
     openTeamEditor(id);
   };
 
   const removeStadium=el("#removeStadiumImage");
   if(removeStadium)removeStadium.onclick=()=>{
-    teamEditorDraft={id,logo:pendingLogo,stadium:""};
+    teamEditorDraft={id,logo:pendingLogo,stadium:"",fanMedia:pendingFanMedia};
     openTeamEditor(id);
   };
+
+
+  const mediaInputs={fanHomeWin:"homeWin",fanAwayWin:"awayWin",fanDraw:"draw",fanGeneric:"generic",fanChants:"chants"};
+  for(const [inputId,kind] of Object.entries(mediaInputs)){
+    const input=el(`#${inputId}`);if(!input)continue;
+    input.onchange=async()=>{
+      const files=[...(input.files||[])];if(!files.length)return;
+      const teamId=id||(`draft-${Date.now()}`);
+      for(const file of files){
+        const max=kind==="chants"?18*1024*1024:45*1024*1024;
+        if(file.size>max){toast(`${file.name} ist zu groß`);continue}
+        try{pendingFanMedia[kind].push(await saveFanMediaBlob(teamId,kind,file))}catch(e){console.error(e);toast(`${file.name} konnte nicht gespeichert werden`)}
+      }
+      teamEditorDraft={id,logo:pendingLogo,stadium:pendingStadium,fanMedia:pendingFanMedia};openTeamEditor(id);
+    };
+  }
+  document.querySelectorAll('[data-remove-fan-media]').forEach(btn=>btn.onclick=async()=>{
+    const [kind,itemId]=btn.dataset.removeFanMedia.split(':');const list=pendingFanMedia[kind]||[];const item=list.find(x=>x.id===itemId);
+    if(item)await deleteFanMediaItem(item);pendingFanMedia[kind]=list.filter(x=>x.id!==itemId);
+    teamEditorDraft={id,logo:pendingLogo,stadium:pendingStadium,fanMedia:pendingFanMedia};openTeamEditor(id);
+  });
 
   el("#saveTeam").onclick=async()=>{
     const name=el("#tName").value.trim();
@@ -2203,6 +2272,7 @@ function openTeamEditor(id){
         stadiumPosX:50,
         stadiumPosY:50,
         stadium:{image:""},
+        fanMedia:{homeWin:[],awayWin:[],draw:[],generic:[],chants:[],goal:[]},
         history:[]
       };
       state().teams.push(target);
@@ -2219,6 +2289,7 @@ function openTeamEditor(id){
     target.stadium.name=el("#tStadium").value.trim()||"Neues Stadion";
     target.stadium.capacity=capacity;
     target.stadium.image=pendingStadium;
+    target.fanMedia=pendingFanMedia;
     target.stadiumZoom=100;
     target.stadiumPosX=50;
     target.stadiumPosY=50;

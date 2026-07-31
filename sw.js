@@ -1,4 +1,4 @@
-const CACHE="fantasy-liga-v36-tv-broadcast-1";
+const CACHE="fantasy-liga-v37-real-fan-media-1";
 const ASSETS=[
   "./","./index.html","./styles.css","./seed.json","./manifest.webmanifest",
   "./app.js","./playerUniverse.js","./managerWorld.js","./stabilityCareer.js","./store.js","./ui.js","./standings.js",

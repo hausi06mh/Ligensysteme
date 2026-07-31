@@ -6,6 +6,34 @@ const STATE_KEY = "state";
 const LAST_GOOD_STATE_KEY = "state-last-good";
 const IMAGE_PREFIX = "media:";
 
+
+
+// V37: Große Fanvideos und Audiodateien werden als Blob in IndexedDB gespeichert.
+// Im Karriere-Spielstand stehen nur kleine Metadaten/Schlüssel.
+const fanMediaUrlCache=new Map();
+function fanMediaKey(teamId,kind,id){return `fanmedia:team:${teamId}:${kind}:${id}`;}
+async function saveFanMediaBlob(teamId,kind,file){
+  const id=`${Date.now().toString(36)}-${Math.random().toString(36).slice(2,9)}`;
+  const key=fanMediaKey(teamId,kind,id);
+  await idbSetKey(key,file);
+  return {id,key,kind,name:file.name||kind,type:file.type||"application/octet-stream",size:Number(file.size||0)};
+}
+async function fanMediaUrl(item){
+  if(!item?.key)return "";
+  if(fanMediaUrlCache.has(item.key))return fanMediaUrlCache.get(item.key);
+  const blob=await idbGetKey(item.key);
+  if(!(blob instanceof Blob))return "";
+  const url=URL.createObjectURL(blob);fanMediaUrlCache.set(item.key,url);return url;
+}
+async function deleteFanMediaItem(item){
+  if(!item?.key)return;
+  const old=fanMediaUrlCache.get(item.key);if(old){URL.revokeObjectURL(old);fanMediaUrlCache.delete(item.key)}
+  await idbDeleteKey(item.key);
+}
+async function cleanupDeletedFanMedia(source){
+  // Metadaten werden beim Löschen eines Teams explizit entfernt; diese Funktion bleibt als Erweiterungspunkt.
+  return source;
+}
 let state = null;
 let lastSaved = null;
 let dbPromise = null;
