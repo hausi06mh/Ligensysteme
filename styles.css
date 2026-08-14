@@ -1020,3 +1020,22 @@ details summary{cursor:pointer;padding:10px 0;font-weight:700}
 .fan-media-upload b{font-size:14px}.fan-media-upload span{font-size:11px;color:var(--muted)}.fan-media-upload input{font-size:11px;max-width:100%}
 .fan-media-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.fan-media-chip{border:1px solid var(--line);background:#102536;color:#fff;border-radius:999px;padding:7px 10px;font-size:11px}.fan-media-chip span{color:#ff8ea6;font-weight:900;margin-left:4px}
 @media(max-width:560px){.fan-media-upload-grid{grid-template-columns:1fr}.broadcast-controls{grid-template-columns:1fr 1fr!important}.broadcast-controls [data-close-celebration]{grid-column:1/-1!important}.real-audio-button{grid-column:1/-1}}
+
+
+/* V38 – sinnvoller Live-Ticker & kompakter Spielplan */
+.live-ticker-page .event-item{min-height:88px;padding:11px 12px;grid-template-columns:52px 54px 1fr 36px}
+.live-ticker-page .event-item.goal-event{min-height:104px}
+.live-ticker-page .event-content p{margin:3px 0 0;line-height:1.35;color:var(--muted)}
+.live-ticker-page .event-content>strong{font-size:.98rem}
+.live-ticker-page .event-title-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.live-ticker-page .event-club{display:grid;justify-items:center;gap:3px;font-size:10px;font-weight:900;color:var(--muted)}
+.simple-fixtures{gap:8px}
+.fixture-card{min-height:96px;border-radius:16px;background:linear-gradient(145deg,rgba(17,37,54,.96),rgba(10,26,39,.96))}
+.fixture-direct-score{gap:5px}.fixture-direct-score small{font-size:9.5px;line-height:1.25;text-align:center}
+.matchday-head .subtitle{display:block;margin-top:3px}
+@media(max-width:640px){
+  .live-ticker-page .event-item{grid-template-columns:44px 42px 1fr 32px;min-height:82px;padding:9px 8px}
+  .live-ticker-page .event-item.goal-event{min-height:96px}
+  .live-ticker-page .event-content p{font-size:11.5px}
+  .fixture-card{min-height:102px}
+}

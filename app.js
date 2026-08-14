@@ -72,6 +72,52 @@ function playerById(id){
 }
 function activeTeams(){ return season().teamIds.map(team).filter(Boolean); }
 
+function swapScheduledFixtureSides(match){
+  const oldHome=match.homeId,oldAway=match.awayId;
+  match.homeId=oldAway;match.awayId=oldHome;
+  if(match.lineups){
+    const h=match.lineups.home||[],a=match.lineups.away||[],hb=match.lineups.homeBench||[],ab=match.lineups.awayBench||[];
+    match.lineups.home=a;match.lineups.away=h;match.lineups.homeBench=ab;match.lineups.awayBench=hb;
+  }
+}
+function rebalanceFutureHomeAway(seasonObj){
+  const all=(seasonObj?.matches||[]).filter(m=>m&&Number(m.homeId)&&Number(m.awayId));
+  if(all.length<2)return false;
+  const playedDay=Math.max(0,...all.filter(m=>m.status!=="scheduled"||(m.events||[]).length).map(m=>Number(m.matchday||0)));
+  const history=new Map();
+  const push=(id,side)=>{if(!history.has(Number(id)))history.set(Number(id),[]);history.get(Number(id)).push(side)};
+  all.filter(m=>Number(m.matchday||0)<=playedDay||m.status!=="scheduled"||(m.events||[]).length)
+    .sort((a,b)=>Number(a.matchday||0)-Number(b.matchday||0)||Number(a.id||0)-Number(b.id||0))
+    .forEach(m=>{push(m.homeId,"H");push(m.awayId,"A")});
+  const future=all.filter(m=>m.status==="scheduled"&&!(m.events||[]).length&&Number(m.matchday||0)>playedDay)
+    .sort((a,b)=>Number(a.matchday||0)-Number(b.matchday||0)||Number(a.id||0)-Number(b.id||0));
+  const cost=(id,side)=>{
+    const seq=history.get(Number(id))||[];let score=0;
+    const last=seq[seq.length-1],prev=seq[seq.length-2];
+    if(last===side)score+=7;
+    if(last===side&&prev===side)score+=80;
+    const h=seq.filter(x=>x==="H").length+(side==="H"?1:0),a=seq.length+1-h;
+    score+=Math.abs(h-a)*1.25;
+    return score;
+  };
+  let changed=false,currentDay=null,dayGames=[];
+  const flush=()=>{
+    for(const m of dayGames){
+      const keep=cost(m.homeId,"H")+cost(m.awayId,"A");
+      const flip=cost(m.homeId,"A")+cost(m.awayId,"H");
+      if(flip+0.01<keep){swapScheduledFixtureSides(m);changed=true;}
+      push(m.homeId,"H");push(m.awayId,"A");
+    }
+    dayGames=[];
+  };
+  for(const m of future){
+    if(currentDay!==null&&Number(m.matchday)!==currentDay)flush();
+    currentDay=Number(m.matchday);dayGames.push(m);
+  }
+  flush();
+  return changed;
+}
+
 
 function teamForm(teamId,day=null,limit=5){
   const matches=season().matches
@@ -288,6 +334,12 @@ function upgradeState(){
       }
     }
   }
+  // V38: Importierte ältere Spielpläne behalten alle bereits gespielten Partien.
+  // Nur zukünftige, noch leere Begegnungen werden in Heim/Auswärts sinnvoll neu ausgerichtet.
+  if(!s.settings.fixtureBalanceV38){
+    for(const l of s.leagues||[])for(const se of l.seasons||[])rebalanceFutureHomeAway(se);
+    s.settings.fixtureBalanceV38=true;
+  }
   ensureWorldMarket(80);
   compactCareerState(s);
   saveState({skipHistory:true}).catch(error=>console.warn("Normalisierung konnte nicht sofort gespeichert werden:",error));
@@ -344,7 +396,7 @@ function render(){
   el("#app").innerHTML=`
     <div class="shell">
       <header class="topbar"><div class="topbar-inner">
-        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V36</span></div></div>
+        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V38</span></div></div>
         <div class="top-actions"><span id="saveStateIndicator" class="small muted">Gespeichert</span><button id="commandPaletteButton" class="theme-toggle" aria-label="Schnellmenü">⌘</button><button id="themeToggle" class="theme-toggle" aria-label="Theme wechseln">${state().settings.theme==="light"?"🌙":"☀️"}</button><select class="selector" id="leagueSelector">
           ${s.leagues.map(x=>`<option value="${x.id}" ${x.id===l.id?"selected":""}>${x.name}</option>`).join("")}
         </select></div>
@@ -555,7 +607,7 @@ function renderFixtures(){
     </section>
     <section class="card simple-matchday-card">
       <div class="section-head matchday-head">
-        <div><h2>Partien</h2><span class="subtitle">${matches.filter(m=>m.status==="played").length}/${matches.length} beendet</span></div>
+        <div><h2>Partien</h2><span class="subtitle">${matches.filter(m=>m.status==="played").length}/${matches.length} beendet · Heim/Auswärts ausgewogen</span></div>
         <div class="matchday-progress"><span style="width:${matches.length?matches.filter(m=>m.status==="played").length/matches.length*100:0}%"></span></div>
         <button id="matchdayMenu" class="iconbtn" aria-label="Spieltag-Menü">•••</button>
       </div>
@@ -938,7 +990,12 @@ function openScheduleSheet(){
 
     const pairs=roundRobin(season().teamIds,el("#scheduleMode").value==="double");
     const start=el("#scheduleStart").value||new Date().toISOString().slice(0,10),time=el("#scheduleTime").value||"15:30";
-    season().matches=pairs.map((p,i)=>({id:i+1,matchday:p.matchday,homeId:p.homeId,awayId:p.awayId,date:dateForRound(start,p.matchday),time,status:"scheduled",homeGoals:0,awayGoals:0,lineups:{home:[...(team(Number(el("#mHome").value))?.defaultLineup||[])].slice(0,11),away:[...(team(Number(el("#mAway").value))?.defaultLineup||[])].slice(0,11),homeBench:fullBenchIds(team(Number(el("#mHome").value)),team(Number(el("#mHome").value))?.defaultLineup||[]),awayBench:fullBenchIds(team(Number(el("#mAway").value)),team(Number(el("#mAway").value))?.defaultLineup||[])},events:[],notes:"",attendance:0,referee:"",weather:"",motmPlayerId:null}));
+    season().matches=pairs.map((p,i)=>{
+      const ht=team(Number(p.homeId)),at=team(Number(p.awayId));
+      const hIds=[...(ht?.defaultLineup||chooseLineup(ht).map(x=>x.id))].slice(0,11),aIds=[...(at?.defaultLineup||chooseLineup(at).map(x=>x.id))].slice(0,11);
+      return {id:i+1,matchday:p.matchday,homeId:p.homeId,awayId:p.awayId,date:dateForRound(start,p.matchday),time,status:"scheduled",homeGoals:0,awayGoals:0,lineups:{home:hIds,away:aIds,homeBench:fullBenchIds(ht,hIds),awayBench:fullBenchIds(at,aIds)},events:[],notes:"",attendance:0,referee:"",weather:"",motmPlayerId:null};
+    });
+    state().settings.fixtureBalanceV38=true;
     await saveState();
     closeOverlay();
     render();
@@ -1316,6 +1373,35 @@ function pickAssist(players,scorer){
   const weights={GK:.03,DEF:.7,MID:2.2,AM:3.8,ST:1.8};
   return Math.random()<.18?null:weightedPick(pool,p=>(weights[playerPositionGroup(p)]||1)*(0.6+Number(p.rating||60)/100));
 }
+function attackingWeight(p){
+  const g=playerPositionGroup(p),w={GK:.01,DEF:.18,MID:1.65,AM:3.5,ST:4.9};
+  return (w[g]||1)*(0.55+Number(p.rating||60)/95);
+}
+function cornerTakerWeight(p){
+  const pos=normalizedPos(p);
+  if(["RA","LA","RF","LF","RM","LM"].includes(pos))return 8.5;
+  if(pos==="ZOM")return 5.4;
+  if(pos==="ZM")return 2.7;
+  if(["RV","LV"].includes(pos))return 1.25;
+  if(pos==="ZDM")return .8;
+  if(pos==="ST")return .65;
+  if(["IV","RIV","LIV"].includes(pos))return .12;
+  return pos==="TW"||pos==="GK"?.01:.4;
+}
+function pickGoalkeeper(players){
+  const keepers=(players||[]).filter(p=>playerPositionGroup(p)==="GK");
+  return keepers.sort((a,b)=>Number(b.rating||0)-Number(a.rating||0))[0]||null;
+}
+function pickAttacker(players){return weightedPick((players||[]).filter(p=>playerPositionGroup(p)!=="GK"),attackingWeight);}
+function spacedMinutes(count,min=4,max=89,seedBase="timeline"){
+  const out=[];let tries=0;
+  while(out.length<count&&tries++<500){
+    const candidate=Math.round(min+seededFraction(seedBase,tries,count)*Math.max(1,max-min));
+    if(out.every(x=>Math.abs(x-candidate)>=2))out.push(candidate);
+  }
+  while(out.length<count)out.push(clamp(min+out.length*3,min,max));
+  return out.sort((a,b)=>a-b);
+}
 function normalizedPos(p){
   return String(p?.position||"ZM").toUpperCase().trim().replace(/\s+/g,"");
 }
@@ -1357,9 +1443,9 @@ function chooseLineup(t){
   while(chosen.length<Math.min(11,pool.length)){const next=pool.filter(p=>!chosen.some(x=>x.id===p.id)).sort((a,b)=>Number(b.rating||0)-Number(a.rating||0))[0];if(!next)break;chosen.push(next);}
   t.defaultFormation=t.defaultFormation||"4-3-2-1";t.defaultLineup=chosen.map(p=>p.id);return chosen;
 }
-function addSimEvent(m,type,minute,player,assist=null,addedTime=0){
+function addSimEvent(m,type,minute,player,assist=null,addedTime=0,extra={}){
   if(!player)return;
-  m.events.push({id:nextId(m.events),type,minute,addedTime,playerId:player.id,assistId:assist?.id||null,playerOutId:null});
+  m.events.push({id:nextId(m.events),type,minute,addedTime,playerId:player.id,assistId:assist?.id||null,playerOutId:null,...extra});
 }
 function matchStatBar(label,home,away,suffix="",decimals=0){
   const hv=Number(home||0),av=Number(away||0),sum=Math.max(.001,hv+av),pct=clamp(hv/sum*100,4,96);
@@ -1443,32 +1529,47 @@ function generateManualTimeline(m){
   if(!m.lineups.home?.length)m.lineups.home=hXI.map(p=>p.id);
   if(!m.lineups.away?.length)m.lineups.away=aXI.map(p=>p.id);
   const stats=m.statistics||{};
-  const seed=seededFraction(m.id,m.matchday,m.homeGoals,m.awayGoals,goals.length,"manual-v32");
-  let serial=0;
-  const minute=(min=2,max=89)=>{
-    serial++;
-    return clamp(Math.round(min+seededFraction(m.id,serial,seed)*Math.max(1,max-min)),min,max);
-  };
+  const seed=seededFraction(m.id,m.matchday,m.homeGoals,m.awayGoals,goals.length,"manual-v38");
   const generated=[];
-  const add=(type,side,at=minute(),weight=()=>1)=>{
-    const squad=side==="home"?hXI:aXI;
-    const player=weightedPick(squad,weight);
-    if(player)generated.push({id:0,type,minute:at,addedTime:0,playerId:player.id,assistId:null,playerOutId:null,generated:true});
-  };
-  const cardTotal=clamp(Math.round(2+seed*3+(Number(stats.foulsHome||10)+Number(stats.foulsAway||10))/13),2,7);
+  const push=(type,minute,player,extra={})=>{if(player)generated.push({id:0,type,minute,addedTime:0,playerId:player.id,assistId:null,playerOutId:null,generated:true,...extra})};
+  const chooseSide=(tag,i)=>seededFraction(m.id,tag,i,seed)<.5?"home":"away";
+  const xi=side=>side==="home"?hXI:aXI;
+  const opponent=side=>side==="home"?aXI:hXI;
+
+  // Karten: Gelb ist normal, Platzverweise bleiben echte Ausnahmen.
+  const cardTotal=clamp(Math.round(1.8+seed*2.2+(Number(stats.foulsHome||10)+Number(stats.foulsAway||10))/16),1,6);
+  const cardMinutes=spacedMinutes(cardTotal,12,88,`cards-${m.id}`);
   for(let i=0;i<cardTotal;i++){
-    const side=seededFraction(m.id,"card",i)<.5?"home":"away";
-    const redRoll=seededFraction(m.id,"red",i);
-    add(redRoll<.035?"red":redRoll<.075?"secondYellow":"yellow",side,minute(12,88),p=>playerPositionGroup(p)==="DEF"?2.3:playerPositionGroup(p)==="MID"?1.6:.7);
+    const side=chooseSide("card",i),roll=seededFraction(m.id,"red-v38",i);
+    const type=roll<.006?"red":roll<.018?"secondYellow":"yellow";
+    const player=weightedPick(xi(side),p=>playerPositionGroup(p)==="DEF"?2.2:playerPositionGroup(p)==="MID"?1.55:.65);
+    push(type,cardMinutes[i],player);
   }
-  const cornersH=clamp(Number(stats.cornersHome||0),0,12),cornersA=clamp(Number(stats.cornersAway||0),0,12);
-  for(let i=0;i<Math.min(cornersH,7);i++)add("corner","home",minute(3,89),p=>playerPositionGroup(p)==="AM"?2.2:playerPositionGroup(p)==="MID"?1.6:1);
-  for(let i=0;i<Math.min(cornersA,7);i++)add("corner","away",minute(3,89),p=>playerPositionGroup(p)==="AM"?2.2:playerPositionGroup(p)==="MID"?1.6:1);
-  const extra=clamp(Math.round(4+seed*5+(Number(m.homeGoals||0)+Number(m.awayGoals||0))),4,11);
-  const types=["chance","save","post"];
-  for(let i=0;i<extra;i++)add(types[Math.floor(seededFraction(m.id,"narrative",i)*types.length)],seededFraction(m.id,"side",i)<.52?"home":"away",minute(4,89),p=>playerPositionGroup(p)==="ST"?2.4:playerPositionGroup(p)==="AM"?1.9:1);
+
+  // Ecken werden fast immer von Außen-/offensiven Mittelfeldspielern getreten.
+  for(const side of ["home","away"]){
+    const count=clamp(Number(side==="home"?stats.cornersHome:stats.cornersAway)||0,0,10);
+    const mins=spacedMinutes(Math.min(count,7),4,88,`corners-${m.id}-${side}`);
+    for(let i=0;i<mins.length;i++)push("corner",mins[i],weightedPick(xi(side),cornerTakerWeight));
+  }
+
+  // Chancen, Pfosten und Paraden hängen logisch zusammen. Bei einer Parade ist der
+  // Hauptspieler der gegnerische Torwart; der Schütze wird separat gespeichert.
+  const extra=clamp(Math.round(3+seed*4+(Number(m.homeGoals||0)+Number(m.awayGoals||0))),3,9);
+  const mins=spacedMinutes(extra,6,87,`chances-${m.id}`);
+  for(let i=0;i<extra;i++){
+    const attackSide=chooseSide("attack",i),attackers=xi(attackSide),defenders=opponent(attackSide);
+    const shooter=pickAttacker(attackers);if(!shooter)continue;
+    const roll=seededFraction(m.id,"chance-type",i);
+    if(roll<.46){
+      const keeper=pickGoalkeeper(defenders);
+      if(keeper)push("save",mins[i],keeper,{shotById:shooter.id,attackingTeamId:attackSide==="home"?m.homeId:m.awayId});
+      else push("chance",mins[i],shooter);
+    }else if(roll<.62)push("post",mins[i],shooter);
+    else push("chance",mins[i],shooter);
+  }
   const anchor=hXI[0]||aXI[0];
-  if(anchor){generated.push({id:0,type:"halftime",minute:45,addedTime:0,playerId:anchor.id,assistId:null,playerOutId:null,generated:true});generated.push({id:0,type:"fulltime",minute:90,addedTime:0,playerId:anchor.id,assistId:null,playerOutId:null,generated:true});}
+  if(anchor){push("halftime",45,anchor);push("fulltime",90,anchor);}
   m.events=[...goals,...manualSubs,...generated].sort((x,y)=>(x.minute+(x.addedTime||0)/100)-(y.minute+(y.addedTime||0)/100));
   m.events.forEach((e,i)=>e.id=i+1);
 }
@@ -1586,12 +1687,12 @@ async function simulateMatch(matchId){
       const scorer=pickScorer(aXI);
       if(scorer)addSimEvent(m,Math.random()<.11?"penalty":"goal",minute(),scorer,pickAssist(aXI,scorer));
     }
-    const cards=clamp(poisson(3.8),1,8);
+    const cards=clamp(poisson(3.35),1,7);
     for(let i=0;i<cards;i++){
       const side=Math.random()<.52?hXI:aXI;
-      const player=weightedPick(side,p=>playerPositionGroup(p)==="DEF"?2.2:playerPositionGroup(p)==="MID"?1.5:.7);
+      const player=weightedPick(side,p=>playerPositionGroup(p)==="DEF"?2.2:playerPositionGroup(p)==="MID"?1.5:.65);
       if(player){
-        const roll=Math.random(),type=roll<.055?"red":roll<.11?"secondYellow":"yellow";
+        const roll=Math.random(),type=roll<.006?"red":roll<.018?"secondYellow":"yellow";
         addSimEvent(m,type,minute(),player);
       }
     }
@@ -1600,9 +1701,19 @@ async function simulateMatch(matchId){
     const redAway=redEvents.filter(e=>playerById(e.playerId)?.teamId===a.id||a.players.some(p=>p.id===e.playerId)).length;
     if(redHome>redAway&&Math.random()<.58){const scorer=pickScorer(aXI);if(scorer){ag=Math.min(8,ag+1);addSimEvent(m,"goal",minute(),scorer,pickAssist(aXI,scorer));}}
     if(redAway>redHome&&Math.random()<.58){const scorer=pickScorer(hXI);if(scorer){hg=Math.min(8,hg+1);addSimEvent(m,"goal",minute(),scorer,pickAssist(hXI,scorer));}}
-    if(Math.random()<.24){const side=Math.random()<.5?hXI:aXI;const injured=weightedPick(side,()=>1);if(injured)addSimEvent(m,"injury",minute(),injured);}
-    const narrativeCount=clamp(poisson(7.5),4,15),narrativeTypes=["chance","save","post","corner"];
-    for(let i=0;i<narrativeCount;i++){const side=Math.random()<.53?hXI:aXI;const actor=weightedPick(side,p=>playerPositionGroup(p)==="GK"?.35:playerPositionGroup(p)==="ST"?2.2:1);if(actor)addSimEvent(m,narrativeTypes[Math.floor(Math.random()*narrativeTypes.length)],minute(),actor);}
+    if(Math.random()<.20){const side=Math.random()<.5?hXI:aXI;const injured=weightedPick(side,()=>1);if(injured)addSimEvent(m,"injury",minute(),injured);}
+    const narrativeCount=clamp(poisson(6.6),4,12);
+    for(let i=0;i<narrativeCount;i++){
+      const homeAttack=Math.random()<.53,attackers=homeAttack?hXI:aXI,defenders=homeAttack?aXI:hXI;
+      const shooter=pickAttacker(attackers);if(!shooter)continue;
+      const roll=Math.random();
+      if(roll<.29){
+        const keeper=pickGoalkeeper(defenders);
+        if(keeper)addSimEvent(m,"save",minute(),keeper,null,0,{shotById:shooter.id,attackingTeamId:homeAttack?m.homeId:m.awayId});
+      }else if(roll<.47)addSimEvent(m,"corner",minute(),weightedPick(attackers,cornerTakerWeight));
+      else if(roll<.60)addSimEvent(m,"post",minute(),shooter);
+      else addSimEvent(m,"chance",minute(),shooter);
+    }
     const halfPlayer=hXI[0]||aXI[0];if(halfPlayer)addSimEvent(m,"halftime",45,halfPlayer,null,0);if(halfPlayer)addSimEvent(m,"fulltime",90,halfPlayer,null,0);
 
     m.events.sort((x,y)=>Number(x.minute||0)-Number(y.minute||0));
@@ -1817,6 +1928,8 @@ function eventsView(m){
 }
 function eventTickerText(e,player,assist,out,et){
   const name=player?.name||"Ein Spieler",club=et?.short||"das Team";
+  const shooter=e.shotById?playerById(e.shotById):null;
+  const attackingClub=e.attackingTeamId?team(Number(e.attackingTeamId))?.short:null;
   const texts={
     goal:`${name} trifft für ${club}${assist?` nach Vorlage von ${assist.name}`:""}.`,
     penalty:`${name} verwandelt den Strafstoß sicher für ${club}.`,
@@ -1828,8 +1941,8 @@ function eventTickerText(e,player,assist,out,et){
     red:`Direkter Platzverweis für ${name}.`,
     sub:`${name} kommt in die Partie${out?` und ersetzt ${out.name}`:""}.`,
     injury:`${name} muss behandelt werden.`,
-    chance:`Großchance für ${club} durch ${name}.`,
-    save:`${name} verhindert mit einer starken Parade den Treffer.`,
+    chance:`${name} kommt für ${club} gefährlich zum Abschluss.`,
+    save:`${name} hält stark${shooter?` gegen den Abschluss von ${shooter.name}`:""}${attackingClub?` (${attackingClub})`:""}.`,
     post:`${name} trifft nur Aluminium.`,
     corner:`Eckball für ${club}, ausgeführt von ${name}.`,
     halftime:`Pause – beide Teams gehen in die Kabine.`,
