@@ -1,14 +1,13 @@
-# Fantasy Liga Elite V38 – Sinnvoller Live-Ticker & realistischer Spielplan
+# Fantasy Liga Elite V39.1 – 2D Live-Match
 
-V38 verbessert vor allem Logik und Übersicht.
+V39.1 basiert auf V38 und ergänzt eine übersichtliche 2D-Live-Simulation.
 
-- Ecken werden überwiegend von Flügelspielern / offensiven Mittelfeldspielern ausgeführt.
-- Paraden gehören immer zum Torwart; der gegnerische Schütze wird im Text genannt.
-- Abschlüsse kommen überwiegend von Stürmern und Mittelfeldspielern.
-- Rote Karten und Gelb-Rot sind deutlich seltener.
-- Chancen, Paraden und Ecken werden plausibler verteilt und nicht wahllos Spielern zugeordnet.
-- Neue Spielpläne nutzen ein ausgeglichenes Berger-Schema mit maximal kurzen Heim-/Auswärtsserien.
-- Beim Import eines alten Spielstands bleiben alle gespielten Partien erhalten. Nur zukünftige, leere Spiele werden in Heim/Auswärts neu ausbalanciert.
-- Ticker und Spieltagskarten sind kompakter und besser lesbar.
+- 22 Spieler bewegen sich auf einem 2D-Spielfeld.
+- Ball folgt den berechneten Spielszenen.
+- Spieluhr läuft schnell; Standard 2x, umschaltbar 1x/2x/4x/8x.
+- Tore, Chancen, Paraden, Ecken und Karten werden synchron im Live-Ticker angezeigt.
+- Ergebnis und Ereignisse stammen weiterhin aus der realistischen Simulationslogik von V38.
+- Bestehende Spielstände bleiben kompatibel.
 
-Bestehende Ergebnisse, Tore und Statistiken werden nicht gelöscht.
+
+V39.1 Stabilitäts-Fix: Ereignisse derselben Minute werden zeitlich verteilt; Spielerfokus wird sauber zurückgesetzt; Close/Finish räumt Animationstimer auf.
