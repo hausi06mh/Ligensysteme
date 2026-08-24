@@ -396,7 +396,7 @@ function render(){
   el("#app").innerHTML=`
     <div class="shell">
       <header class="topbar"><div class="topbar-inner">
-        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V39</span></div></div>
+        <div class="brand"><div class="brandmark">🏆</div><div>Fantasy Liga Studio <span class="version-pill">V40</span></div></div>
         <div class="top-actions"><span id="saveStateIndicator" class="small muted">Gespeichert</span><button id="commandPaletteButton" class="theme-toggle" aria-label="Schnellmenü">⌘</button><button id="themeToggle" class="theme-toggle" aria-label="Theme wechseln">${state().settings.theme==="light"?"🌙":"☀️"}</button><select class="selector" id="leagueSelector">
           ${s.leagues.map(x=>`<option value="${x.id}" ${x.id===l.id?"selected":""}>${x.name}</option>`).join("")}
         </select></div>
@@ -1702,16 +1702,19 @@ async function simulateMatch(matchId){
     if(redHome>redAway&&Math.random()<.58){const scorer=pickScorer(aXI);if(scorer){ag=Math.min(8,ag+1);addSimEvent(m,"goal",minute(),scorer,pickAssist(aXI,scorer));}}
     if(redAway>redHome&&Math.random()<.58){const scorer=pickScorer(hXI);if(scorer){hg=Math.min(8,hg+1);addSimEvent(m,"goal",minute(),scorer,pickAssist(hXI,scorer));}}
     if(Math.random()<.20){const side=Math.random()<.5?hXI:aXI;const injured=weightedPick(side,()=>1);if(injured)addSimEvent(m,"injury",minute(),injured);}
-    const narrativeCount=clamp(poisson(6.6),4,12);
-    for(let i=0;i<narrativeCount;i++){
-      const homeAttack=Math.random()<.53,attackers=homeAttack?hXI:aXI,defenders=homeAttack?aXI:hXI;
+    // V40: Mehr sichtbare Offensivszenen. Wer mehr Spielkontrolle hat, erzeugt auch mehr
+    // Chancen; Außenseiter können aber selten trotz mehr Abschlüssen verlieren.
+    const controlHome=clamp(.50 + ratingGap*.035 + seasonGap*.115 + formGap*.07 + .025 - fatigueH*.025 + fatigueA*.025,.20,.80);
+    const chanceVolume=clamp(Math.round(10 + Math.abs(ratingGap)*.7 + Math.abs(seasonGap)*3 + poisson(3.6)),9,19);
+    for(let i=0;i<chanceVolume;i++){
+      const homeAttack=Math.random()<controlHome,attackers=homeAttack?hXI:aXI,defenders=homeAttack?aXI:hXI;
       const shooter=pickAttacker(attackers);if(!shooter)continue;
       const roll=Math.random();
-      if(roll<.29){
+      if(roll<.31){
         const keeper=pickGoalkeeper(defenders);
         if(keeper)addSimEvent(m,"save",minute(),keeper,null,0,{shotById:shooter.id,attackingTeamId:homeAttack?m.homeId:m.awayId});
-      }else if(roll<.47)addSimEvent(m,"corner",minute(),weightedPick(attackers,cornerTakerWeight));
-      else if(roll<.60)addSimEvent(m,"post",minute(),shooter);
+      }else if(roll<.45)addSimEvent(m,"corner",minute(),weightedPick(attackers,cornerTakerWeight));
+      else if(roll<.55)addSimEvent(m,"post",minute(),shooter);
       else addSimEvent(m,"chance",minute(),shooter);
     }
     const halfPlayer=hXI[0]||aXI[0];if(halfPlayer)addSimEvent(m,"halftime",45,halfPlayer,null,0);if(halfPlayer)addSimEvent(m,"fulltime",90,halfPlayer,null,0);
@@ -1722,18 +1725,38 @@ async function simulateMatch(matchId){
     m.status="played";
     m.simulated=true;
 
-    const possH=Math.round(clamp(50+(hs-as)*.6+randomNormal()*4,35,65));
-    const shotsH=Math.max(hg+2,Math.round(8+baseHome*3+randomNormal()*2.2));
-    const shotsA=Math.max(ag+2,Math.round(7+baseAway*3+randomNormal()*2.2));
+    // V40 Statistikmodell: Tabellenlage, Form und Stärke sollen sich deutlich in der
+    // Anzahl der Angriffe/Schüsse spiegeln. Ergebnisse bleiben aber nicht deterministisch.
+    let shotEdge=ratingGap*1.15 + seasonGap*6.0 + formGap*3.3 + 1.2 + randomNormal()*2.0;
+    // Seltene statistische Überraschung: der Verlierer kann trotzdem mehr Chancen gehabt haben.
+    const statUpset=Math.random()<.085;
+    if(statUpset && hg!==ag){
+      if(hg>ag)shotEdge=-Math.max(1.5,Math.abs(shotEdge)*.55);
+      else shotEdge=Math.max(1.5,Math.abs(shotEdge)*.55);
+    }
+    const totalShots=clamp(Math.round(21 + Math.abs(ratingGap)*.7 + Math.abs(seasonGap)*4 + randomNormal()*3.2),13,34);
+    let shotsH=Math.round(totalShots/2 + shotEdge/2);
+    let shotsA=totalShots-shotsH;
+    shotsH=clamp(Math.max(hg+2,shotsH),4,26);
+    shotsA=clamp(Math.max(ag+2,shotsA),4,26);
+    // Verhindert, dass die Anpassung der Mindestwerte die Summe völlig aus dem Rahmen zieht.
+    if(shotsH+shotsA>36){const over=shotsH+shotsA-36;if(shotsH>shotsA)shotsH-=over;else shotsA-=over;}
+    const possH=Math.round(clamp(50 + shotEdge*.72 + ratingGap*.22 + randomNormal()*2.5,31,69));
+    const sotH=clamp(Math.max(hg,Math.round(shotsH*(.30+Math.random()*.15))),hg,shotsH);
+    const sotA=clamp(Math.max(ag,Math.round(shotsA*(.30+Math.random()*.15))),ag,shotsA);
+    const qualityH=clamp(baseHome*.72 + shotsH*.055 + sotH*.075,.25,5.2);
+    const qualityA=clamp(baseAway*.72 + shotsA*.055 + sotA*.075,.25,5.0);
     m.statistics={
       possessionHome:possH,possessionAway:100-possH,
       shotsHome:shotsH,shotsAway:shotsA,
-      shotsOnTargetHome:Math.max(hg,Math.round(shotsH*(.32+Math.random()*.16))),
-      shotsOnTargetAway:Math.max(ag,Math.round(shotsA*(.32+Math.random()*.16))),
-      xgHome:Number(clamp(baseHome+randomNormal()*.22,.2,4.7).toFixed(1)),
-      xgAway:Number(clamp(baseAway+randomNormal()*.22,.2,4.4).toFixed(1)),
-      cornersHome:clamp(poisson(4.8),0,12),cornersAway:clamp(poisson(4.2),0,12),
-      foulsHome:clamp(poisson(10.5),5,20),foulsAway:clamp(poisson(11),5,21)
+      shotsOnTargetHome:sotH,shotsOnTargetAway:sotA,
+      xgHome:Number((qualityH+randomNormal()*.14).toFixed(1)),
+      xgAway:Number((qualityA+randomNormal()*.14).toFixed(1)),
+      cornersHome:clamp(Math.round(shotsH*.28+Math.random()*2),0,13),
+      cornersAway:clamp(Math.round(shotsA*.28+Math.random()*2),0,13),
+      foulsHome:clamp(poisson(10.5),5,20),foulsAway:clamp(poisson(11),5,21),
+      bigChancesHome:clamp(Math.round(sotH*.42 + hg*.45 + Math.random()*1.5),0,10),
+      bigChancesAway:clamp(Math.round(sotA*.42 + ag*.45 + Math.random()*1.5),0,10)
     };
     m.statisticsSource="simulated";
     m.simulationFactors={
@@ -1756,7 +1779,7 @@ async function simulateMatch(matchId){
     await saveState({label:"Realistische Spielsimulation",throwOnError:true});
     toast(`${h.short||h.name} ${hg}:${ag} ${a.short||a.name} simuliert`);
     render();
-    // V39: Das simulierte Ergebnis wird anschließend als echte 2D-Live-Partie abgespielt.
+    // V40: Das simulierte Ergebnis wird anschließend als echte 2D-Live-Partie abgespielt.
     // Der Spielstand ist zu diesem Zeitpunkt bereits sicher gespeichert.
     setTimeout(()=>openLiveSimulation(matchId),80);
   }catch(error){
@@ -1771,7 +1794,7 @@ async function simulateMatch(matchId){
   }
 }
 
-// V39 – 2D Live-Match-Ansicht -------------------------------------------------
+// V40 – 2D Live-Match-Ansicht -------------------------------------------------
 // Die Simulation bleibt datengetrieben. Die Visualisierung spielt genau die
 // bereits berechneten Ereignisse ab und erfindet keine zusätzlichen Tore/Karten.
 function liveSimTeamSideForPlayer(m,playerId){
@@ -1862,24 +1885,30 @@ function openLiveSimulation(matchId){
     <div class="live2d-toolbar">
       <button class="live2d-control" id="live2dPause">⏸ Pause</button>
       <div class="live2d-progress"><i id="live2dProgress"></i></div>
-      <button class="live2d-speed" id="live2dSpeed">2×</button>
+      <button class="live2d-speed" id="live2dSpeed">1×</button>
       <button class="live2d-close" id="live2dClose">×</button>
     </div>
     <section class="live2d-pitch" id="live2dPitch" style="--home:${hColor};--away:${aColor}">
       <div class="live2d-field-lines"><i class="half"></i><i class="circle"></i><i class="box left"></i><i class="box right"></i><i class="goal left"></i><i class="goal right"></i></div>
       ${liveSimBuildPlayerNodes(m)}
       <div class="live2d-ball" id="live2dBall">⚽</div>
-      <div class="live2d-scene-caption" id="live2dScene">Anpfiff</div>
+      <div class="live2d-goalflash" id="live2dGoalFlash"><span>TOR!</span><small id="live2dGoalName"></small></div><div class="live2d-scene-caption" id="live2dScene">Anpfiff</div>
     </section>
     <section class="live2d-info">
       <div class="live2d-possession"><span style="--c:${hColor}">${h.short||h.name}</span><b id="live2dPoss">50 : 50</b><span style="--c:${aColor}">${a.short||a.name}</span></div>
+      <div class="live2d-statstrip">
+        <div><span>Schüsse</span><b id="live2dShots">0 : 0</b></div>
+        <div><span>Aufs Tor</span><b id="live2dSot">0 : 0</b></div>
+        <div><span>Großchancen</span><b id="live2dBig">0 : 0</b></div>
+        <div><span>xG</span><b id="live2dXg">0.0 : 0.0</b></div>
+      </div>
       <div class="live2d-ticker" id="live2dTicker">${initialTicker}</div>
     </section>
   </div></div>`;
-  const shell=document.querySelector('.live2d-shell'),clock=el('#live2dClock'),score=el('#live2dScore'),progress=el('#live2dProgress'),ticker=el('#live2dTicker'),scene=el('#live2dScene'),ball=el('#live2dBall');
-  let simSecond=0,lastFrame=performance.now(),paused=false,speed=2,eventIndex=0,raf=0,ended=false,focusTimer=0;
+  const shell=document.querySelector('.live2d-shell'),clock=el('#live2dClock'),score=el('#live2dScore'),progress=el('#live2dProgress'),ticker=el('#live2dTicker'),scene=el('#live2dScene'),ball=el('#live2dBall'),goalFlash=el('#live2dGoalFlash'),goalName=el('#live2dGoalName');
+  let simSecond=0,lastFrame=performance.now(),paused=false,speed=1,eventIndex=0,raf=0,ended=false,focusTimer=0,goalTimer=0;
   const totalSeconds=90*60;
-  const realSecondsAt1x=88; // 90 Spielminuten in 88 echten Sekunden; Standard 2× ≈44 s.
+  const realSecondsAt1x=165; // V40: Standard 1× ≈2:45 Min. 2× ≈82 s, 4× ≈41 s.
   const simPerReal=totalSeconds/realSecondsAt1x;
   const tickerRows=[];
   function nodeFor(id){return shell?.querySelector(`[data-live-player="${Number(id)}"]`)}
@@ -1896,6 +1925,34 @@ function openLiveSimulation(matchId){
       node.style.setProperty('--py',`${clamp(baseY+yWave,5,95)}%`);
     });
   }
+  function liveStatAt(currentMinute){
+    const frac=clamp(Number(currentMinute||0)/90,0,1),st=m.statistics||{};
+    const jitter=(key)=>{const target=Number(st[key]||0);return Math.min(target,Math.max(0,Math.round(target*frac)))};
+    const sh=jitter('shotsHome'),sa=jitter('shotsAway'),oh=Math.min(sh,jitter('shotsOnTargetHome')),oa=Math.min(sa,jitter('shotsOnTargetAway'));
+    const bh=Math.min(Number(st.bigChancesHome||0),Math.round(Number(st.bigChancesHome||0)*frac));
+    const ba=Math.min(Number(st.bigChancesAway||0),Math.round(Number(st.bigChancesAway||0)*frac));
+    const xh=(Number(st.xgHome||0)*frac).toFixed(1),xa=(Number(st.xgAway||0)*frac).toFixed(1);
+    if(el('#live2dShots'))el('#live2dShots').textContent=`${sh} : ${sa}`;
+    if(el('#live2dSot'))el('#live2dSot').textContent=`${oh} : ${oa}`;
+    if(el('#live2dBig'))el('#live2dBig').textContent=`${bh} : ${ba}`;
+    if(el('#live2dXg'))el('#live2dXg').textContent=`${xh} : ${xa}`;
+  }
+  function playGoalAnimation(e,side,actor){
+    if(!goalFlash)return;
+    if(goalTimer)clearTimeout(goalTimer);
+    const scorer=playerById(e.playerId);
+    goalName.textContent=scorer?.name||'';
+    goalFlash.classList.remove('home','away','show');
+    goalFlash.classList.add(side==='away'?'away':'home');
+    void goalFlash.offsetWidth;goalFlash.classList.add('show');
+    if(actor){
+      actor.classList.add('goal-celebrate');
+      const baseY=Number(actor.dataset.baseY||50);
+      actor.style.setProperty('--py',`${clamp(baseY+(baseY<50?-7:7),7,93)}%`);
+      setTimeout(()=>actor.classList.remove('goal-celebrate'),Math.max(700,1600/speed));
+    }
+    goalTimer=setTimeout(()=>goalFlash.classList.remove('show'),Math.max(900,1800/speed));
+  }
   function focusEvent(e){
     const side=liveSimTeamSideForPlayer(m,e.playerId)||(e.attackingTeamId===m.homeId?'home':e.attackingTeamId===m.awayId?'away':null);
     moveTeamShape(side||'home',1);
@@ -1903,13 +1960,15 @@ function openLiveSimulation(matchId){
     if(focusTimer){clearTimeout(focusTimer);focusTimer=0}
     shell?.querySelectorAll('.live2d-player.active').forEach(n=>n.classList.remove('active'));
     actor?.classList.add('active');shooter?.classList.add('active');
-    if(["save"].includes(e.type)&&shooter){setBallAtNode(shooter);setTimeout(()=>setBallAtNode(actor),260/speed)}
-    else if(["goal","penalty","chance","post"].includes(e.type)&&actor){setBallAtNode(actor);setTimeout(()=>{if(ball){ball.style.left=side==='home'?'95%':'5%';ball.style.top='50%'}},280/speed)}
+    if(["save"].includes(e.type)&&shooter){setBallAtNode(shooter);setTimeout(()=>setBallAtNode(actor),420/Math.max(.75,speed))}
+    else if(["goal","penalty","chance","post"].includes(e.type)&&actor){setBallAtNode(actor);setTimeout(()=>{if(ball){ball.style.left=side==='home'?'95%':'5%';ball.style.top='50%'}},460/Math.max(.75,speed))}
     else if(e.type==='corner'&&actor){if(ball){ball.style.left=side==='home'?'96%':'4%';ball.style.top=Number(actor.dataset.baseY)<50?'5%':'95%'}}
     else if(actor)setBallAtNode(actor);
     const title=liveSimEventTitle(e,m);scene.textContent=title;
     scene.classList.remove('show');void scene.offsetWidth;scene.classList.add('show');
     const [gh,ga]=liveSimScoreAt(m,Number(e.minute||0));score.textContent=`${gh} : ${ga}`;
+    liveStatAt(Number(e.minute||0));
+    if(["goal","penalty"].includes(e.type))playGoalAnimation(e,side,actor);
     tickerRows.unshift(`<div class="live2d-ticker-row ${["goal","penalty"].includes(e.type)?'goal':''}"><b>${Number(e.minute||0)}'</b><span>${title}</span></div>`);
     ticker.innerHTML=tickerRows.slice(0,4).join('');
     // Fokus nur kurz halten, damit danach wieder normales Pass-/Verschiebespiel sichtbar ist.
@@ -1917,10 +1976,10 @@ function openLiveSimulation(matchId){
       if(!shell||!document.body.contains(shell))return;
       shell.querySelectorAll('.live2d-player.active').forEach(n=>n.classList.remove('active'));
       scene.classList.remove('show');
-    },Math.max(350,1050/speed));
+    },Math.max(700,1750/Math.max(.75,speed)));
   }
   function finish(){
-    if(ended)return;ended=true;if(focusTimer)clearTimeout(focusTimer);cancelAnimationFrame(raf);clock.textContent="90:00";score.textContent=`${m.homeGoals||0} : ${m.awayGoals||0}`;progress.style.width='100%';scene.textContent='🏁 Abpfiff';scene.classList.add('show');
+    if(ended)return;ended=true;if(focusTimer)clearTimeout(focusTimer);if(goalTimer)clearTimeout(goalTimer);cancelAnimationFrame(raf);clock.textContent="90:00";score.textContent=`${m.homeGoals||0} : ${m.awayGoals||0}`;progress.style.width='100%';liveStatAt(90);scene.textContent='🏁 Abpfiff';scene.classList.add('show');
     tickerRows.unshift(`<div class="live2d-ticker-row full"><b>90'</b><span>🏁 Abpfiff · ${h.short||h.name} ${m.homeGoals||0}:${m.awayGoals||0} ${a.short||a.name}</span></div>`);ticker.innerHTML=tickerRows.slice(0,4).join('');
     el('#live2dPause').textContent='✓ Beendet';el('#live2dPause').disabled=true;
     setTimeout(()=>{if(document.querySelector('.live2d-shell')){closeOverlay();openMatch(matchId)}},2600);
@@ -1949,7 +2008,7 @@ function openLiveSimulation(matchId){
   }
   el('#live2dPause').onclick=()=>{if(ended)return;paused=!paused;el('#live2dPause').textContent=paused?'▶ Weiter':'⏸ Pause';lastFrame=performance.now()};
   el('#live2dSpeed').onclick=()=>{speed=speed===1?2:speed===2?4:speed===4?8:1;el('#live2dSpeed').textContent=`${speed}×`};
-  el('#live2dClose').onclick=()=>{if(focusTimer)clearTimeout(focusTimer);cancelAnimationFrame(raf);closeOverlay();openMatch(matchId)};
+  el('#live2dClose').onclick=()=>{if(focusTimer)clearTimeout(focusTimer);if(goalTimer)clearTimeout(goalTimer);cancelAnimationFrame(raf);closeOverlay();openMatch(matchId)};
   // Startball beim Heim-ZM.
   const startNode=shell.querySelector('.live2d-player.home:nth-of-type(7)')||shell.querySelector('.live2d-player.home');if(startNode)setBallAtNode(startNode);
   raf=requestAnimationFrame(tick);

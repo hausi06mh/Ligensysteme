@@ -1,4 +1,4 @@
-const CACHE="fantasy-liga-v39-live2d";
+const CACHE="fantasy-liga-v40-live2d-plus";
 const ASSETS=[
   "./","./index.html","./styles.css","./seed.json","./manifest.webmanifest",
   "./app.js","./playerUniverse.js","./managerWorld.js","./stabilityCareer.js","./store.js","./ui.js","./standings.js",
