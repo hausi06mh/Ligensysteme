@@ -1907,7 +1907,7 @@ function openLiveSimulation(matchId){
   events.sort((x,y)=>x.__liveSecond-y.__liveSecond);
 
   const {home:hColor,away:aColor}=distinctMatchColors(h,a);
-  el('#overlay').innerHTML=`<div class="modal live2d-modal"><div class="live2d-shell live2d-v50 live2d-v52 live2d-v54 live2d-v55" style="--liveTempo:1.05s;--home:${hColor};--away:${aColor};${h.stadium?.image?`--stadium-photo:url(\'${h.stadium.image}\');`:``}">
+  el('#overlay').innerHTML=`<div class="modal live2d-modal"><div class="live2d-shell live2d-v50 live2d-v52 live2d-v54 live2d-v55 live2d-v56" style="--liveTempo:1.05s;--home:${hColor};--away:${aColor};${h.stadium?.image?`--stadium-photo:url(\'${h.stadium.image}\');`:``}">
     <header class="v50-scoreboard">
       <div class="v50-team home">${badge(h)}<div><small>${h.short||"HEIM"}</small><strong>${h.name}</strong><span>HEIM</span></div></div>
       <div class="v50-score-center"><small id="live2dPeriod">1. HZ</small><strong id="live2dScore">0 : 0</strong><b id="live2dClock">00:00</b></div>
@@ -1974,7 +1974,7 @@ function openLiveSimulation(matchId){
   let ballCarrierNode=null,ballFlightRAF=0,traceTimer=0,actionTimer=0,possTimer=0,statusTimer=0;
   let possessionSide=Math.random()<(Number(m.statistics?.possessionHome||50)/100)?'home':'away';
   let currentBallPlayerId=null,cinematicUntil=0,nextAmbientAction=70,nextShapeReal=0,shapeNonce=0,ballInFlight=false,restartLock=false,lastAmbientTickerAt=-999,lastAmbientTickerKey='';
-  const totalSeconds=90*60,realSecondsAt1x=420,simPerReal=totalSeconds/realSecondsAt1x,tickerRows=[];
+  const totalSeconds=90*60,realSecondsAt1x=360,simPerReal=totalSeconds/realSecondsAt1x,tickerRows=[];
   const liveRuntime={shotsHome:0,shotsAway:0,sotHome:0,sotAway:0,bigHome:0,bigAway:0,cornersHome:0,cornersAway:0,foulsHome:0,foulsAway:0,xgHome:0,xgAway:0};
   const countedLiveEvents=new Set();
 
@@ -2057,7 +2057,7 @@ function openLiveSimulation(matchId){
 
   // Das Team bewegt sich als Block, aber jeder Spieler bekommt eigene Läufe.
   function updateDynamicShape(force=false){
-    if(!shell||ended||paused)return;const now=performance.now();if(!force&&now<nextShapeReal)return;nextShapeReal=now+(95+Math.random()*75)/Math.max(.82,Math.sqrt(speed));shapeNonce++;
+    if(!shell||ended||paused)return;const now=performance.now();if(!force&&now<nextShapeReal)return;nextShapeReal=now+(310+Math.random()*150)/Math.max(.82,Math.sqrt(speed));shapeNonce++;
     const carrier=nodeFor(currentBallPlayerId),carrierPos=carrier?currentXY(carrier):{x:50,y:50};
     ['home','away'].forEach(side=>{
       const own=side===possessionSide,dir=attackingDir(side),nodes=sideNodes(side),ballProgress=side==='home'?carrierPos.x:100-carrierPos.x;
@@ -2085,7 +2085,7 @@ function openLiveSimulation(matchId){
           y+=(50-b.y)*.10+wave2*(g==='ST'?4:2.2);
         }
         // Jeder Spieler bleibt sichtbar in Bewegung, aber ohne hektisches Zittern.
-        x+=wave*(g==='ST'?6.1:g==='AM'?4.8:g==='MID'?3.3:2.2);y+=wave2*(g==='ST'?6.3:g==='AM'?5.2:g==='MID'?3.8:2.6);
+        x+=wave*(g==='ST'?2.8:g==='AM'?2.4:g==='MID'?1.8:1.2);y+=wave2*(g==='ST'?3.2:g==='AM'?2.7:g==='MID'?2.0:1.4);
         // ballnahe Spieler bieten sich aktiv an; ballferne laufen in Anschlussräume.
         const dBall=Math.hypot(x-carrierPos.x,y-carrierPos.y);if(own&&dBall<34&&g!=='GK'){x+=dir*(2.8+Math.max(0,wave)*4.1);y+=Math.sign(y-carrierPos.y||1)*(1.9+Math.abs(wave2)*3.1)} if(own&&g==='ST'&&dBall>18){x+=dir*(3.6+Math.abs(wave)*3.5)}
         setNodeXY(node,x,y);
@@ -2127,8 +2127,8 @@ function openLiveSimulation(matchId){
     support.forEach((n,i)=>{if(isLocked(n))return;const p=currentXY(n),dir=attackingDir(side);if(groupOf(n)==='ST'||groupOf(n)==='AM')runTo(n,p.x+dir*(1.2+Math.random()*4.4),p.y+(Math.random()-.5)*8,1150*scale+i*18,'runner');else runTo(n,p.x+dir*(0.6+Math.random()*2.2),p.y+(Math.random()-.5)*4.2,980*scale+i*14,'runner')});
     if(through){const lane=(Math.random()-.5)*9;runIntoSpace(to,side,12+Math.random()*11,lane,1750*scale);showScene(`${playerLabel(from)} spielt steil in den Lauf von ${playerLabel(to)}`);showAction('STEILPASS',`${playerLabel(from)} → ${playerLabel(to)}`,'in den freien Raum',side,1900*scale);lead=280*scale}
     else if(long){runIntoSpace(to,side,5+Math.random()*7,(Math.random()-.5)*8,1580*scale);showScene(`${playerLabel(from)} verlagert auf ${playerLabel(to)}`);showAction('SEITENWECHSEL',`${playerLabel(from)} → ${playerLabel(to)}`,'Verlagerung',side,1800*scale);lead=180*scale}
-    else {if(groupOf(to)==='ST'||groupOf(to)==='AM')runIntoSpace(to,side,2+Math.random()*4,(Math.random()-.5)*5,1180*scale);showScene(label||`${playerLabel(from)} findet ${playerLabel(to)}`);showAction('PASS',`${playerLabel(from)} → ${playerLabel(to)}`,'Kurzpass',side,1280*scale)}
-    const duration=clamp(720+dist0*20+(long?340:0)+(through?110:0),820,2200)*scale;
+    else {if(groupOf(to)==='ST'||groupOf(to)==='AM')runIntoSpace(to,side,2+Math.random()*4,(Math.random()-.5)*5,1180*scale);showScene(label||`${playerLabel(from)} findet ${playerLabel(to)}`);showAction('PASS',`${playerLabel(from)} → ${playerLabel(to)}`,'Kurzpass',side,850*scale)}
+    const duration=clamp(900+dist0*24+(long?420:0)+(through?170:0),980,2500)*scale;
     later(()=>{const start=actualXY(from);flyBall(start,()=>actualXY(to),duration,{air:long||through,kind:through?'through':long?'long':'pass',onDone:()=>{if(ended)return;from.classList.remove('active');to.classList.add('active','receiving');setBallAtNode(to);showScene(`${playerLabel(to)} nimmt den Ball mit`);nextAmbientAction=Math.min(nextAmbientAction,simSecond+4+Math.random()*3);later(()=>to.classList.remove('active','receiving'),650*scale)}})},lead);
     return duration+lead;
   }
@@ -2240,8 +2240,8 @@ function openLiveSimulation(matchId){
     else if(r<drib+through+long+.11){const opp=nearestOpp(carrier);if(opp&&Math.random()<.27)turnover(carrier,opp);else dribble(carrier,side,false)}
     else if(r<drib+through+long+.16&&progressFor(carrier,side)>58){arrangeFreeKick(side)}
     else {const to=choosePassTarget(carrier,side,{});if(to)animatePass(carrier,to,{})}
-    if(!restartLock&&Math.random()<.075){possessionSide=side==='home'?'away':'home';const c=chooseCarrier(possessionSide);later(()=>{if(c&&!ballInFlight)setBallAtNode(c)},900*tempoScale())}
-    nextAmbientAction=simSecond+9+Math.random()*11;
+    if(!restartLock&&Math.random()<.025){possessionSide=side==='home'?'away':'home';const c=chooseCarrier(possessionSide);later(()=>{if(c&&!ballInFlight)setBallAtNode(c)},900*tempoScale())}
+    nextAmbientAction=simSecond+15+Math.random()*13;
   }
 
   function liveStatAt(currentMinute){refreshRuntimeStats()}
@@ -2273,7 +2273,7 @@ function openLiveSimulation(matchId){
   function tick(now){
     if(!shell||!document.body.contains(shell))return;const dt=Math.min(.055,(now-lastFrame)/1000);lastFrame=now;
     if(!paused&&!ended){
-      const cinematicFactor=now<cinematicUntil?.30:1;simSecond=Math.min(totalSeconds,simSecond+dt*simPerReal*speed*cinematicFactor);const minute=simSecond/60,whole=Math.floor(minute),sec=Math.floor((minute-whole)*60);clock.textContent=`${String(Math.min(90,whole)).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;progress.style.width=`${(simSecond/totalSeconds)*100}%`;if(period)period.textContent=whole<45?'1. HZ':whole<90?'2. HZ':'ENDE';
+      simSecond=Math.min(totalSeconds,simSecond+dt*simPerReal*speed);const minute=simSecond/60,whole=Math.floor(minute),sec=Math.floor((minute-whole)*60);clock.textContent=`${String(Math.min(90,whole)).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;progress.style.width=`${(simSecond/totalSeconds)*100}%`;if(period)period.textContent=whole<45?'1. HZ':whole<90?'2. HZ':'ENDE';
       refreshRuntimeStats();updateDynamicShape();if(ballCarrierNode&&!ballInFlight){const bp=actualXY(ballCarrierNode);rawBallXY(bp.x,bp.y,false)}
       while(eventIndex<events.length&&Number(events[eventIndex].__liveSecond||0)<=simSecond){focusEvent(events[eventIndex++])}
       if(simSecond>=nextAmbientAction&&now>=cinematicUntil&&!restartLock)ambientAttack();if(simSecond>=totalSeconds)return finish();

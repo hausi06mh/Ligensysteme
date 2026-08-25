@@ -1,9 +1,3 @@
-FANTASY LIGA ELITE V55 — REFERENCE BROADCAST
+Fantasy Liga Elite V56 – Clean Football Match Engine
 
-V54 plus revised simulation presentation matching the supplied broadcast reference more closely:
-- full, unclipped pitch instead of exaggerated 3D tilt
-- stadium/photo atmosphere kept as a narrow broadcast backdrop
-- both goals remain clearly visible
-- ball reduced to a realistic but readable 13–14 px
-- compact player markers and labels
-- existing V54 simulation logic/data retained
+Aufbauend auf V55: sauberes Spielfeld, echte Torrahmen/Netzoptik, kleiner weißer Ball, stabiler Match-Timer, ruhigere Laufwege, langsamere Pässe, weniger Ping-Pong und klarere Abschluss-/Torwart-Szenen. Bestehende Karriere-/Importdaten bleiben kompatibel.
