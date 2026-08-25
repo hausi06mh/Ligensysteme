@@ -1904,24 +1904,28 @@ function openLiveSimulation(matchId){
       <div class="live2d-setpiece" id="live2dSetpiece"></div>
       <div class="live2d-scene-caption show" id="live2dScene">⚽ Anstoß</div>
     </section>
-    <div class="live2d-hud-buttons">
-      <button class="live2d-hud-btn" id="live2dTickerBtn">💬 Live-Ticker</button>
-      <button class="live2d-hud-btn" id="live2dStatsBtn">▥ Statistiken</button>
+    <section class="live2d-broadcast-dock">
+      <aside class="live2d-broadcast-card stats-panel open" id="live2dStatsPanel">
+        <div class="live2d-panel-head compact"><b>LIVE-STATISTIKEN</b></div>
+        <div class="live2d-possession"><span style="--c:${hColor}">${h.short||h.name}</span><b id="live2dPoss">50 : 50</b><span style="--c:${aColor}">${a.short||a.name}</span></div>
+        <div class="live2d-statstrip broadcast-statstrip">
+          <div><span>Ballbesitz</span><b id="live2dPossMini">50 : 50</b></div>
+          <div><span>Schüsse</span><b id="live2dShots">0 : 0</b></div>
+          <div><span>Aufs Tor</span><b id="live2dSot">0 : 0</b></div>
+          <div><span>Großch.</span><b id="live2dBig">0 : 0</b></div>
+          <div><span>Ecken</span><b id="live2dCorners">0 : 0</b></div>
+          <div><span>xG</span><b id="live2dXg">0.0 : 0.0</b></div>
+        </div>
+      </aside>
+      <aside class="live2d-broadcast-card ticker-panel open" id="live2dTickerPanel">
+        <div class="live2d-panel-head compact"><b>LIVE-TICKER</b><span class="live2d-panel-sub">Szenen & Spielverlauf</span></div>
+        <div class="live2d-ticker" id="live2dTicker"><div class="live2d-ticker-empty">Anstoß – ${h.name} gegen ${a.name}</div></div>
+      </aside>
+    </section>
+    <div class="live2d-hud-buttons live2d-hud-buttons-broadcast">
+      <button class="live2d-hud-btn active" id="live2dTickerBtn">💬 Live-Ticker</button>
+      <button class="live2d-hud-btn active" id="live2dStatsBtn">▥ Statistiken</button>
     </div>
-    <aside class="live2d-glass-panel ticker-panel" id="live2dTickerPanel">
-      <div class="live2d-panel-head"><b>Live-Ticker</b><button data-live-panel-close>×</button></div>
-      <div class="live2d-ticker" id="live2dTicker"><div class="live2d-ticker-empty">Anstoß – ${h.name} gegen ${a.name}</div></div>
-    </aside>
-    <aside class="live2d-glass-panel stats-panel" id="live2dStatsPanel">
-      <div class="live2d-panel-head"><b>Live-Statistiken</b><button data-live-panel-close>×</button></div>
-      <div class="live2d-possession"><span style="--c:${hColor}">${h.short||h.name}</span><b id="live2dPoss">50 : 50</b><span style="--c:${aColor}">${a.short||a.name}</span></div>
-      <div class="live2d-statstrip">
-        <div><span>Schüsse</span><b id="live2dShots">0 : 0</b></div>
-        <div><span>Aufs Tor</span><b id="live2dSot">0 : 0</b></div>
-        <div><span>Großchancen</span><b id="live2dBig">0 : 0</b></div>
-        <div><span>xG</span><b id="live2dXg">0.0 : 0.0</b></div>
-      </div>
-    </aside>
   </div></div>`;
 
   const shell=document.querySelector('.live2d-shell'),pitch=el('#live2dPitch'),clock=el('#live2dClock'),score=el('#live2dScore'),period=el('#live2dPeriod'),progress=el('#live2dProgress'),ticker=el('#live2dTicker'),scene=el('#live2dScene'),ball=el('#live2dBall'),goalFlash=el('#live2dGoalFlash'),goalName=el('#live2dGoalName'),setpiece=el('#live2dSetpiece'),tickerPanel=el('#live2dTickerPanel'),statsPanel=el('#live2dStatsPanel'),traceMain=el('#live2dTraceMain'),attackBar=el('#live2dAttackBar'),attackTeam=el('#live2dAttackTeam'),possFlash=el('#live2dPossFlash'),actionCard=el('#live2dActionCard'),actionType=el('#live2dActionType'),actionTitle=el('#live2dActionTitle'),actionDetail=el('#live2dActionDetail');
@@ -2158,8 +2162,11 @@ function openLiveSimulation(matchId){
 
   function liveStatAt(currentMinute){
     const frac=clamp(Number(currentMinute||0)/90,0,1),st=m.statistics||{},scaled=key=>{const target=Number(st[key]||0);return Math.min(target,Math.max(0,Math.round(target*frac)))};
-    const sh=scaled('shotsHome'),sa=scaled('shotsAway'),oh=Math.min(sh,scaled('shotsOnTargetHome')),oa=Math.min(sa,scaled('shotsOnTargetAway')),bh=Math.min(Number(st.bigChancesHome||0),Math.round(Number(st.bigChancesHome||0)*frac)),ba=Math.min(Number(st.bigChancesAway||0),Math.round(Number(st.bigChancesAway||0)*frac)),xh=(Number(st.xgHome||0)*frac).toFixed(1),xa=(Number(st.xgAway||0)*frac).toFixed(1);
-    el('#live2dShots').textContent=`${sh} : ${sa}`;el('#live2dSot').textContent=`${oh} : ${oa}`;el('#live2dBig').textContent=`${bh} : ${ba}`;el('#live2dXg').textContent=`${xh} : ${xa}`;
+    const sh=scaled('shotsHome'),sa=scaled('shotsAway'),oh=Math.min(sh,scaled('shotsOnTargetHome')),oa=Math.min(sa,scaled('shotsOnTargetAway')),bh=Math.min(Number(st.bigChancesHome||0),Math.round(Number(st.bigChancesHome||0)*frac)),ba=Math.min(Number(st.bigChancesAway||0),Math.round(Number(st.bigChancesAway||0)*frac)),xh=(Number(st.xgHome||0)*frac).toFixed(2),xa=(Number(st.xgAway||0)*frac).toFixed(2),ch=scaled('cornersHome'),ca=scaled('cornersAway');
+    const possH=Number(st.possessionHome||50), possText=`${possH} : ${100-possH}`;
+    const poss=el('#live2dPoss'), possMini=el('#live2dPossMini'), shots=el('#live2dShots'), sot=el('#live2dSot'), big=el('#live2dBig'), xg=el('#live2dXg'), corners=el('#live2dCorners');
+    if(poss)poss.textContent=possText; if(possMini)possMini.textContent=possText;
+    if(shots)shots.textContent=`${sh} : ${sa}`; if(sot)sot.textContent=`${oh} : ${oa}`; if(big)big.textContent=`${bh} : ${ba}`; if(xg)xg.textContent=`${xh} : ${xa}`; if(corners)corners.textContent=`${ch} : ${ca}`;
   }
 
   function playGoalAnimation(e,side,actor){
@@ -2202,17 +2209,17 @@ function openLiveSimulation(matchId){
     if(!shell||!document.body.contains(shell))return;const dt=Math.min(.055,(now-lastFrame)/1000);lastFrame=now;
     if(!paused&&!ended){
       const cinematicFactor=now<cinematicUntil?.30:1;simSecond=Math.min(totalSeconds,simSecond+dt*simPerReal*speed*cinematicFactor);const minute=simSecond/60,whole=Math.floor(minute),sec=Math.floor((minute-whole)*60);clock.textContent=`${String(Math.min(90,whole)).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;progress.style.width=`${(simSecond/totalSeconds)*100}%`;if(period)period.textContent=whole<45?'1. HZ':whole<90?'2. HZ':'ENDE';
-      const possH=Number(m.statistics?.possessionHome||50);el('#live2dPoss').textContent=`${possH} : ${100-possH}`;updateDynamicShape();if(ballCarrierNode&&!ballInFlight){const bp=actualXY(ballCarrierNode);rawBallXY(bp.x,bp.y,false)}
+      const possH=Number(m.statistics?.possessionHome||50);el('#live2dPoss').textContent=`${possH} : ${100-possH}`;const possMini=el('#live2dPossMini');if(possMini)possMini.textContent=`${possH} : ${100-possH}`;updateDynamicShape();if(ballCarrierNode&&!ballInFlight){const bp=actualXY(ballCarrierNode);rawBallXY(bp.x,bp.y,false)}
       while(eventIndex<events.length&&Number(events[eventIndex].__liveSecond||0)<=simSecond){focusEvent(events[eventIndex++])}
       if(simSecond>=nextAmbientAction&&now>=cinematicUntil&&!restartLock)ambientAttack();if(simSecond>=totalSeconds)return finish();
     }
     raf=requestAnimationFrame(tick);
   }
 
-  const togglePanel=(panel)=>{if(!panel)return;const opening=!panel.classList.contains('open');[tickerPanel,statsPanel].forEach(p=>p?.classList.remove('open'));if(opening)panel.classList.add('open')};
+  const togglePanel=(panel)=>{if(!panel)return;panel.scrollIntoView({behavior:'smooth',block:'nearest'});panel.classList.add('pulse');setTimeout(()=>panel.classList.remove('pulse'),700)};
   el('#live2dTickerBtn').onclick=()=>togglePanel(tickerPanel);
   el('#live2dStatsBtn').onclick=()=>togglePanel(statsPanel);
-  shell.querySelectorAll('[data-live-panel-close]').forEach(b=>b.onclick=()=>b.closest('.live2d-glass-panel')?.classList.remove('open'));
+  shell.querySelectorAll('[data-live-panel-close]').forEach(b=>b.onclick=()=>{});
   el('#live2dPause').onclick=()=>{if(ended)return;paused=!paused;el('#live2dPause').textContent=paused?'▶ Weiter':'⏸ Pause';lastFrame=performance.now()};
   el('#live2dSpeed').onclick=()=>{speed=speed===1?2:speed===2?4:speed===4?8:1;el('#live2dSpeed').textContent=`${speed}×`;setTempo()};
   el('#live2dClose').onclick=()=>{clearSequenceTimers();if(goalTimer)clearTimeout(goalTimer);cancelAnimationFrame(raf);closeOverlay();openMatch(matchId)};
