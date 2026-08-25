@@ -1,3 +1,3 @@
-Fantasy Liga Elite V56 – Clean Football Match Engine
+Fantasy Liga Elite V57 – Rebuilt Match Engine
 
-Aufbauend auf V55: sauberes Spielfeld, echte Torrahmen/Netzoptik, kleiner weißer Ball, stabiler Match-Timer, ruhigere Laufwege, langsamere Pässe, weniger Ping-Pong und klarere Abschluss-/Torwart-Szenen. Bestehende Karriere-/Importdaten bleiben kompatibel.
+Grundlegender Neuaufbau der 2D-Simulation: stabiler 90-Minuten-Timer, keine überlappenden Animationen, ruhigere positionsbezogene Laufwege, echter Abschluss-Trigger im letzten Drittel, sichtbare Torwartparaden, weißer Ball, neues Fußballfeld mit korrekten Strafräumen und Toren.

@@ -1474,3 +1474,39 @@ repeating-linear-gradient(90deg,#1b783f 0 8.33%,#207f45 8.33% 16.66%);border:1px
 .live2d-v56 .live2d-player{transition:left .95s cubic-bezier(.22,.61,.36,1),top .95s cubic-bezier(.22,.61,.36,1)!important}.live2d-v56 .live2d-player .live2d-dot{width:18px!important;height:18px!important;font-size:7px!important;border:1.5px solid #fff!important}.live2d-v56 .live2d-player small{font-size:5.2px!important}
 .live2d-v56 .live2d-action-card{max-width:42%!important;min-width:0!important;padding:7px 10px!important;bottom:7px!important;left:50%!important;transform:translateX(-50%) translateY(8px)!important}.live2d-v56 .live2d-action-card.show{transform:translateX(-50%) translateY(0)!important}.live2d-v56 .live2d-action-card small{font-size:6px!important}.live2d-v56 .live2d-action-card strong{font-size:9px!important}.live2d-v56 .live2d-action-card span{font-size:6px!important}.live2d-v56 .live2d-scene-caption{font-size:7px!important;bottom:3px!important;padding:4px 8px!important;opacity:.88!important}
 @media(max-width:560px){.live2d-v56 .v54-stadium-wrap{padding-left:7px!important;padding-right:7px!important}.live2d-v56 .v50-pitch{aspect-ratio:105/69!important}.live2d-v56 .live2d-ball{width:10px!important;height:10px!important}}
+
+/* === V57 REBUILT MATCH ENGINE / CLEAN BROADCAST FIELD === */
+.live2d-v57 .v54-stadium-wrap{padding:32px 12px 12px!important;background:linear-gradient(180deg,#071018,#09141b)!important;overflow:hidden!important}
+.live2d-v57 .v54-stadium-photo{height:92px!important;opacity:.54!important;filter:brightness(.42) saturate(.85) contrast(1.05)!important;background-position:center 35%!important}
+.live2d-v57 .v50-stadium-band{top:27px!important;height:24px!important;background:#070d11!important;border-top:1px solid rgba(255,255,255,.04)!important;border-bottom:1px solid rgba(255,255,255,.08)!important}
+.live2d-v57 .v50-pitch{position:relative!important;width:96%!important;margin:22px auto 0!important;aspect-ratio:105/68!important;border:2px solid rgba(255,255,255,.9)!important;border-radius:8px!important;clip-path:none!important;transform:none!important;background:repeating-linear-gradient(90deg,#327d38 0 9.09%,#398943 9.09% 18.18%)!important;box-shadow:0 18px 38px rgba(0,0,0,.34),inset 0 0 46px rgba(0,0,0,.08)!important;overflow:visible!important}
+.live2d-v57 .v50-pitch.camera-zoom{transform:scale(1.02)!important}
+.live2d-v57 .live2d-field-lines{position:absolute!important;inset:0!important;pointer-events:none!important}
+.live2d-v57 .live2d-field-lines i{border-color:rgba(255,255,255,.88)!important;box-sizing:border-box!important}
+.live2d-v57 .live2d-field-lines .touch{display:none!important}
+.live2d-v57 .live2d-field-lines .half{position:absolute!important;left:50%!important;top:0!important;bottom:0!important;height:auto!important;border:0!important;border-left:2px solid rgba(255,255,255,.88)!important}
+.live2d-v57 .live2d-field-lines .circle{position:absolute!important;left:41.4%!important;top:36.6%!important;width:17.2%!important;height:26.8%!important;border:2px solid rgba(255,255,255,.88)!important;border-radius:50%!important}
+.live2d-v57 .live2d-field-lines .center-dot{position:absolute!important;left:50%!important;top:50%!important;width:5px!important;height:5px!important;border:0!important;border-radius:50%!important;background:#fff!important;transform:translate(-50%,-50%)!important}
+.live2d-v57 .live2d-field-lines .box{position:absolute!important;top:20.6%!important;width:16.5%!important;height:58.8%!important;border:2px solid rgba(255,255,255,.88)!important}
+.live2d-v57 .live2d-field-lines .box.left{left:0!important;border-left:0!important}.live2d-v57 .live2d-field-lines .box.right{right:0!important;border-right:0!important}
+.live2d-v57 .live2d-field-lines .six{position:absolute!important;top:36.2%!important;width:5.3%!important;height:27.6%!important;border:2px solid rgba(255,255,255,.88)!important}
+.live2d-v57 .live2d-field-lines .six.left{left:0!important;border-left:0!important}.live2d-v57 .live2d-field-lines .six.right{right:0!important;border-right:0!important}
+.live2d-v57 .live2d-field-lines .spot{position:absolute!important;top:50%!important;width:5px!important;height:5px!important;border:0!important;background:#fff!important;border-radius:50%!important;transform:translateY(-50%)!important}
+.live2d-v57 .live2d-field-lines .spot.left{left:10.5%!important}.live2d-v57 .live2d-field-lines .spot.right{right:10.5%!important}
+.live2d-v57 .live2d-field-lines .arc{display:none!important}
+.live2d-v57 .live2d-field-lines .goal{display:block!important;position:absolute!important;top:43.1%!important;width:3.2%!important;height:13.8%!important;border:2px solid rgba(255,255,255,.96)!important;background:repeating-linear-gradient(0deg,rgba(255,255,255,.38) 0 1px,transparent 1px 5px),repeating-linear-gradient(90deg,rgba(255,255,255,.34) 0 1px,transparent 1px 5px)!important;box-shadow:0 2px 7px rgba(0,0,0,.44)!important;z-index:4!important}
+.live2d-v57 .live2d-field-lines .goal.left{left:-3.2%!important;border-right-width:2px!important}.live2d-v57 .live2d-field-lines .goal.right{right:-3.2%!important;border-left-width:2px!important}
+.live2d-v57 .live2d-field-lines .corner{display:none!important}
+.live2d-v57 .live2d-ball{width:10px!important;height:10px!important;border-radius:50%!important;background:#fff!important;border:1px solid rgba(0,0,0,.48)!important;box-shadow:0 2px 4px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.42)!important;z-index:100!important}
+.live2d-v57 .live2d-ball span{display:none!important}.live2d-v57 .live2d-ball.air{transform:translate(-50%,-50%) scale(1.12)!important;background:#fff!important}
+.live2d-v57 .live2d-player{transition:left 1.0s cubic-bezier(.22,.61,.36,1),top 1.0s cubic-bezier(.22,.61,.36,1)!important;z-index:20!important}
+.live2d-v57 .live2d-player .live2d-dot{width:18px!important;height:18px!important;font-size:7px!important;border:1.5px solid rgba(255,255,255,.94)!important;box-shadow:0 2px 5px rgba(0,0,0,.48)!important}
+.live2d-v57 .live2d-player small{font-size:5.2px!important;max-width:43px!important;padding:2px 4px!important;background:rgba(2,10,14,.88)!important;border-radius:6px!important}
+.live2d-v57 .live2d-attackbar{top:10px!important;left:14px!important;padding:7px 11px!important;font-size:8px!important;z-index:110!important}
+.live2d-v57 .live2d-possession-flash{bottom:8px!important;left:12px!important;max-width:42%!important;font-size:7px!important;padding:6px 9px!important;z-index:110!important}
+.live2d-v57 .live2d-action-card{max-width:44%!important;min-width:0!important;left:50%!important;bottom:7px!important;padding:7px 10px!important;transform:translateX(-50%) translateY(8px)!important;z-index:115!important}
+.live2d-v57 .live2d-action-card.show{transform:translateX(-50%) translateY(0)!important}.live2d-v57 .live2d-action-card small{font-size:6px!important}.live2d-v57 .live2d-action-card strong{font-size:9px!important}.live2d-v57 .live2d-action-card span{font-size:6px!important}
+.live2d-v57 .live2d-scene-caption{display:none!important}
+@media(max-width:560px){
+ .live2d-v57 .v54-stadium-wrap{padding:26px 8px 10px!important}.live2d-v57 .v54-stadium-photo{height:72px!important}.live2d-v57 .v50-stadium-band{top:22px!important;height:20px!important}.live2d-v57 .v50-pitch{width:95%!important;margin-top:18px!important;aspect-ratio:105/69!important}.live2d-v57 .live2d-ball{width:9px!important;height:9px!important}.live2d-v57 .live2d-player .live2d-dot{width:17px!important;height:17px!important}.live2d-v57 .live2d-player small{font-size:4.9px!important;max-width:39px!important}
+}
