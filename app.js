@@ -1742,10 +1742,15 @@ async function simulateMatch(matchId){
     const halfPlayer=hXI[0]||aXI[0];if(halfPlayer)addSimEvent(m,"halftime",45,halfPlayer,null,0);if(halfPlayer)addSimEvent(m,"fulltime",90,halfPlayer,null,0);
 
     m.events.sort((x,y)=>Number(x.minute||0)-Number(y.minute||0));
-    m.homeGoals=hg;
-    m.awayGoals=ag;
-    m.status="played";
-    m.simulated=true;
+    // V58: Endergebnis bleibt bis zum Abpfiff verborgen.
+    // Die Live-Simulation kennt die Torereignisse, aber Tabellen/Spieltag sehen noch kein Endresultat.
+    m.__liveFinalHome=hg;
+    m.__liveFinalAway=ag;
+    m.homeGoals=0;
+    m.awayGoals=0;
+    m.status="scheduled";
+    m.simulated=false;
+    m.__livePreview=true;
 
     // V41 Statistikmodell: Tabellenlage, Form und Stärke sollen sich deutlich in der
     // Anzahl der Angriffe/Schüsse spiegeln. Ergebnisse bleiben aber nicht deterministisch.
@@ -1799,10 +1804,9 @@ async function simulateMatch(matchId){
     rebuildPlayerStats();
     delete m.__simulationBusy;
     await saveState({label:"Realistische Spielsimulation",throwOnError:true});
-    toast(`${h.short||h.name} ${hg}:${ag} ${a.short||a.name} simuliert`);
+    toast(`Live-Simulation gestartet`);
     render();
-    // V41: Das simulierte Ergebnis wird anschließend als echte 2D-Live-Partie abgespielt.
-    // Der Spielstand ist zu diesem Zeitpunkt bereits sicher gespeichert.
+    // V58: Das Ergebnis wird erst beim Abpfiff übernommen. Bis dahin bleibt es verborgen.
     setTimeout(()=>openLiveSimulation(matchId),80);
   }catch(error){
     console.error("Simulation fehlgeschlagen:",error);
@@ -1907,7 +1911,7 @@ function openLiveSimulation(matchId){
   events.sort((x,y)=>x.__liveSecond-y.__liveSecond);
 
   const {home:hColor,away:aColor}=distinctMatchColors(h,a);
-  el('#overlay').innerHTML=`<div class="modal live2d-modal"><div class="live2d-shell live2d-v50 live2d-v52 live2d-v54 live2d-v55 live2d-v56 live2d-v57" style="--liveTempo:1.05s;--home:${hColor};--away:${aColor};${h.stadium?.image?`--stadium-photo:url(\'${h.stadium.image}\');`:``}">
+  el('#overlay').innerHTML=`<div class="modal live2d-modal"><div class="live2d-shell live2d-v50 live2d-v52 live2d-v54 live2d-v55 live2d-v56 live2d-v57 live2d-v58 live2d-v59" style="--liveTempo:1.05s;--home:${hColor};--away:${aColor};${h.stadium?.image?`--stadium-photo:url(\'${h.stadium.image}\');`:``}">
     <header class="v50-scoreboard">
       <div class="v50-team home">${badge(h)}<div><small>${h.short||"HEIM"}</small><strong>${h.name}</strong><span>HEIM</span></div></div>
       <div class="v50-score-center"><small id="live2dPeriod">1. HZ</small><strong id="live2dScore">0 : 0</strong><b id="live2dClock">00:00</b></div>
@@ -2058,28 +2062,25 @@ function openLiveSimulation(matchId){
   // Das Team bewegt sich als Block, aber jeder Spieler bekommt eigene Läufe.
   function updateDynamicShape(force=false){
     if(!shell||ended||paused)return;
-    const now=performance.now();if(!force&&now<nextShapeReal)return;nextShapeReal=now+420/Math.max(.9,Math.sqrt(speed));shapeNonce++;
+    const now=performance.now();if(!force&&now<nextShapeReal)return;nextShapeReal=now+620/Math.max(.9,Math.sqrt(speed));shapeNonce++;
     const carrier=nodeFor(currentBallPlayerId),cp=carrier?currentXY(carrier):{x:50,y:50};
     ['home','away'].forEach(side=>{
       const own=side===possessionSide,dir=attackingDir(side),ballProg=side==='home'?cp.x:100-cp.x;
       sideNodes(side).forEach(node=>{
         if(node===carrier||isLocked(node))return;
-        const b=baseXY(node),g=groupOf(node),slot=slotOf(node);
-        let advance=own?clamp((ballProg-42)*.18,-3,10):clamp((ballProg-52)*.10,-6,3);
-        let x=b.x+dir*advance,y=b.y;
-        // compact team shift toward ball, never random chaos
-        y+=(cp.y-50)*(g==='DEF'?.12:g==='MID'?.20:g==='AM'?.24:.18);
-        const wave=Math.sin(shapeNonce*.35+slot*1.71), wave2=Math.cos(shapeNonce*.31+slot*.93);
+        const b=baseXY(node),g=groupOf(node),slot=slotOf(node);let x=b.x,y=b.y;
+        const block=clamp((ballProg-50)*(own?.11:.075),-4.5,6.2);if(g!=='GK')x+=dir*block;
+        if(g!=='GK')y+=clamp((cp.y-b.y)*(own?.055:.035),-3.2,3.2);
         if(own){
-          if(g==='ST'){const phase=(shapeNonce+slot)%4;x+=dir*(phase===0?-4:phase===1?4:phase===2?9:2);y+=wave2*3.2}
-          else if(g==='AM'){x+=dir*(2.5+Math.max(0,wave)*3.5);y+=wave2*2.4}
-          else if(g==='MID'){x+=dir*(1.5+Math.max(0,wave)*2.2);y+=wave2*1.8}
-          else if(g==='DEF'&&(slot===1||slot===4)){x+=dir*2.2;y+=Math.sign(b.y-50)*2.2}
+          if(g==='ST'){const nearBall=Math.abs(cp.y-b.y)<20;x+=dir*(nearBall?5.2:3.2);y+=clamp((cp.y-b.y)*.10,-4,4)}
+          else if(g==='AM'){x+=dir*3.0;y+=clamp((cp.y-b.y)*.07,-3,3)}
+          else if(g==='MID'){x+=dir*1.4;y+=clamp((cp.y-b.y)*.04,-2,2)}
+          else if(g==='DEF'&&(slot===1||slot===4)&&ballProg>62){x+=dir*2.2;y+=Math.sign(b.y-50)*1.4}
         }else{
-          if(g!=='GK')x-=dir*(g==='ST'?2.8:g==='AM'?2.0:g==='MID'?1.4:.8);
-          y+=(50-b.y)*.05+wave2*.9;
+          if(g==='ST')x-=dir*1.0;else if(g==='AM')x-=dir*.7;else if(g==='MID')x-=dir*.45;
+          if(g!=='GK')y+=(50-b.y)*.025;
         }
-        setNodeXY(node,x,y);
+        setNodeXY(node,clamp(x,3.5,96.5),clamp(y,5,95));
       });
     });
   }
@@ -2108,7 +2109,32 @@ function openLiveSimulation(matchId){
       return{n,w};
     }).filter(x=>x.w>.02);
   }
-  function choosePassTarget(from,side,opts={}){const c=passCandidates(from,side,opts);return weightedPick(c,x=>x.w)?.n||chooseRole(side,['MID','AM','ST'],[from])}
+  function choosePassTarget(from,side,opts={}){
+    if(!from)return null;
+    const through=Boolean(opts.through),long=Boolean(opts.long),fp=currentXY(from),fg=groupOf(from),dir=attackingDir(side);
+    const candidates=sideNodes(side).filter(n=>n!==from&&!isGoalkeeper(n)).map(n=>{
+      const p=currentXY(n),g=groupOf(n),dx=(p.x-fp.x)*dir,dy=Math.abs(p.y-fp.y),dist=Math.hypot(p.x-fp.x,p.y-fp.y),pressure=segmentPressure(from,n,side);
+      if(!long&&dist>34)return null;
+      if(!long&&dy>27)return null;
+      if(through&&dx<5)return null;
+      let w=.4;
+      if(fg==='GK')w=g==='DEF'?8:g==='MID'?1.8:.05;
+      else if(fg==='DEF')w=g==='MID'?7:g==='DEF'?2.4:g==='AM'?1.4:g==='ST'?.2:.1;
+      else if(fg==='MID')w=g==='AM'?6.4:g==='MID'?3.8:g==='ST'?4.2:g==='DEF'?1.1:.1;
+      else if(fg==='AM')w=g==='ST'?7.2:g==='AM'?2.8:g==='MID'?2.2:g==='DEF'?.35:.1;
+      else if(fg==='ST')w=g==='AM'?5.2:g==='MID'?2.4:g==='ST'?1.1:.2;
+      // Normale Pässe bevorzugen kurze/mittlere Distanzen und leichtes Vorwärtsspiel.
+      if(dx>=2&&dx<=22)w*=1.9;else if(dx>22)w*=.78;else if(dx<0)w*=.58;
+      if(dist>=7&&dist<=25)w*=1.65;else if(dist<5)w*=.5;
+      if(dy<15)w*=1.35;
+      w*=1/(1+pressure*.28);
+      if(through){w*=g==='ST'?4.5:g==='AM'?2.5:.35;w*=dx>=8&&dx<=28?2.0:.5;}
+      if(long){w*=dist>=24&&dist<=48?2.2:.5;}
+      return {n,w};
+    }).filter(Boolean).filter(x=>x.w>.04);
+    return weightedPick(candidates,x=>x.w)?.n||chooseRole(side,['MID','AM','ST'],[from]);
+  }
+
 
   function animatePass(from,to,{through=false,long=false,label=''}={}){
     if(!from||!to)return 0;const side=sideOf(from),scale=tempoScale(),fp=actualXY(from),dist0=Math.hypot(actualXY(to).x-fp.x,actualXY(to).y-fp.y);actionBusyUntil=performance.now()+2600*scale;
@@ -2185,39 +2211,80 @@ function openLiveSimulation(matchId){
   }
 
   function realisticShot(side,shooter,{kind='chance',keeperNode=null,event=null}={}){
-    const scale=tempoScale(),goalX=side==='home'?98.5:1.5,gk=keeperNode||keeper(side==='home'?'away':'home');actionBusyUntil=performance.now()+3600*scale;registerVisibleEvent(kind==='goal'?'goal':kind==='save'?'save':kind==='post'?'post':'chance',side,event);
-    if(!shooter)return;const sp=actualXY(shooter),shootX=side==='home'?clamp(Math.max(sp.x,72),72,88):clamp(Math.min(sp.x,28),12,28),shootY=clamp(sp.y,20,80);
-    runTo(shooter,shootX,shootY,1120*scale,'shooter');setLocked(shooter,3600*scale);setBallAtNode(shooter);setAttackLabel(side,'ABSCHLUSS');showScene(`${playerLabel(shooter)} zieht zum Abschluss`,true);
+    const scale=tempoScale(),goalX=side==='home'?98.5:1.5,gk=keeperNode||keeper(side==='home'?'away':'home');actionBusyUntil=performance.now()+3900*scale;registerVisibleEvent(kind==='goal'?'goal':kind==='save'?'save':kind==='post'?'post':'chance',side,event);
+    if(!shooter)return;const sp=actualXY(shooter),shootX=side==='home'?clamp(Math.max(sp.x,70),70,88):clamp(Math.min(sp.x,30),12,30),shootY=clamp(sp.y,18,82),distance=Math.round(Math.abs((side==='home'?100-shootX:shootX))*1.05);
+    runTo(shooter,shootX,shootY,780*scale,'shooter');setLocked(shooter,3900*scale);setBallAtNode(shooter);setAttackLabel(side,'ABSCHLUSS');
+    const shotType=distance>24?'DISTANZSCHUSS':Math.random()<.23?'FLACHSCHUSS':'ABSCHLUSS';showAction(shotType,playerLabel(shooter),`${distance} m`,side,1900*scale);showScene(`${playerLabel(shooter)} zieht ab`,true);
     later(()=>{
-      const start=actualXY(shooter);
-      const onTargetY=40+Math.random()*20;
-      const wideY=Math.random()<.5?(18+Math.random()*10):(72+Math.random()*10);
-      const postY=Math.random()<.5?37:63;
-      const end = kind==='chance' ? {x:goalX+(side==='home'?1.6:-1.6),y:wideY} : kind==='post' ? {x:goalX,y:postY} : {x:goalX,y:onTargetY};
-      const shotKind = kind==='chance' ? 'miss' : kind==='post' ? 'post' : 'shot';
-      const distanceText=`${Math.round(Math.abs((side==='home'?100-start.x:start.x))*1.05)} m`;
-      shooter.classList.add('shooter');
-      if(gk&&kind!=='chance')runTo(gk,side==='home'?95.2:4.8,onTargetY,900*scale,'runner');
-      const actionTypeLabel = kind==='goal' ? 'TORABSCHLUSS' : kind==='save' ? 'ABSCHLUSS AUFS TOR' : kind==='post' ? 'SCHUSS ANS ALU' : 'ABSCHLUSS VORBEI';
-      const actionDetailLabel = kind==='goal' ? `${distanceText} · platziert ins Eck` : kind==='save' ? `${distanceText} · aufs Tor` : kind==='post' ? `${distanceText} · an den Pfosten` : `${distanceText} · deutlich vorbei`;
-      showAction(actionTypeLabel,`${playerLabel(shooter)} schießt!`,actionDetailLabel,side,2500*scale);
-      flyBall(start,end,920*scale,{air:true,kind:shotKind,onDone:()=>{
-        if(kind==='save'&&gk){later(()=>{setBallAtNode(gk);showAction('STARKE PARADE',playerLabel(gk),`hält den Schuss von ${playerLabel(shooter)}`,side==='home'?'away':'home',2400*scale);showScene(`🧤 ${playerLabel(gk)} pariert gegen ${playerLabel(shooter)}`,true)},420*scale)}
-        else if(kind==='post'){showAction('ALUMINIUM!',playerLabel(shooter),'Der Ball klatscht an den Pfosten.',side,2400*scale);showScene(`🥅 ${playerLabel(shooter)} trifft nur das Aluminium`,true)}
-        else if(kind==='chance'){showAction('NEBEN DAS TOR',playerLabel(shooter),'Der Abschluss geht klar vorbei.',side,2200*scale);showScene(`↗ ${playerLabel(shooter)} verzieht`,true)}
+      const start=actualXY(shooter),onTargetY=40+Math.random()*20,wideY=Math.random()<.5?(18+Math.random()*10):(72+Math.random()*10),postY=Math.random()<.5?37:63;
+      const end=kind==='chance'?{x:goalX+(side==='home'?1.7:-1.7),y:wideY}:kind==='post'?{x:goalX,y:postY}:{x:goalX,y:onTargetY};
+      if(gk&&kind!=='chance'){const gkp=actualXY(gk);runTo(gk,side==='home'?96:4,onTargetY,700*scale,'runner');showScene(`${playerLabel(gk)} macht sich bereit`,false)}
+      flyBall(start,end,850*scale,{air:distance>18,kind:kind==='chance'?'miss':kind==='post'?'post':'shot',onDone:()=>{
+        if(kind==='goal'){showAction('TOR!',playerLabel(shooter),'der Ball ist drin',side,2100*scale);showScene(`⚽ ${playerLabel(shooter)} trifft!`,true)}
+        else if(kind==='save'&&gk){later(()=>{setBallAtNode(gk);showAction('PARADE',playerLabel(gk),`hält gegen ${playerLabel(shooter)}`,side==='home'?'away':'home',2100*scale);showScene(`🧤 ${playerLabel(gk)} hält den Schuss`,true)},240*scale)}
+        else if(kind==='post'){showAction('ALUMINIUM',playerLabel(shooter),'Pfosten oder Latte',side,2100*scale);showScene(`🥅 Aluminium!`,true)}
+        else{showAction('VORBEI',playerLabel(shooter),'der Ball verfehlt das Tor',side,1900*scale);showScene(`↗ ${playerLabel(shooter)} schießt vorbei`,true)}
       }})
-    },1260*scale);
+    },900*scale);
   }
 
   function buildAttackToEvent(side,shooter,onReady){
-    const scale=tempoScale(),support=chooseRole(side,['DEF','MID']),mid=chooseRole(side,['MID','AM'],[support,shooter]),wing=chooseRole(side,['AM','MID'],[support,mid,shooter]),second=chooseRole(side,['ST','AM'],[support,mid,wing,shooter]),chain=[support,mid,wing,second,shooter].filter(Boolean).filter((n,i,a)=>a.indexOf(n)===i);
-    if(!chain.length){onReady?.(0);return}let t=0;setBallAtNode(chain[0]);currentBallPlayerId=playerNodeId(chain[0]);nextAmbientAction=Math.min(nextAmbientAction,simSecond+5);showScene(`${teamLabel(side)} baut ruhig von hinten auf`);
-    for(let i=0;i<chain.length-1;i++){
-      const from=chain[i],to=chain[i+1],last=i===chain.length-2,through=last&&['ST','AM'].includes(groupOf(to))&&Math.random()<.78;
-      const delay=t;t+=last?1500*scale:1180*scale;later(()=>animatePass(from,to,{through,long:!last&&Math.random()<.18}),delay+340*scale);
-      if(!last&&Math.random()<.44){const carrier2=to; later(()=>dribble(carrier2,side,groupOf(carrier2)==='AM'||groupOf(carrier2)==='ST'),delay+620*scale)}
-    }
-    later(()=>{nextAmbientAction=Math.min(nextAmbientAction,simSecond+6+Math.random()*4);onReady?.(t)},t+380*scale);
+    const scale=tempoScale();
+    const first=chooseRole(side,['DEF','MID'],[shooter])||chooseCarrier(side);
+    const chain=[first];
+    const mid=choosePassTarget(first,side,{});if(mid&&mid!==shooter)chain.push(mid);
+    const next=mid?choosePassTarget(mid,side,{through:false}):null;if(next&&next!==shooter&&!chain.includes(next))chain.push(next);
+    if(shooter&&!chain.includes(shooter))chain.push(shooter);
+    if(!chain.length){onReady?.(0);return}
+    setBallAtNode(chain[0]);currentBallPlayerId=playerNodeId(chain[0]);showScene(`${teamLabel(side)} baut den Angriff auf`);
+    let i=0,total=0;
+    const step=()=>{
+      if(i>=chain.length-1){nextAmbientAction=Math.max(nextAmbientAction,simSecond+8);onReady?.(total);return}
+      const from=chain[i],to=chain[i+1],last=i===chain.length-2;
+      if(!from||!to){i++;step();return}
+      const through=last&&['ST','AM'].includes(groupOf(to))&&Math.random()<.58;
+      const passMs=animatePass(from,to,{through,long:false});
+      total+=passMs;
+      const shouldDribble=!last&&['MID','AM','ST'].includes(groupOf(to))&&Math.random()<.30;
+      later(()=>{
+        if(shouldDribble){const d=dribble(to,side,groupOf(to)==='AM'||groupOf(to)==='ST');total+=d;later(()=>{i++;step()},d+180*scale)}
+        else {i++;step()}
+      },passMs+180*scale);
+    };
+    step();
+  }
+
+
+  function oneTwo(side,carrier){
+    const scale=tempoScale(),mate=choosePassTarget(carrier,side,{});if(!mate)return 0;
+    const dir=attackingDir(side),cp=currentXY(carrier),mp=currentXY(mate);actionBusyUntil=performance.now()+4100*scale;
+    showAction('DOPPELPASS',`${playerLabel(carrier)} ↔ ${playerLabel(mate)}`,'schnelle Kombination',side,1900*scale);setAttackLabel(side,'DOPPELPASS');
+    const forward=chooseRole(side,['ST','AM'],[carrier,mate])||carrier;
+    const first=animatePass(carrier,mate,{});
+    later(()=>{runTo(carrier,cp.x+dir*(7+Math.random()*5),cp.y+(Math.random()-.5)*8,1000*scale,'runner');const back=animatePass(mate,carrier,{through:true});later(()=>{setBallAtNode(carrier);nextAmbientAction=Math.min(nextAmbientAction,simSecond+5)},back+180*scale)},first+180*scale);
+    return 4000*scale;
+  }
+
+  function crossAttack(side,carrier){
+    const scale=tempoScale(),dir=attackingDir(side),p=currentXY(carrier),target=chooseRole(side,['ST','AM'],[carrier]),other=side==='home'?'away':'home',gk=keeper(other);if(!target)return 0;
+    actionBusyUntil=performance.now()+4700*scale;setAttackLabel(side,'FLANKE');showAction('FLANKE',playerLabel(carrier),`auf ${playerLabel(target)}`,side,1900*scale);
+    const wingY=p.y<50?13:87,wingX=side==='home'?82:18;runTo(carrier,wingX,wingY,1000*scale,'runner');
+    const tp=currentXY(target),boxX=side==='home'?88:12,boxY=clamp(42+(Math.random()-.5)*26,27,73);runTo(target,boxX,boxY,1250*scale,'runner');
+    later(()=>{const start=actualXY(carrier);flyBall(start,()=>actualXY(target),1100*scale,{air:true,kind:'long',onDone:()=>{setBallAtNode(target);showScene(`${playerLabel(target)} kommt an die Flanke`,true);later(()=>realisticShot(side,target,{kind:Math.random()<.52?'save':Math.random()<.18?'post':'chance',keeperNode:gk}),400*scale)}})},1150*scale);
+    return 4550*scale;
+  }
+
+  function counterAttack(side,carrier){
+    const scale=tempoScale(),dir=attackingDir(side),runner=chooseRole(side,['ST','AM'],[carrier])||choosePassTarget(carrier,side,{through:true});if(!runner)return 0;
+    actionBusyUntil=performance.now()+5000*scale;setAttackLabel(side,'KONTER');showAction('KONTER',teamLabel(side),`${playerLabel(carrier)} schaltet schnell um`,side,1900*scale);pushAmbientTicker(side,`KONTER ${teamLabel(side)}`,`${playerLabel(carrier)} treibt den Angriff an`,'⚡',{force:true});
+    const p=currentXY(runner);runTo(runner,p.x+dir*(13+Math.random()*8),p.y+(Math.random()-.5)*10,1300*scale,'runner');
+    const pass=animatePass(carrier,runner,{through:true});later(()=>{setBallAtNode(runner);const rp=currentXY(runner);if(progressFor(runner,side)>70){later(()=>realisticShot(side,runner,{kind:Math.random()<.48?'save':Math.random()<.16?'post':'chance',keeperNode:keeper(side==='home'?'away':'home')}),500*scale)}else{dribble(runner,side,true)}},pass+240*scale);
+    return 4900*scale;
+  }
+
+  function reboundChance(side,shooter,gk){
+    const scale=tempoScale(),support=chooseRole(side,['ST','AM','MID'],[shooter]);if(!support)return;
+    showAction('ABPRALLER',playerLabel(support),'kommt an den zweiten Ball',side,1800*scale);const sp=currentXY(support),dir=attackingDir(side);runTo(support,sp.x+dir*5,sp.y+(Math.random()-.5)*8,800*scale,'runner');later(()=>realisticShot(side,support,{kind:Math.random()<.55?'save':'chance',keeperNode:gk}),850*scale)
   }
 
   function ambientAttack(){
@@ -2225,32 +2292,41 @@ function openLiveSimulation(matchId){
     let carrier=nodeFor(currentBallPlayerId);
     if(!carrier||sideOf(carrier)!==possessionSide){carrier=chooseCarrier(possessionSide);if(carrier)setBallAtNode(carrier)}
     if(!carrier)return;
-    const side=possessionSide,g=groupOf(carrier),progress=progressFor(carrier,side),profile=profiles[side],r=Math.random();
+    const side=possessionSide,g=groupOf(carrier),progress=progressFor(carrier,side),profile=profiles[side],r=Math.random(),wide=Math.abs(currentXY(carrier).y-50)>25;
     updateDynamicShape(true);
-    // In the final third a real attack must end with an attempt often enough.
-    if(progress>72&&['ST','AM','MID'].includes(g)&&r<.34){
-      const keeperNode=keeper(side==='home'?'away':'home');
-      const outcome=Math.random()<.50?'save':Math.random()<.16?'post':'chance';
+
+    // Final third: an attack should resolve into a recognizable football action.
+    if(progress>76&&['ST','AM','MID'].includes(g)){
+      if(wide&&Math.random()<.38){crossAttack(side,carrier);nextAmbientAction=simSecond+40+Math.random()*22;return}
+      if(Math.random()<.26){const mate=choosePassTarget(carrier,side,{});if(mate&&oneTwo(side,carrier)){nextAmbientAction=simSecond+36+Math.random()*20;return}}
+      const keeperNode=keeper(side==='home'?'away':'home'),roll=Math.random(),outcome=roll<.46?'save':roll<.60?'post':'chance';
       realisticShot(side,carrier,{kind:outcome,keeperNode});
-      if(outcome==='save')pushAmbientTicker(side,`ABSCHLUSS ${teamLabel(side)}`,`${playerLabel(carrier)} scheitert am Torwart`,'🧤',{force:true});
-      else if(outcome==='post')pushAmbientTicker(side,`ALUMINIUM ${teamLabel(side)}`,`${playerLabel(carrier)} trifft Pfosten oder Latte`,'🥅',{force:true});
-      else pushAmbientTicker(side,`ABSCHLUSS ${teamLabel(side)}`,`${playerLabel(carrier)} schießt vorbei`,'⚽',{force:true});
+      if(outcome==='save'&&Math.random()<.22)later(()=>reboundChance(side,carrier,keeperNode),2100*tempoScale());
       possessionSide=side==='home'?'away':'home';
-      later(()=>{const c=keeper(possessionSide)||chooseCarrier(possessionSide);if(c&&!ballInFlight)setBallAtNode(c)},2500*tempoScale());
-      nextAmbientAction=simSecond+38+Math.random()*24;return;
+      later(()=>{const c=keeper(possessionSide)||chooseCarrier(possessionSide);if(c&&!ballInFlight)setBallAtNode(c)},2800*tempoScale());
+      nextAmbientAction=simSecond+42+Math.random()*24;return;
     }
+
+    // Ball recovery in own/middle third can create a counter.
+    if(progress<58&&['MID','AM','ST'].includes(g)&&Math.random()<.13){counterAttack(side,carrier);nextAmbientAction=simSecond+44+Math.random()*20;return}
     if(g==='GK'){
-      const to=choosePassTarget(carrier,side,{});if(to)animatePass(carrier,to,{label:`${playerLabel(carrier)} eröffnet über die Abwehr`});
-    } else if(r<.30){
+      const to=choosePassTarget(carrier,side,{});if(to)animatePass(carrier,to,{label:`${playerLabel(carrier)} eröffnet kurz`});
+    } else if(progress>60&&wide&&Math.random()<.20){
+      crossAttack(side,carrier);
+    } else if(progress>58&&['AM','ST'].includes(g)&&r<.34){
+      dribble(carrier,side,true);
+    } else if(r<.25){
       dribble(carrier,side,g==='AM'||g==='ST');
-    } else if(r<.55){
-      const to=choosePassTarget(carrier,side,{through:progress>48});if(to)animatePass(carrier,to,{through:progress>48&&groupOf(to)!=='DEF'});
-    } else if(r<.88){
+    } else if(r<.36&&['MID','AM','ST'].includes(g)){
+      oneTwo(side,carrier);
+    } else if(r<.63){
+      const to=choosePassTarget(carrier,side,{through:progress>52});if(to)animatePass(carrier,to,{through:progress>52&&['AM','ST'].includes(groupOf(to))});
+    } else if(r<.96){
       const to=choosePassTarget(carrier,side,{});if(to)animatePass(carrier,to,{});
     } else {
       const opp=nearestOpp(carrier);if(opp)turnover(carrier,opp);
     }
-    nextAmbientAction=simSecond+28+Math.random()*24;
+    nextAmbientAction=simSecond+32+Math.random()*18;
   }
 
   function liveStatAt(currentMinute){refreshRuntimeStats()}
@@ -2277,7 +2353,12 @@ function openLiveSimulation(matchId){
   }
 
   function finish(){
-    if(ended)return;ended=true;clearSequenceTimers();if(goalTimer)clearTimeout(goalTimer);cancelAnimationFrame(raf);clock.textContent='90:00';if(period)period.textContent='ENDE';score.textContent=`${m.homeGoals||0} : ${m.awayGoals||0}`;progress.style.width='100%';liveStatAt(90);showScene('🏁 Abpfiff',true);showSetpiece('ABPFIFF');tickerRows.unshift(`<div class="live2d-ticker-row full"><b>90'</b><span>🏁 Abpfiff · ${h.short||h.name} ${m.homeGoals||0}:${m.awayGoals||0} ${a.short||a.name}</span></div>`);ticker.innerHTML=tickerRows.slice(0,6).join('');if(tickerPanel){tickerPanel.classList.add('pulse');setTimeout(()=>tickerPanel.classList.remove('pulse'),620)}el('#live2dPause').textContent='✓ Beendet';el('#live2dPause').disabled=true;if(el('#v50PauseBottom')){el('#v50PauseBottom').textContent='SIMULATION BEENDET';el('#v50PauseBottom').disabled=true;}setTimeout(()=>{if(document.querySelector('.live2d-shell')){closeOverlay();openMatch(matchId)}},3300)
+    if(ended)return;ended=true;clearSequenceTimers();if(goalTimer)clearTimeout(goalTimer);cancelAnimationFrame(raf);
+    const finalHome=Number.isFinite(Number(m.__liveFinalHome))?Number(m.__liveFinalHome):liveSimScoreAt(m,90)[0];
+    const finalAway=Number.isFinite(Number(m.__liveFinalAway))?Number(m.__liveFinalAway):liveSimScoreAt(m,90)[1];
+    m.homeGoals=finalHome;m.awayGoals=finalAway;m.status="played";m.simulated=true;delete m.__livePreview;delete m.__liveFinalHome;delete m.__liveFinalAway;
+    try{rebuildPlayerStats();saveState({label:"Live-Simulation beendet"})}catch(err){console.error("Endstand speichern:",err)}
+    clock.textContent='90:00';if(period)period.textContent='ENDE';score.textContent=`${finalHome} : ${finalAway}`;progress.style.width='100%';liveStatAt(90);showScene('🏁 Abpfiff',true);showSetpiece('ABPFIFF');tickerRows.unshift(`<div class="live2d-ticker-row full"><b>90'</b><span>🏁 Abpfiff · ${h.short||h.name} ${finalHome}:${finalAway} ${a.short||a.name}</span></div>`);ticker.innerHTML=tickerRows.slice(0,6).join('');if(tickerPanel){tickerPanel.classList.add('pulse');setTimeout(()=>tickerPanel.classList.remove('pulse'),620)}el('#live2dPause').textContent='✓ Beendet';el('#live2dPause').disabled=true;if(el('#v50PauseBottom')){el('#v50PauseBottom').textContent='SIMULATION BEENDET';el('#v50PauseBottom').disabled=true;}setTimeout(()=>{if(document.querySelector('.live2d-shell')){closeOverlay();openMatch(matchId)}},3300)
   }
   function tick(now){
     if(!shell||!document.body.contains(shell))return;

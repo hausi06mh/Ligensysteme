@@ -1,4 +1,4 @@
-const CACHE="fantasy-liga-v57-rebuilt-engine";
+const CACHE="fantasy-liga-v59-watchable-match";
 const ASSETS=[
   "./","./index.html","./styles.css","./seed.json","./manifest.webmanifest",
   "./app.js","./playerUniverse.js","./managerWorld.js","./stabilityCareer.js","./store.js","./ui.js","./standings.js",
