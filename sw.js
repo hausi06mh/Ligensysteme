@@ -1,4 +1,4 @@
-const CACHE="fantasy-liga-v51-reference-broadcast";
+const CACHE="fantasy-liga-v52-perspective-broadcast";
 const ASSETS=[
   "./","./index.html","./styles.css","./seed.json","./manifest.webmanifest",
   "./app.js","./playerUniverse.js","./managerWorld.js","./stabilityCareer.js","./store.js","./ui.js","./standings.js",
