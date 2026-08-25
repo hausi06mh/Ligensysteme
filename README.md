@@ -1,3 +1,3 @@
-Fantasy Liga Elite V59 – Watchable Match Engine
+Fantasy Liga Elite V60 – Synchronized Match Engine
 
-Aufbauend auf V58, aber mit stärkerem Fokus aufs Zuschauen: Konter, Doppelpässe, Flanken, Distanzschüsse, Abpraller, klarere Torwartaktionen, variablere Dribblings und bewusstere Angriffsmuster. Spielerbewegungen wurden ruhiger und rollenbezogener, damit Formationen erkennbar bleiben. Das Ergebnis bleibt bis zum tatsächlichen Abpfiff verborgen.
+Aufbauend auf V59. Wichtigster Umbau: Tore, sichtbare Matchszene, Scoreboard, Live-Ticker und Statistik werden synchron verarbeitet. Kein unsichtbares Tor mehr. Der Ticker zeigt nur Chancen, Tore sowie gelbe/rote Karten. Angriffsmuster wurden erweitert: mehr Flanken/Kopfbälle, Distanzschüsse, weniger sinnlose Rückpässe des Stürmers und begrenzte Steilpässe vor der Torwartzone.
