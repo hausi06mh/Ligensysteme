@@ -1937,6 +1937,13 @@ function openLiveSimulation(matchId){
       <div class="live2d-setpiece" id="live2dSetpiece"></div>
       <div class="live2d-scene-caption show" id="live2dScene">⚽ Anstoß</div>
     </section>
+    <section class="live2d-status-rail home" id="live2dStatusRail">
+      <div class="live2d-status-kicker" id="live2dStatusType">LIVE-SZENE</div>
+      <div class="live2d-status-copy">
+        <strong id="live2dStatusTitle">Anstoß</strong>
+        <span id="live2dStatusDetail">Die Simulation läuft an.</span>
+      </div>
+    </section>
     <section class="live2d-broadcast-dock">
       <aside class="live2d-broadcast-card stats-panel open" id="live2dStatsPanel">
         <div class="live2d-panel-head compact"><b>LIVE-STATISTIKEN</b></div>
@@ -1961,9 +1968,9 @@ function openLiveSimulation(matchId){
     </div>
   </div></div>`;
 
-  const shell=document.querySelector('.live2d-shell'),pitch=el('#live2dPitch'),clock=el('#live2dClock'),score=el('#live2dScore'),period=el('#live2dPeriod'),progress=el('#live2dProgress'),ticker=el('#live2dTicker'),scene=el('#live2dScene'),ball=el('#live2dBall'),goalFlash=el('#live2dGoalFlash'),goalName=el('#live2dGoalName'),setpiece=el('#live2dSetpiece'),tickerPanel=el('#live2dTickerPanel'),statsPanel=el('#live2dStatsPanel'),traceMain=el('#live2dTraceMain'),attackBar=el('#live2dAttackBar'),attackTeam=el('#live2dAttackTeam'),possFlash=el('#live2dPossFlash'),actionCard=el('#live2dActionCard'),actionType=el('#live2dActionType'),actionTitle=el('#live2dActionTitle'),actionDetail=el('#live2dActionDetail');
+  const shell=document.querySelector('.live2d-shell'),pitch=el('#live2dPitch'),clock=el('#live2dClock'),score=el('#live2dScore'),period=el('#live2dPeriod'),progress=el('#live2dProgress'),ticker=el('#live2dTicker'),scene=el('#live2dScene'),ball=el('#live2dBall'),goalFlash=el('#live2dGoalFlash'),goalName=el('#live2dGoalName'),setpiece=el('#live2dSetpiece'),tickerPanel=el('#live2dTickerPanel'),statsPanel=el('#live2dStatsPanel'),traceMain=el('#live2dTraceMain'),attackBar=el('#live2dAttackBar'),attackTeam=el('#live2dAttackTeam'),possFlash=el('#live2dPossFlash'),actionCard=el('#live2dActionCard'),actionType=el('#live2dActionType'),actionTitle=el('#live2dActionTitle'),actionDetail=el('#live2dActionDetail'),statusRail=el('#live2dStatusRail'),statusType=el('#live2dStatusType'),statusTitle=el('#live2dStatusTitle'),statusDetail=el('#live2dStatusDetail');
   let simSecond=0,lastFrame=performance.now(),paused=false,speed=1,eventIndex=0,raf=0,ended=false,sequenceTimers=[],goalTimer=0;
-  let ballCarrierNode=null,ballFlightRAF=0,traceTimer=0,actionTimer=0,possTimer=0;
+  let ballCarrierNode=null,ballFlightRAF=0,traceTimer=0,actionTimer=0,possTimer=0,statusTimer=0;
   let possessionSide=Math.random()<(Number(m.statistics?.possessionHome||50)/100)?'home':'away';
   let currentBallPlayerId=null,cinematicUntil=0,nextAmbientAction=70,nextShapeReal=0,shapeNonce=0,ballInFlight=false,restartLock=false;
   const totalSeconds=90*60,realSecondsAt1x=420,simPerReal=totalSeconds/realSecondsAt1x,tickerRows=[];
@@ -1993,10 +2000,10 @@ function openLiveSimulation(matchId){
   function clearBallOwner(){ballCarrierNode=null;shell?.querySelectorAll('.live2d-player.ball-owner').forEach(n=>n.classList.remove('ball-owner'))}
   function drawTrace(a,b,kind='pass',ms=900){if(!traceMain)return;traceMain.setAttribute('x1',a.x);traceMain.setAttribute('y1',a.y);traceMain.setAttribute('x2',b.x);traceMain.setAttribute('y2',b.y);traceMain.setAttribute('class',kind);traceMain.parentElement?.classList.add('show');clearTimeout(traceTimer);traceTimer=setTimeout(()=>traceMain.parentElement?.classList.remove('show'),ms)}
   function flyBall(start,getEnd,duration=900,{air=false,kind='pass',onDone=null}={}){if(ballFlightRAF)cancelAnimationFrame(ballFlightRAF);clearBallOwner();ballInFlight=true;const t0=performance.now();const end0=typeof getEnd==='function'?getEnd():getEnd;drawTrace(start,end0,kind,Math.max(450,duration*.9));const step=now=>{const t=clamp((now-t0)/Math.max(120,duration),0,1),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,end=typeof getEnd==='function'?getEnd():getEnd;let x=start.x+(end.x-start.x)*e,y=start.y+(end.y-start.y)*e;if(air)y-=Math.sin(Math.PI*t)*5.5;rawBallXY(x,y,air);if(t<1)ballFlightRAF=requestAnimationFrame(step);else{ballFlightRAF=0;ballInFlight=false;rawBallXY(end.x,end.y,false);onDone?.()}};ballFlightRAF=requestAnimationFrame(step)}
-  function flashPossession(side,node){if(!possFlash)return;const who=node?playerLabel(node):teamLabel(side);possFlash.textContent=`↔ BALLGEWINN · ${who}`;possFlash.className=`live2d-possession-flash show ${side}`;clearTimeout(possTimer);possTimer=setTimeout(()=>possFlash.classList.remove('show'),1700)}
-  function showAction(type,title,detail='',side='home',ms=2200){if(!actionCard)return;actionType.textContent=type;actionTitle.textContent=title;actionDetail.textContent=detail;actionCard.className=`live2d-action-card show ${side}`;clearTimeout(actionTimer);actionTimer=setTimeout(()=>actionCard.classList.remove('show'),ms)}
+  function flashPossession(side,node){if(!possFlash)return;const who=node?playerLabel(node):teamLabel(side);possFlash.textContent=`↔ BALLGEWINN · ${who}`;possFlash.className=`live2d-possession-flash show ${side}`;clearTimeout(possTimer);possTimer=setTimeout(()=>possFlash.classList.remove('show'),1800)}
+  function showAction(type,title,detail='',side='home',ms=2200){if(actionCard){actionType.textContent=type;actionTitle.textContent=title;actionDetail.textContent=detail;actionCard.className=`live2d-action-card show ${side}`;clearTimeout(actionTimer);actionTimer=setTimeout(()=>actionCard.classList.remove('show'),ms)}if(statusRail){statusRail.className=`live2d-status-rail show ${side}`;if(statusType)statusType.textContent=type;if(statusTitle)statusTitle.textContent=title;if(statusDetail)statusDetail.textContent=detail||'';clearTimeout(statusTimer);statusTimer=setTimeout(()=>statusRail.classList.remove('show'),ms)}}
   function setAttackLabel(side,label='ANGRIFF'){if(!attackBar)return;attackTeam.textContent=`${label} ${teamLabel(side)}`;attackBar.className=`live2d-attackbar show ${side}`}
-  function showScene(text,strong=false){if(!scene)return;scene.textContent=text;scene.classList.toggle('strong',Boolean(strong));scene.classList.add('show')}
+  function showScene(text,strong=false){if(scene){scene.textContent=text;scene.classList.toggle('strong',Boolean(strong));scene.classList.add('show')}if(statusRail){statusRail.classList.add('show');if(statusType&&strong)statusType.textContent='LIVE-SZENE';if(statusDetail)statusDetail.textContent=text;if(strong&&statusTitle)statusTitle.textContent=text;clearTimeout(statusTimer);statusTimer=setTimeout(()=>statusRail.classList.remove('show'),1500)}}
   function showSetpiece(text){if(!setpiece)return;setpiece.textContent=text;setpiece.classList.remove('show');void setpiece.offsetWidth;setpiece.classList.add('show');later(()=>setpiece.classList.remove('show'),1700*tempoScale())}
   function teamLabel(side){return side==='home'?(h.short||h.name):(a.short||a.name)}
   function playerLabel(node){return liveSimPlayerLabel(playerById(playerNodeId(node)))}
@@ -2098,18 +2105,18 @@ function openLiveSimulation(matchId){
     if(through){const lane=(Math.random()-.5)*9;runIntoSpace(to,side,12+Math.random()*11,lane,1750*scale);showScene(`${playerLabel(from)} spielt steil in den Lauf von ${playerLabel(to)}`);showAction('STEILPASS',`${playerLabel(from)} → ${playerLabel(to)}`,'Der Ball geht in den freien Raum.',side,1900*scale);lead=280*scale}
     else if(long){runIntoSpace(to,side,5+Math.random()*7,(Math.random()-.5)*8,1580*scale);showScene(`${playerLabel(from)} verlagert auf ${playerLabel(to)}`);showAction('SEITENWECHSEL',playerLabel(from),`Verlagerung auf ${playerLabel(to)}`,side,1800*scale);lead=180*scale}
     else {if(groupOf(to)==='ST'||groupOf(to)==='AM')runIntoSpace(to,side,2+Math.random()*4,(Math.random()-.5)*5,1180*scale);showScene(label||`${playerLabel(from)} findet ${playerLabel(to)}`);showAction('PASS',playerLabel(from),`auf ${playerLabel(to)}`,side,1280*scale)}
-    const duration=clamp(760+dist0*22+(long?390:0)+(through?130:0),880,2350)*scale;
-    later(()=>{const start=actualXY(from);flyBall(start,()=>actualXY(to),duration,{air:long||through,kind:through?'through':long?'long':'pass',onDone:()=>{if(ended)return;from.classList.remove('active');to.classList.add('active','receiving');setBallAtNode(to);showScene(`${playerLabel(to)} nimmt den Ball mit`);later(()=>to.classList.remove('active','receiving'),760*scale)}})},lead);
+    const duration=clamp(720+dist0*20+(long?340:0)+(through?110:0),820,2200)*scale;
+    later(()=>{const start=actualXY(from);flyBall(start,()=>actualXY(to),duration,{air:long||through,kind:through?'through':long?'long':'pass',onDone:()=>{if(ended)return;from.classList.remove('active');to.classList.add('active','receiving');setBallAtNode(to);showScene(`${playerLabel(to)} nimmt den Ball mit`);nextAmbientAction=Math.min(nextAmbientAction,simSecond+4+Math.random()*3);later(()=>to.classList.remove('active','receiving'),650*scale)}})},lead);
     return duration+lead;
   }
 
   function dribble(node,side,aggressive=false){
     if(!node)return 0;const scale=tempoScale(),p=actualXY(node),dir=attackingDir(side),opp=nearestOpp(node),dist=(aggressive?10:6)+Math.random()*(aggressive?10:6),lane=(Math.random()-.5)*(aggressive?16:10);
-    node.classList.add('active','runner');setLocked(node,2150*scale);setBallAtNode(node);setAttackLabel(side,'DRIBBLING');showScene(`${playerLabel(node)} ${aggressive?'geht ins Eins-gegen-Eins':'trägt den Ball'}`);showAction('DRIBBLING',playerLabel(node),aggressive?'zieht mit Tempo am Gegenspieler vorbei':'treibt den Ball nach vorne',side,1650*scale);
+    node.classList.add('active','runner');setLocked(node,1850*scale);setBallAtNode(node);setAttackLabel(side,'DRIBBLING');showScene(`${playerLabel(node)} ${aggressive?'geht ins Eins-gegen-Eins':'trägt den Ball'}`);showAction('DRIBBLING',playerLabel(node),aggressive?'zieht mit Tempo am Gegenspieler vorbei':'treibt den Ball nach vorne',side,1650*scale);
     const step1={x:p.x+dir*(dist*.42),y:p.y+lane*.38},step2={x:p.x+dir*dist,y:p.y+lane};
     runTo(node,step1.x,step1.y,760*scale,'runner');later(()=>runTo(node,step2.x,step2.y,980*scale,'runner'),720*scale);
     let duelLoss=false;if(opp&&Math.hypot(actualXY(opp).x-p.x,actualXY(opp).y-p.y)<19){runTo(opp,p.x+dir*(dist*.56),p.y+lane*.54,1420*scale,'duel');const ap=playerById(playerNodeId(node)),dp=playerById(playerNodeId(opp)),atk=Number(ap?.attributes?.dribbling||ap?.rating||60)+Number(ap?.attributes?.pace||60)*.28,def=Number(dp?.attributes?.defending||dp?.rating||60)+Number(dp?.attributes?.physical||60)*.24;duelLoss=Math.random()<clamp(.31+(def-atk)/120,.12,.60)}
-    later(()=>{if(duelLoss&&opp){possessionSide=sideOf(opp);setBallAtNode(opp);flashPossession(possessionSide,opp);showScene(`${playerLabel(opp)} stoppt das Dribbling`)}else setBallAtNode(node)},1680*scale);later(()=>node.classList.remove('active'),2120*scale);return 2150*scale;
+    later(()=>{if(duelLoss&&opp){possessionSide=sideOf(opp);setBallAtNode(opp);flashPossession(possessionSide,opp);showScene(`${playerLabel(opp)} stoppt das Dribbling`)}else {setBallAtNode(node);nextAmbientAction=Math.min(nextAmbientAction,simSecond+3+Math.random()*3)}},1420*scale);later(()=>node.classList.remove('active'),1780*scale);return 1850*scale;
   }
 
   function turnover(from,opp){
@@ -2124,7 +2131,7 @@ function openLiveSimulation(matchId){
     if(attack){runTo(attack,50-dir*1.2,49,700*scale,'active');setBallXY(50,50);currentBallPlayerId=playerNodeId(attack)}
     if(mate)runTo(mate,50+dir*2.1,55,700*scale,'runner');
     later(()=>{if(attack&&mate)animatePass(attack,mate,{label:`${playerLabel(attack)} eröffnet die Partie`})},1050*scale);
-    later(()=>{restartLock=false;updateDynamicShape(true);nextAmbientAction=simSecond+42},2750*scale);
+    later(()=>{restartLock=false;updateDynamicShape(true);nextAmbientAction=simSecond+20},2750*scale);
   }
 
   function arrangeCorner(side,e){
@@ -2142,12 +2149,16 @@ function openLiveSimulation(matchId){
   }
 
   function arrangeFreeKick(side){
-    const scale=tempoScale(),other=side==='home'?'away':'home',dir=attackingDir(side),taker=chooseRole(side,['AM','MID']),gk=keeper(other),ballX=side==='home'?70+Math.random()*8:30-Math.random()*8,ballY=30+Math.random()*40,goalX=side==='home'?98:2;
-    if(!taker)return;restartLock=true;cinematicUntil=performance.now()+4300*scale;showSetpiece('FREISTOSS');showScene(`🎯 Freistoß für ${teamLabel(side)}`,true);clearActive();runTo(taker,ballX-dir*2,ballY,800*scale,'shooter');setLocked(taker,4100*scale);setBallXY(ballX,ballY);
-    const wall=roleNodes(other,['DEF','MID']).slice(0,4);wall.forEach((n,i)=>{runTo(n,ballX+dir*7,ballY-7+i*4.6,800*scale,'wall');setLocked(n,3600*scale)});if(gk)runTo(gk,side==='home'?96:4,50,700*scale,'active');
-    later(()=>{showScene(`${playerLabel(taker)} läuft an…`,true)},1050*scale);
-    later(()=>{ballInFlight=true;setBallXY((ballX+goalX)/2,ballY+(50-ballY)*.42-7,true);later(()=>setBallXY(goalX,45+Math.random()*10,true),700*scale)},1750*scale);
-    later(()=>{showScene(Math.random()<.45?'🧤 Der Torwart ist zur Stelle':'Der Ball geht knapp vorbei');restartLock=false;ballInFlight=false;possessionSide=other;const c=keeper(other)||chooseCarrier(other);if(c)setBallAtNode(c)},3400*scale);
+    const scale=tempoScale(),other=side==='home'?'away':'home',dir=attackingDir(side),taker=chooseRole(side,['AM','MID','ST']),fouled=chooseRole(side,['AM','MID','ST'],[taker])||taker,fouler=nearestOpp(fouled)||chooseCarrier(other),gk=keeper(other),ballX=side==='home'?70+Math.random()*8:30-Math.random()*8,ballY=30+Math.random()*40,goalX=side==='home'?98:2;
+    if(!taker)return;restartLock=true;cinematicUntil=performance.now()+5000*scale;clearActive();
+    if(fouler&&fouled){showAction('FOUL',playerLabel(fouler),`bringt ${playerLabel(fouled)} zu Fall`,other,1500*scale);showScene(`Pfiff – Foul an ${playerLabel(fouled)}`,true);tickerRows.unshift(`<div class="live2d-ticker-row ${other} foul"><b>${Math.max(1,Math.round(simSecond/60))}'</b><span>🛑 Foul von ${playerLabel(fouler)} an ${playerLabel(fouled)}</span></div>`);if(ticker)ticker.innerHTML=tickerRows.slice(0,6).join('')}
+    later(()=>{showSetpiece('FREISTOSS');showScene(`🎯 Freistoß für ${teamLabel(side)}`,true)},600*scale);
+    runTo(taker,ballX-dir*2,ballY,980*scale,'shooter');setLocked(taker,4700*scale);setBallXY(ballX,ballY);
+    const wall=roleNodes(other,['DEF','MID']).slice(0,4);wall.forEach((n,i)=>{runTo(n,ballX+dir*7,ballY-7+i*4.6,980*scale,'wall');setLocked(n,4100*scale)});if(gk)runTo(gk,side==='home'?96:4,50,760*scale,'active');
+    later(()=>{showScene(`${playerLabel(taker)} legt sich den Ball zurecht`,true)},1180*scale);
+    later(()=>{showScene(`${playerLabel(taker)} läuft an…`,true)},1760*scale);
+    later(()=>{ballInFlight=true;setBallXY((ballX+goalX)/2,ballY+(50-ballY)*.42-7,true);later(()=>setBallXY(goalX,45+Math.random()*10,true),780*scale)},2520*scale);
+    later(()=>{showScene(Math.random()<.45?'🧤 Der Torwart ist zur Stelle':'Der Ball geht knapp vorbei');restartLock=false;ballInFlight=false;possessionSide=other;const c=keeper(other)||chooseCarrier(other);if(c)setBallAtNode(c);nextAmbientAction=Math.min(nextAmbientAction,simSecond+4)},4200*scale);
   }
 
   function arrangePenalty(side,e,scored=true){
@@ -2187,28 +2198,28 @@ function openLiveSimulation(matchId){
 
   function buildAttackToEvent(side,shooter,onReady){
     const scale=tempoScale(),support=chooseRole(side,['DEF','MID']),mid=chooseRole(side,['MID','AM'],[support,shooter]),wing=chooseRole(side,['AM','MID'],[support,mid,shooter]),second=chooseRole(side,['ST','AM'],[support,mid,wing,shooter]),chain=[support,mid,wing,second,shooter].filter(Boolean).filter((n,i,a)=>a.indexOf(n)===i);
-    if(!chain.length){onReady?.(0);return}let t=0;setBallAtNode(chain[0]);currentBallPlayerId=playerNodeId(chain[0]);showScene(`${teamLabel(side)} baut ruhig von hinten auf`);
+    if(!chain.length){onReady?.(0);return}let t=0;setBallAtNode(chain[0]);currentBallPlayerId=playerNodeId(chain[0]);nextAmbientAction=Math.min(nextAmbientAction,simSecond+5);showScene(`${teamLabel(side)} baut ruhig von hinten auf`);
     for(let i=0;i<chain.length-1;i++){
       const from=chain[i],to=chain[i+1],last=i===chain.length-2,through=last&&['ST','AM'].includes(groupOf(to))&&Math.random()<.78;
-      const delay=t;t+=last?1680*scale:1380*scale;later(()=>animatePass(from,to,{through,long:!last&&Math.random()<.22}),delay+440*scale);
-      if(!last&&Math.random()<.28){const carrier2=to; later(()=>dribble(carrier2,side,groupOf(carrier2)==='AM'||groupOf(carrier2)==='ST'),delay+760*scale)}
+      const delay=t;t+=last?1500*scale:1180*scale;later(()=>animatePass(from,to,{through,long:!last&&Math.random()<.18}),delay+340*scale);
+      if(!last&&Math.random()<.44){const carrier2=to; later(()=>dribble(carrier2,side,groupOf(carrier2)==='AM'||groupOf(carrier2)==='ST'),delay+620*scale)}
     }
-    later(()=>onReady?.(t),t+540*scale);
+    later(()=>{nextAmbientAction=Math.min(nextAmbientAction,simSecond+6+Math.random()*4);onReady?.(t)},t+380*scale);
   }
 
   function ambientAttack(){
     if(ended||paused||restartLock||performance.now()<cinematicUntil)return;let carrier=nodeFor(currentBallPlayerId);if(!carrier||sideOf(carrier)!==possessionSide){carrier=chooseCarrier(possessionSide);if(carrier)setBallAtNode(carrier)}if(!carrier)return;
     const side=possessionSide,g=groupOf(carrier),profile=profiles[side],r=Math.random(),scoreNow=liveSimScoreAt(m,simSecond/60),own=side==='home'?scoreNow[0]:scoreNow[1],oppGoals=side==='home'?scoreNow[1]:scoreNow[0],chasing=simSecond>68*60&&own<oppGoals;updateDynamicShape(true);
-    const direct=clamp(profile.direct+(chasing?.16:0),.18,.90),drib=clamp((profile.dribbling-55)/90+.20,.14,.44),through=.15+direct*.22,long=.08+direct*.15;
+    const direct=clamp(profile.direct+(chasing?.16:0),.18,.90),drib=clamp((profile.dribbling-55)/90+.27,.18,.52),through=.16+direct*.22,long=.07+direct*.13;
     if(g==='GK'){const goLong=Math.random()<(chasing?.26:.08+direct*.10),to=choosePassTarget(carrier,side,{long:goLong});if(to)animatePass(carrier,to,{long:goLong,label:goLong?`${playerLabel(carrier)} sucht den langen Ball`:`${playerLabel(carrier)} eröffnet kontrolliert`})}
     else if(r<drib){dribble(carrier,side,g==='AM'||g==='ST')}
     else if(r<drib+through){const to=choosePassTarget(carrier,side,{through:true});if(to)animatePass(carrier,to,{through:true})}
     else if(r<drib+through+long){const to=choosePassTarget(carrier,side,{long:true});if(to)animatePass(carrier,to,{long:true})}
-    else if(r<drib+through+long+.10){const opp=nearestOpp(carrier);if(opp&&Math.random()<.34)turnover(carrier,opp);else dribble(carrier,side,false)}
+    else if(r<drib+through+long+.11){const opp=nearestOpp(carrier);if(opp&&Math.random()<.27)turnover(carrier,opp);else dribble(carrier,side,false)}
     else if(r<drib+through+long+.16&&progressFor(carrier,side)>58){arrangeFreeKick(side)}
     else {const to=choosePassTarget(carrier,side,{});if(to)animatePass(carrier,to,{})}
     if(!restartLock&&Math.random()<.075){possessionSide=side==='home'?'away':'home';const c=chooseCarrier(possessionSide);later(()=>{if(c&&!ballInFlight)setBallAtNode(c)},900*tempoScale())}
-    nextAmbientAction=simSecond+18+Math.random()*24;
+    nextAmbientAction=simSecond+9+Math.random()*11;
   }
 
   function liveStatAt(currentMinute){
@@ -2234,7 +2245,7 @@ function openLiveSimulation(matchId){
 
   function focusEvent(e){
     clearSequenceTimers();const side=eventAttackSide(e),other=side==='home'?'away':'home',scale=tempoScale(),title=liveSimEventTitle(e,m);possessionSide=side;restartLock=false;clearActive();updateDynamicShape(true);
-    const [gh,ga]=liveSimScoreAt(m,Number(e.minute||0));score.textContent=`${gh} : ${ga}`;liveStatAt(Number(e.minute||0));tickerRows.unshift(liveSimTickerRow(e,title,side));ticker.innerHTML=tickerRows.slice(0,4).join('');if(tickerPanel){tickerPanel.classList.add('pulse');setTimeout(()=>tickerPanel.classList.remove('pulse'),620)}if(['goal','penalty','save','chance','post','corner'].includes(e.type)&&statsPanel){statsPanel.classList.add('pulse');setTimeout(()=>statsPanel.classList.remove('pulse'),620)}
+    const [gh,ga]=liveSimScoreAt(m,Number(e.minute||0));score.textContent=`${gh} : ${ga}`;liveStatAt(Number(e.minute||0));tickerRows.unshift(liveSimTickerRow(e,title,side));ticker.innerHTML=tickerRows.slice(0,6).join('');if(tickerPanel){tickerPanel.classList.add('pulse');setTimeout(()=>tickerPanel.classList.remove('pulse'),620)}if(['goal','penalty','save','chance','post','corner'].includes(e.type)&&statsPanel){statsPanel.classList.add('pulse');setTimeout(()=>statsPanel.classList.remove('pulse'),620)}
     if(e.type==='halftime'){cinematicUntil=performance.now()+3300*scale;showSetpiece('HALBZEIT');showScene('⏸ Halbzeitpause',true);later(()=>arrangeKickoff(side==='home'?'away':'home','Anstoß 2. Halbzeit'),1800*scale);return}
     if(e.type==='corner'){arrangeCorner(side,e);return}
     if(e.type==='penalty'||e.type==='missedPenalty'){arrangePenalty(side,e,e.type==='penalty');if(e.type==='penalty')later(()=>arrangeKickoff(other,'Wiederanstoß'),5100*scale);return}
@@ -2250,11 +2261,11 @@ function openLiveSimulation(matchId){
         realisticShot(side,shooter,{kind:'goal',keeperNode:gk,event:e});later(()=>{playGoalAnimation(e,side,shooter);showScene(`⚽ TOR! ${playerLabel(shooter)}`,true)},1900*scale);later(()=>arrangeKickoff(other,'Wiederanstoß'),4300*scale);
       }else{setBallAtNode(shooter);showScene(title,true)}
     });
-    nextAmbientAction=simSecond+65;
+    nextAmbientAction=simSecond+34;
   }
 
   function finish(){
-    if(ended)return;ended=true;clearSequenceTimers();if(goalTimer)clearTimeout(goalTimer);cancelAnimationFrame(raf);clock.textContent='90:00';if(period)period.textContent='ENDE';score.textContent=`${m.homeGoals||0} : ${m.awayGoals||0}`;progress.style.width='100%';liveStatAt(90);showScene('🏁 Abpfiff',true);showSetpiece('ABPFIFF');tickerRows.unshift(`<div class="live2d-ticker-row full"><b>90'</b><span>🏁 Abpfiff · ${h.short||h.name} ${m.homeGoals||0}:${m.awayGoals||0} ${a.short||a.name}</span></div>`);ticker.innerHTML=tickerRows.slice(0,4).join('');if(tickerPanel){tickerPanel.classList.add('pulse');setTimeout(()=>tickerPanel.classList.remove('pulse'),620)}el('#live2dPause').textContent='✓ Beendet';el('#live2dPause').disabled=true;setTimeout(()=>{if(document.querySelector('.live2d-shell')){closeOverlay();openMatch(matchId)}},3300)
+    if(ended)return;ended=true;clearSequenceTimers();if(goalTimer)clearTimeout(goalTimer);cancelAnimationFrame(raf);clock.textContent='90:00';if(period)period.textContent='ENDE';score.textContent=`${m.homeGoals||0} : ${m.awayGoals||0}`;progress.style.width='100%';liveStatAt(90);showScene('🏁 Abpfiff',true);showSetpiece('ABPFIFF');tickerRows.unshift(`<div class="live2d-ticker-row full"><b>90'</b><span>🏁 Abpfiff · ${h.short||h.name} ${m.homeGoals||0}:${m.awayGoals||0} ${a.short||a.name}</span></div>`);ticker.innerHTML=tickerRows.slice(0,6).join('');if(tickerPanel){tickerPanel.classList.add('pulse');setTimeout(()=>tickerPanel.classList.remove('pulse'),620)}el('#live2dPause').textContent='✓ Beendet';el('#live2dPause').disabled=true;setTimeout(()=>{if(document.querySelector('.live2d-shell')){closeOverlay();openMatch(matchId)}},3300)
   }
   function tick(now){
     if(!shell||!document.body.contains(shell))return;const dt=Math.min(.055,(now-lastFrame)/1000);lastFrame=now;
