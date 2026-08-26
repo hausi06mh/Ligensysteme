@@ -1,3 +1,2 @@
-Fantasy Liga Elite V70 – Real Match Coherence
-
-Live-Statistik = Endstatistik, Karten nur nach sichtbaren Fouls, Freistöße nur als Folge eines Fouls, Elfmeter mit vorherigem Foul, geglättete Bewegungen bei 4x/8x und nachvollziehbare Standards.
+Fantasy Liga Elite V71 – Causal Football Engine
+Freistöße, Elfmeter und Karten entstehen ausschließlich sichtbar aus Fouls. Bewegungen bei 1x geglättet.
