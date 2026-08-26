@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Liga Studio">
-  <title>Fantasy Liga Studio Elite V63.2</title>
+  <title>Fantasy Liga Studio Elite V63.3</title>
   <link rel="manifest" href="./manifest.webmanifest?v=632">
   <link rel="apple-touch-icon" href="./icon-192.png?v=632">
-  <link rel="stylesheet" href="./styles632.css?v=632">
+  <link rel="stylesheet" href="./styles632.css?v=633">
 </head>
 <body>
   <div id="app">
@@ -33,7 +33,7 @@
       if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k).catch(()=>false)));}
       window.__FLE_BOOT_OK__=false;
       window.addEventListener('fle:boot-ok',()=>window.__FLE_BOOT_OK__=true,{once:true});
-      await import('./app632.js?v=632-20260826');
+      await import('./app632.js?v=633-20260826');
       setTimeout(()=>{if(!window.__FLE_BOOT_OK__ && document.querySelector('#startupFallback')) fallback('Start dauert zu lange','Die neue App-Datei wurde geladen, aber der Start wurde nicht abgeschlossen. Bitte einmal neu laden.');},8000);
     }catch(e){console.error(e);fallback('App-Datei konnte nicht geladen werden','Bitte lade diese Seite einmal neu. Dein lokaler Spielstand wird nicht gelöscht. Fehler: '+String(e&&e.message||e));}
   })();

@@ -1775,10 +1775,10 @@ async function simulateMatch(matchId){
     if(Math.random()<.20){const side=Math.random()<.5?hXI:aXI;const injured=weightedPick(side,()=>1);if(injured)addSimEvent(m,"injury",minute(),injured);}
     // V41: Mehr sichtbare Offensivszenen. Wer mehr Spielkontrolle hat, erzeugt auch mehr
     // Chancen; Außenseiter können aber selten trotz mehr Abschlüssen verlieren.
-    const controlHome=clamp(.50 + ratingGap*.035 + seasonGap*.115 + formGap*.07 + .025 - fatigueH*.025 + fatigueA*.025,.20,.80);
+    const eventControlHome=clamp(.50 + ratingGap*.035 + seasonGap*.115 + formGap*.07 + .025 - fatigueH*.025 + fatigueA*.025,.20,.80);
     const chanceVolume=clamp(Math.round(9 + power.totalXg*2.1 + Math.abs(effectiveGap)*.55 + poisson(2.8)),8,22);
     for(let i=0;i<chanceVolume;i++){
-      const homeAttack=Math.random()<controlHome,attackers=homeAttack?hXI:aXI,defenders=homeAttack?aXI:hXI;
+      const homeAttack=Math.random()<eventControlHome,attackers=homeAttack?hXI:aXI,defenders=homeAttack?aXI:hXI;
       const shooter=pickAttacker(attackers);if(!shooter)continue;
       const roll=Math.random();
       if(roll<.31){
@@ -1790,7 +1790,7 @@ async function simulateMatch(matchId){
     }
     // Seltene zusätzliche Elfmeter, die auch vergeben werden können.
     if(Math.random()<.07){
-      const homePen=Math.random()<controlHome,sidePlayers=homePen?hXI:aXI,teamId=homePen?m.homeId:m.awayId;
+      const homePen=Math.random()<eventControlHome,sidePlayers=homePen?hXI:aXI,teamId=homePen?m.homeId:m.awayId;
       const shooter=pickScorerBySource(sidePlayers,'open');
       if(shooter)addSimEvent(m,'missedPenalty',minute(),shooter,null,0,{source:'penalty',attackingTeamId:teamId});
     }
@@ -1853,14 +1853,14 @@ async function simulateMatch(matchId){
     // 1–4 gefährliche Freistöße pro Spiel. Das normale Foulvolumen bleibt in den Statistiken höher.
     const dangerousFK=clamp(poisson(2.1),1,4);
     for(let i=0;i<dangerousFK;i++){
-      const homeFK=Math.random()<controlHome,sidePlayers=homeFK?hXI:aXI,teamId=homeFK?m.homeId:m.awayId;
+      const homeFK=Math.random()<eventControlHome,sidePlayers=homeFK?hXI:aXI,teamId=homeFK?m.homeId:m.awayId;
       const taker=weightedPick(sidePlayers,p=>['AM','MID','ST'].includes(playerPositionGroup(p))?2.4:0.4);
       if(taker)addSimEvent(m,'freeKick',minute(),taker,null,0,{attackingTeamId:teamId,source:'foul'});
     }
     // Selten zusätzlicher Elfmeter, falls noch keiner im Spiel geplant ist.
     const hasPenalty=m.events.some(ev=>['penalty','missedPenalty'].includes(ev.type));
     if(!hasPenalty&&Math.random()<.16){
-      const homePen=Math.random()<controlHome,sidePlayers=homePen?hXI:aXI,teamId=homePen?m.homeId:m.awayId;
+      const homePen=Math.random()<eventControlHome,sidePlayers=homePen?hXI:aXI,teamId=homePen?m.homeId:m.awayId;
       const shooter=pickScorerBySource(sidePlayers,'open');
       if(shooter){
         if(Math.random()<.76){

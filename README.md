@@ -1,3 +1,3 @@
-Fantasy Liga Elite V63.2 – Hard Cache Reset
+Fantasy Liga Elite V63.3 – Startfehler behoben
 
-V63-Funktionen bleiben enthalten. Neue physische Dateinamen verhindern, dass Safari/GitHub Pages alte app.js/styles.css aus einem Service-Worker-Cache verwendet. fresh632.html ist eine einmalige Notfall-Startseite, die alte Service Worker und Cache Storage entfernt. Lokale Karriere-/Spielstanddaten werden nicht gelöscht.
+Fix: doppelte const-Deklaration controlHome in simulateMatch entfernt/umbenannt. Alle JavaScript-Dateien wurden mit node --check geprüft. V63-Funktionen wie Wahrscheinlichkeitsmodell, Aufstellungsprüfung und Live-/Endstatistik bleiben enthalten.
