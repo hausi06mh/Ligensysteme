@@ -1683,12 +1683,12 @@ async function simulateMatch(matchId){
     let baseHome=1.30+homeAdvantage+ratingGap*.235+formGap*.15+seasonGap*.22+fatigueGap*.17+leaderH+relegationH+upsetSwing;
     let baseAway=1.26-ratingGap*.225-formGap*.14-seasonGap*.20-fatigueGap*.16+leaderA+relegationA-upsetSwing;
     if(derby){baseHome=(baseHome+1.27)*.5;baseAway=(baseAway+1.24)*.5;}
-    const openMatch=Math.random()<.125;
-    const blowoutMatch=!openMatch&&Math.random()<.032;
-    const defensiveMatch=!openMatch&&!blowoutMatch&&Math.random()<.205;
-    if(openMatch){baseHome*=1.34;baseAway*=1.34}
-    if(blowoutMatch){baseHome*=1.62;baseAway*=1.62}
-    if(defensiveMatch){baseHome*=.70;baseAway*=.70}
+    const openMatch=Math.random()<.16;
+    const blowoutMatch=!openMatch&&Math.random()<.045;
+    const defensiveMatch=!openMatch&&!blowoutMatch&&Math.random()<.13;
+    if(openMatch){baseHome*=1.42;baseAway*=1.42}
+    if(blowoutMatch){baseHome*=1.78;baseAway*=1.78}
+    if(defensiveMatch){baseHome*=.78;baseAway*=.78}
     baseHome=clamp(baseHome,.24,3.45);baseAway=clamp(baseAway,.20,3.25);
 
     let hg=clamp(poisson(baseHome),0,8),ag=clamp(poisson(baseAway),0,8);
@@ -1698,6 +1698,20 @@ async function simulateMatch(matchId){
       while((Math.abs(hg-ag)>=4||hg+ag>=8)&&guard++<5){hg=clamp(poisson(baseHome),0,7);ag=clamp(poisson(baseAway),0,7)}
       if(Math.abs(hg-ag)>=4){
         if(hg>ag)hg=ag+3;else ag=hg+3;
+      }
+    }
+    // V62: 0:0 bleibt möglich, aber nicht als Standardresultat. Ca. 12 % der ursprünglich torlosen Spiele bleiben 0:0.
+    if(hg===0&&ag===0&&Math.random()>.12){
+      const homeScoreBias=clamp(.50 + ratingGap*.045 + formGap*.08 + seasonGap*.12 + .035,.18,.82);
+      if(Math.random()<homeScoreBias)hg=1;else ag=1;
+      if(openMatch&&Math.random()<.34){if(Math.random()<homeScoreBias)hg++;else ag++;}
+    }
+    // Seltene echte Torfestivals bis maximal 10 Gesamttore.
+    if(openMatch&&Math.random()<.12&&hg+ag<5){
+      const extra=1+Math.floor(Math.random()*3);
+      for(let i=0;i<extra&&hg+ag<10;i++){
+        const homeBias=clamp(.50 + ratingGap*.04 + seasonGap*.10,.2,.8);
+        if(Math.random()<homeBias)hg++;else ag++;
       }
     }
 
@@ -1807,6 +1821,38 @@ async function simulateMatch(matchId){
       bigChancesHome:clamp(Math.round(sotH*.42 + hg*.45 + Math.random()*1.5),0,10),
       bigChancesAway:clamp(Math.round(sotA*.42 + ag*.45 + Math.random()*1.5),0,10)
     };
+    // V62: Standards sind echte, geplante Live-Ereignisse und nicht nur Zahlen in der Statistik.
+    const countSideEvents=(type,teamId)=>m.events.filter(ev=>ev.type===type&&Number(ev.attackingTeamId||0)===Number(teamId)).length;
+    const addCornerEventsToTarget=(sidePlayers,teamId,target)=>{
+      const missing=Math.max(0,Math.min(8,Number(target||0))-countSideEvents('corner',teamId));
+      for(let i=0;i<missing;i++){
+        const taker=weightedPick(sidePlayers,cornerTakerWeight);if(taker)addSimEvent(m,'corner',minute(),taker,null,0,{attackingTeamId:teamId,source:'corner'});
+      }
+    };
+    addCornerEventsToTarget(hXI,m.homeId,m.statistics.cornersHome);
+    addCornerEventsToTarget(aXI,m.awayId,m.statistics.cornersAway);
+    // 1–4 gefährliche Freistöße pro Spiel. Das normale Foulvolumen bleibt in den Statistiken höher.
+    const dangerousFK=clamp(poisson(2.1),1,4);
+    for(let i=0;i<dangerousFK;i++){
+      const homeFK=Math.random()<controlHome,sidePlayers=homeFK?hXI:aXI,teamId=homeFK?m.homeId:m.awayId;
+      const taker=weightedPick(sidePlayers,p=>['AM','MID','ST'].includes(playerPositionGroup(p))?2.4:0.4);
+      if(taker)addSimEvent(m,'freeKick',minute(),taker,null,0,{attackingTeamId:teamId,source:'foul'});
+    }
+    // Selten zusätzlicher Elfmeter, falls noch keiner im Spiel geplant ist.
+    const hasPenalty=m.events.some(ev=>['penalty','missedPenalty'].includes(ev.type));
+    if(!hasPenalty&&Math.random()<.16){
+      const homePen=Math.random()<controlHome,sidePlayers=homePen?hXI:aXI,teamId=homePen?m.homeId:m.awayId;
+      const shooter=pickScorerBySource(sidePlayers,'open');
+      if(shooter){
+        if(Math.random()<.76){
+          // Ein erfolgreicher Elfmeter zählt als zusätzliches geplantes Tor und ist live sichtbar.
+          if(homePen)hg=Math.min(8,hg+1);else ag=Math.min(8,ag+1);
+          addSimEvent(m,'penalty',minute(),shooter,null,0,{source:'penalty',attackingTeamId:teamId});
+        }else addSimEvent(m,'missedPenalty',minute(),shooter,null,0,{source:'penalty',attackingTeamId:teamId});
+      }
+    }
+    m.events.sort((x,y)=>Number(x.minute||0)-Number(y.minute||0));
+
     m.statisticsSource="simulated";
     m.simulationFactors={
       homeStrength:Number(hs.toFixed(1)),awayStrength:Number(as.toFixed(1)),
@@ -1842,7 +1888,7 @@ async function simulateMatch(matchId){
   }
 }
 
-// V61 – Synchronized Visible Match Engine -------------------------------------------------
+// V62 – Match Event & Scoring Engine -------------------------------------------------
 // Die Simulation bleibt datengetrieben. Die Visualisierung spielt genau die
 // bereits berechneten Ereignisse ab und erfindet keine zusätzlichen Tore/Karten.
 function liveSimTeamSideForPlayer(m,playerId){
@@ -2208,19 +2254,20 @@ function openLiveSimulation(matchId){
   }
 
   function arrangeCorner(side,e){
-    const scale=tempoScale(),other=side==='home'?'away':'home',dir=attackingDir(side),taker=nodeFor(e?.playerId)||chooseRole(side,['AM','MID']),top=Math.random()<.5,cornerX=side==='home'?98:2,cornerY=top?3:97,goalX=side==='home'?92:8;
-    restartLock=true;cinematicUntil=performance.now()+4700*scale;registerVisibleEvent('corner',side,e);showSetpiece('ECKBALL');showAction('ECKE',teamLabel(side),playerLabel(taker),side,1800*scale);showScene(`🚩 Ecke für ${teamLabel(side)} · ${playerLabel(taker)}`,true);clearActive();
-    if(taker){runTo(taker,cornerX,cornerY,850*scale,'active');setLocked(taker,4300*scale)}setBallXY(cornerX,cornerY);
-    const attackers=roleNodes(side,['ST','AM','MID','DEF']).filter(n=>n!==taker).slice(0,7),defenders=roleNodes(other,['DEF','MID']).slice(0,6),gk=keeper(other);
-    attackers.forEach((n,i)=>runTo(n,goalX-dir*(4+Math.random()*7),27+i*11+(Math.random()-.5)*5,1100*scale,'runner'));
-    defenders.forEach((n,i)=>runTo(n,goalX-dir*(2+Math.random()*6),25+i*10+(Math.random()-.5)*4,1100*scale,'duel'));
-    if(gk)runTo(gk,side==='home'?96:4,50,700*scale,'active');
-    const defTargets=attackers.filter(n=>groupOf(n)==='DEF');
-    const target=(Math.random()<.34&&defTargets.length?defTargets[Math.floor(Math.random()*defTargets.length)]:weightedNode(attackers,n=>groupOf(n)==='ST'?4:groupOf(n)==='DEF'?2.5:1.7))||attackers[0];
-    later(()=>{if(!taker||!target)return;const tp=currentXY(target);ballInFlight=true;setBallXY((cornerX+tp.x)/2,(cornerY+tp.y)/2-7,true);later(()=>setBallXY(tp.x,tp.y,true),720*scale);showScene(`${playerLabel(taker)} bringt die Ecke in den Strafraum`)},1400*scale);
-    later(()=>{if(target){target.classList.add('active');showScene(`${playerLabel(target)} steigt zum Kopfball hoch`)}},2350*scale);
-    later(()=>{if(target){const out=Math.random()<.45?'save':Math.random()<.18?'post':'chance';realisticShot(side,target,{kind:out,keeperNode:gk,technique:'header'})}},2700*scale);
-    later(()=>{restartLock=false;ballInFlight=false;possessionSide=other;const c=keeper(other)||chooseCarrier(other);if(c&&!ballInFlight)setBallAtNode(c);updateDynamicShape(true)},5000*scale);
+    const scale=tempoScale(),other=side==='home'?'away':'home',dir=attackingDir(side),taker=nodeFor(e?.playerId)||chooseRole(side,['AM','MID']),gk=keeper(other);
+    const aerial=chooseRole(side,['ST','DEF','AM','MID'],[taker])||chooseCarrier(side);if(!taker||!aerial){eventSceneActive=false;return}
+    restartLock=true;actionBusyUntil=performance.now()+5000*scale;cinematicUntil=performance.now()+5000*scale;registerVisibleEvent('corner',side,e);clearActive();showSetpiece('ECKE');showAction('ECKE',playerLabel(taker),`Flanke auf ${playerLabel(aerial)}`,side,1600*scale);showScene(`🚩 Ecke für ${teamLabel(side)}`,true);
+    const cornerX=side==='home'?98:2,cornerY=Math.random()<.5?3:97,boxX=side==='home'?87:13,boxY=38+Math.random()*24;
+    runTo(taker,cornerX,cornerY,700*scale,'active');setBallXY(cornerX,cornerY);runTo(aerial,boxX,boxY,950*scale,'runner');setLocked(taker,4200*scale);setLocked(aerial,4200*scale);
+    roleNodes(side,['ST','AM','DEF']).filter(n=>n!==aerial).slice(0,4).forEach((n,i)=>runTo(n,boxX-dir*(2+i%2*2),30+i*10,950*scale,'runner'));
+    roleNodes(other,['DEF','MID']).slice(0,5).forEach((n,i)=>runTo(n,boxX+dir*(1+i%2*2),28+i*10,950*scale,'duel'));if(gk)runTo(gk,side==='home'?96:4,50,650*scale,'active');
+    later(()=>{const start=actualXY(taker);flyBall(start,()=>actualXY(aerial),950*scale,{air:true,kind:'long',onDone:()=>setBallAtNode(aerial)});showScene(`${playerLabel(taker)} bringt die Ecke herein`,true)},900*scale);
+    later(()=>{showAction('KOPFBALL',playerLabel(aerial),'kommt zum Abschluss',side,1250*scale);const r=Math.random();const kind=r<.12?'goal':r<.56?'save':r<.69?'post':'chance';if(kind==='goal'){
+      const goalEvent={id:e?.id?Number(e.id)*1000+17:Date.now(),type:'goal',minute:Math.max(1,Math.floor(simSecond/60)),playerId:playerNodeId(aerial),attackingTeamId:side==='home'?m.homeId:m.awayId,source:'corner'};
+      realisticShot(side,aerial,{kind:'goal',keeperNode:gk,event:goalEvent,technique:'header'});later(()=>playGoalAnimation(goalEvent,side,aerial),1750*scale);
+    }else realisticShot(side,aerial,{kind,keeperNode:gk,event:e,technique:'header'});
+    },2150*scale);
+    later(()=>{restartLock=false;eventSceneActive=false;nextAmbientAction=Math.min(nextAmbientAction,simSecond+5)},4700*scale);
   }
 
   function arrangeFreeKick(side){
@@ -2245,7 +2292,9 @@ function openLiveSimulation(matchId){
     showAction('TOR!',playerLabel(shooter),`${teamLabel(side)} geht auf ${visibleHomeGoals}:${visibleAwayGoals}`,side,2400*scale);
     showScene(`⚽ TOR! ${playerLabel(shooter)}`,true);
     registerVisibleEvent('goal',side,e);
-    {const ge={...e,type:'goal',minute:Math.max(1,Number(e?.minute||Math.floor(simSecond/60)))};const title=liveTickerDisplayTitle(ge,m);tickerRows.unshift(liveSimTickerRow(ge,title,side));if(ticker)ticker.innerHTML=tickerRows.slice(0,6).join('')}
+    const ge={...e,type:'goal',minute:Math.max(1,Number(e?.minute||Math.floor(simSecond/60))),attackingTeamId:side==='home'?m.homeId:m.awayId};
+    if(!m.events.some(ev=>Number(ev.id||0)===Number(ge.id||0)&&['goal','penalty'].includes(ev.type)))m.events.push(ge);
+    {const title=liveTickerDisplayTitle(ge,m);tickerRows.unshift(liveSimTickerRow(ge,title,side));if(ticker)ticker.innerHTML=tickerRows.slice(0,6).join('')}
     actionBusyUntil=performance.now()+2600*scale;eventSceneUntil=performance.now()+3000*scale;
   }
 
@@ -2270,7 +2319,7 @@ function openLiveSimulation(matchId){
       if(gk&&kind!=='chance'){const gkp=actualXY(gk);runTo(gk,side==='home'?96:4,onTargetY,700*scale,'runner');showScene(`${playerLabel(gk)} macht sich bereit`,false)}
       flyBall(start,end,850*scale,{air:distance>18,kind:kind==='chance'?'miss':kind==='post'?'post':'shot',onDone:()=>{
         if(kind==='goal'){showScene(`Der Ball ist im Netz`,true)}
-        else if(kind==='save'&&gk){later(()=>{setBallAtNode(gk);showAction('PARADE',playerLabel(gk),`hält gegen ${playerLabel(shooter)}`,side==='home'?'away':'home',2100*scale);showScene(`🧤 ${playerLabel(gk)} hält den Schuss`,true)},240*scale)}
+        else if(kind==='save'&&gk){later(()=>{const parry=Math.random()<.28;if(parry){registerVisibleEvent('corner',side);showAction('PARADE',playerLabel(gk),`lenkt den Schuss zur Ecke`,side==='home'?'away':'home',2100*scale);showScene(`🧤 ${playerLabel(gk)} pariert zur Ecke`,true);later(()=>arrangeCorner(side,{playerId:playerNodeId(chooseRole(side,['AM','MID'])),attackingTeamId:side==='home'?m.homeId:m.awayId}),900*scale)}else{setBallAtNode(gk);showAction('PARADE',playerLabel(gk),`hält gegen ${playerLabel(shooter)}`,side==='home'?'away':'home',2100*scale);showScene(`🧤 ${playerLabel(gk)} hält den Schuss`,true)}},240*scale)}
         else if(kind==='post'){showAction('ALUMINIUM',playerLabel(shooter),'Pfosten oder Latte',side,2100*scale);showScene(`🥅 Aluminium!`,true)}
         else{showAction('VORBEI',playerLabel(shooter),'der Ball verfehlt das Tor',side,1900*scale);showScene(`↗ ${playerLabel(shooter)} schießt vorbei`,true)}
       }})
@@ -2350,7 +2399,7 @@ function openLiveSimulation(matchId){
       if(wide&&Math.random()<.58){crossAttack(side,carrier);nextAmbientAction=simSecond+32+Math.random()*18;return}
       if(g==='ST'){
         const roll=Math.random();
-        if(roll<.72){const outcome=roll<.39?'save':roll<.50?'post':'chance';realisticShot(side,carrier,{kind:outcome,keeperNode});possessionSide=side==='home'?'away':'home';later(()=>{const c=keeper(possessionSide)||chooseCarrier(possessionSide);if(c&&!ballInFlight)setBallAtNode(c)},2800*tempoScale());nextAmbientAction=simSecond+34+Math.random()*18;return}
+        if(roll<.72){let outcome=roll<.08?'goal':roll<.41?'save':roll<.52?'post':'chance';if(outcome==='goal'){const ge={id:Date.now()+Math.floor(Math.random()*99999),type:'goal',minute:Math.max(1,Math.floor(simSecond/60)),playerId:playerNodeId(carrier),attackingTeamId:side==='home'?m.homeId:m.awayId,source:'open'};realisticShot(side,carrier,{kind:'goal',keeperNode,event:ge});later(()=>playGoalAnimation(ge,side,carrier),1750*tempoScale())}else realisticShot(side,carrier,{kind:outcome,keeperNode});possessionSide=side==='home'?'away':'home';later(()=>{const c=keeper(possessionSide)||chooseCarrier(possessionSide);if(c&&!ballInFlight)setBallAtNode(c)},2800*tempoScale());nextAmbientAction=simSecond+34+Math.random()*18;return}
         if(roll<.86){oneTwo(side,carrier);nextAmbientAction=simSecond+25+Math.random()*15;return}
         dribble(carrier,side,true);nextAmbientAction=simSecond+22+Math.random()*12;return;
       }
@@ -2420,6 +2469,7 @@ function openLiveSimulation(matchId){
     if(e.type==='halftime'){cinematicUntil=performance.now()+3300*scale;showSetpiece('HALBZEIT');showScene('⏸ Halbzeitpause',true);later(()=>{arrangeKickoff(side==='home'?'away':'home','Anstoß 2. Halbzeit');eventSceneActive=false},1800*scale);return}
     if(e.type==='goal'){guaranteedGoalSequence(side,e);return}
     if(e.type==='corner'){arrangeCorner(side,e);later(()=>eventSceneActive=false,5000*scale);return}
+    if(e.type==='freeKick'){arrangeFreeKick(side);later(()=>eventSceneActive=false,5200*scale);return}
     if(e.type==='penalty'||e.type==='missedPenalty'){arrangePenalty(side,e,e.type==='penalty');if(e.type==='penalty')later(()=>arrangeKickoff(other,'Wiederanstoß'),5100*scale);later(()=>eventSceneActive=false,5200*scale);return}
     if(['yellow','secondYellow','red','injury'].includes(e.type)){cinematicUntil=performance.now()+2700*scale;pitch?.classList.add('cinematic');later(()=>pitch?.classList.remove('cinematic'),2200*scale);const actor=nodeFor(e.playerId);if(actor){actor.classList.add('active');setLocked(actor,2300*scale);if(['red','secondYellow'].includes(e.type))later(()=>actor.classList.add('sent-off'),1800*scale)}showAction(e.type==='yellow'?'GELBE KARTE':e.type==='red'||e.type==='secondYellow'?'PLATZVERWEIS':'UNTERBRECHUNG',actor?playerLabel(actor):title,'',side,2100*scale);showScene(title,true);later(()=>eventSceneActive=false,2300*scale);return}
     const gk=e.type==='save'?nodeFor(e.playerId):keeper(other),shooter=visualAttacker(side,e.type==='save'?e.shotById:e.playerId);
@@ -2451,7 +2501,13 @@ function openLiveSimulation(matchId){
     const dt=Math.min(.08,Math.max(0,(now-lastFrame)/1000));lastFrame=now;
     try{
       if(!paused&&!ended){
-        simSecond=Math.min(totalSeconds,simSecond+dt*simPerReal*speed);
+        const advance=dt*simPerReal*speed;
+        const nextEvt=eventIndex<events.length?Number(events[eventIndex].__liveSecond||0):Infinity;
+        const blocked=eventSceneActive||performance.now()<actionBusyUntil||restartLock;
+        // V62: Sobald eine geplante Szene erreicht ist, wartet die Spieluhr auf deren sichtbare Ausführung.
+        // Dadurch können Tore/Ecken/Elfmeter nicht mehr unsichtbar übersprungen werden – auch nicht bei 8×.
+        if(Number.isFinite(nextEvt)&&nextEvt>=simSecond&&simSecond+advance>=nextEvt)simSecond=nextEvt;
+        else if(!(blocked&&Number.isFinite(nextEvt)&&simSecond>=nextEvt))simSecond=Math.min(totalSeconds,simSecond+advance);
         const minute=simSecond/60,whole=Math.floor(minute),sec=Math.floor((minute-whole)*60);
         clock.textContent=`${String(Math.min(90,whole)).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
         progress.style.width=`${(simSecond/totalSeconds)*100}%`;if(period)period.textContent=whole<45?'1. HZ':whole<90?'2. HZ':'ENDE';

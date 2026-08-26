@@ -1,4 +1,4 @@
-const CACHE="fantasy-liga-v61-visible-goals";
+const CACHE="fantasy-liga-v62-match-events";
 const ASSETS=[
   "./","./index.html","./styles.css","./seed.json","./manifest.webmanifest",
   "./app.js","./playerUniverse.js","./managerWorld.js","./stabilityCareer.js","./store.js","./ui.js","./standings.js",
