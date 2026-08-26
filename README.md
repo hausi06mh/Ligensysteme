@@ -1,10 +1,3 @@
-Fantasy Liga Elite V67 – 90-Minuten Match Engine Fix
+Fantasy Liga Elite V68 – Coherent Match Flow
 
-- Match-Uhr läuft unabhängig von Live-Animationen bis 90:00.
-- Watchdog löst festhängende Szenen automatisch.
-- Geplante Tore/Karten/Chancen haben Vorrang vor freien Szenen.
-- Formationsabhängige Spielerpositionen in der Live-Simulation.
-- Kürzere, plausiblere Passwege und weniger Steilpässe bis zum Torwart.
-- Mehr kontrollierte Dribblings, Flanken und Distanzabschlüsse.
-- Gelbe, Gelb-Rote und Rote Karten bleiben sichtbar.
-- V66-Funktionen einschließlich flexibler Aufstellungen bleiben enthalten.
+V68 verbessert die sichtbare Spiellogik: Ecken haben eine erkennbare Ursache, keine direkte Gegen-Ecke ohne Ballbesitzphase, ruhigere Passwege, klarere Abschlüsse/Paraden und seltene echte Comeback-Torfolgen. Enthält alle V67-Funktionen.
