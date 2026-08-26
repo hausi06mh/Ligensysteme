@@ -424,7 +424,7 @@ function bindBase(){
   });
   document.querySelectorAll("[data-open-match]").forEach(b=>b.onclick=()=>openMatch(Number(b.dataset.openMatch)));
   document.querySelectorAll("[data-save-result]").forEach(b=>b.onclick=e=>{e.stopPropagation();saveDirectResult(Number(b.dataset.saveResult));});
-  document.querySelectorAll("[data-simulate-match]").forEach(b=>b.onclick=e=>{e.stopPropagation();simulateMatch(Number(b.dataset.simulateMatch));});
+  document.querySelectorAll("[data-simulate-match]").forEach(b=>b.onclick=e=>{e.stopPropagation();openPreMatchLineup(Number(b.dataset.simulateMatch));});
   document.querySelectorAll("[data-edit-result]").forEach(b=>b.onclick=e=>{
     e.stopPropagation();
     const id=Number(b.dataset.editResult);
@@ -1048,7 +1048,7 @@ function openMatch(id){
   });
   const startBtn=el("#startMatch");if(startBtn)startBtn.onclick=()=>{m.status="live";saveState({label:"Spiel gestartet"});openMatch(m.id)};
   const finishBtn=el("#finishMatch");if(finishBtn)finishBtn.onclick=()=>finishMatch(m.id);
-  const simulateBtn=el("#simulateMatch");if(simulateBtn)simulateBtn.onclick=()=>simulateMatch(m.id);
+  const simulateBtn=el("#simulateMatch");if(simulateBtn)simulateBtn.onclick=()=>openPreMatchLineup(m.id);
   const quick=el("#editMatchQuick");if(quick)quick.onclick=()=>document.querySelector('[data-tab="edit"]').click();
   bindMatchActions(m);
 }
@@ -1699,6 +1699,35 @@ function ensureSimulationLineups(m){
   m.lineups.awayBench=fullBenchIds(a,m.lineups.away,m.lineups.awayBench);
   return m.lineups.home.length===11&&m.lineups.away.length===11;
 }
+
+function renderPreMatchLineupBody(m){
+  const host=el('#preMatchLineupBody');
+  if(!host)return;
+  ensureSimulationLineups(m);
+  host.innerHTML=lineupView(m);
+  bindLineupDrag(m);
+}
+function openPreMatchLineup(matchId){
+  const m=season()?.matches?.find(x=>x.id===matchId);
+  if(!m)return toast('Spiel wurde nicht gefunden');
+  const h=team(m.homeId),a=team(m.awayId);
+  if(!h||!a)return toast('Heim- oder Auswärtsteam fehlt');
+  if(!ensureSimulationLineups(m))return toast('Für mindestens ein Team stehen nicht 11 Spieler zur Verfügung.');
+  el('#overlay').innerHTML=`<div class="modal"><div class="sheet prematch-lineup-sheet">
+    <div class="sheet-head"><div><div class="eyebrow">Spieltag ${m.matchday||''}</div><h2>${h.short} – ${a.short}</h2><p class="muted">Aufstellung vor dem Spiel · Spieler auf dem Feld verschieben</p></div><button class="iconbtn" id="closePreMatchLineup">×</button></div>
+    <div id="preMatchLineupBody"></div>
+    <div class="prematch-lineup-actions"><button class="btn ghost" id="autoPreMatchLineup">↻ Automatisch auffüllen</button><button class="btn primary" id="confirmPreMatchSimulation">▶ Mit diesen Aufstellungen simulieren</button></div>
+  </div></div>`;
+  renderPreMatchLineupBody(m);
+  el('#closePreMatchLineup').onclick=closeOverlay;
+  el('#autoPreMatchLineup').onclick=()=>{m.lineups={home:[],away:[],homeBench:[],awayBench:[]};ensureSimulationLineups(m);renderPreMatchLineupBody(m);toast('Aufstellungen automatisch aufgefüllt')};
+  el('#confirmPreMatchSimulation').onclick=()=>{
+    if(!ensureSimulationLineups(m)||new Set(m.lineups.home||[]).size!==11||new Set(m.lineups.away||[]).size!==11)return toast('Beide Teams brauchen 11 verschiedene Spieler.');
+    saveState({label:'Aufstellungen vor Simulation bestätigt'});
+    simulateMatch(matchId);
+  };
+}
+
 async function simulateMatch(matchId){
   const m=season()?.matches?.find(x=>x.id===matchId);
   if(!m)return toast("Spiel wurde nicht gefunden");
@@ -2011,7 +2040,7 @@ function openLiveSimulation(matchId){
   events.sort((x,y)=>x.__liveSecond-y.__liveSecond);
 
   const {home:hColor,away:aColor}=distinctMatchColors(h,a);
-  el('#overlay').innerHTML=`<div class="modal live2d-modal"><div class="live2d-shell live2d-v50 live2d-v52 live2d-v54 live2d-v55 live2d-v56 live2d-v57 live2d-v58 live2d-v59 live2d-v60" style="--liveTempo:1.05s;--home:${hColor};--away:${aColor};${h.stadium?.image?`--stadium-photo:url(\'${h.stadium.image}\');`:``}">
+  el('#overlay').innerHTML=`<div class="modal live2d-modal"><div class="live2d-shell live2d-v50 live2d-v52 live2d-v54 live2d-v55 live2d-v56 live2d-v57 live2d-v58 live2d-v59 live2d-v60 live2d-v65" style="--liveTempo:1.05s;--home:${hColor};--away:${aColor};${h.stadium?.image?`--stadium-photo:url(\'${h.stadium.image}\');`:``}">
     <header class="v50-scoreboard">
       <div class="v50-team home">${badge(h)}<div><small>${h.short||"HEIM"}</small><strong>${h.name}</strong><span>HEIM</span></div></div>
       <div class="v50-score-center"><small id="live2dPeriod">1. HZ</small><strong id="live2dScore">0 : 0</strong><b id="live2dClock">00:00</b></div>
@@ -2545,12 +2574,12 @@ function openLiveSimulation(matchId){
     cinematicUntil=performance.now()+(e.type==='goal'?7000:5200)*scale;pitch?.classList.add('cinematic');later(()=>pitch?.classList.remove('cinematic'),(e.type==='goal'?6200:4300)*scale);
     buildAttackToEvent(side,shooter,()=>{
       if(!shooter)return;shooter.classList.add('active');
-      if(e.type==='save')realisticShot(side,shooter,{kind:'save',keeperNode:gk,event:e});
-      else if(e.type==='post')realisticShot(side,shooter,{kind:'post',keeperNode:gk,event:e});
-      else if(e.type==='chance')realisticShot(side,shooter,{kind:'chance',keeperNode:gk,event:e});
+      if(e.type==='save'){realisticShot(side,shooter,{kind:'save',keeperNode:gk,event:e});later(()=>eventSceneActive=false,3600*scale)}
+      else if(e.type==='post'){realisticShot(side,shooter,{kind:'post',keeperNode:gk,event:e});later(()=>eventSceneActive=false,3400*scale)}
+      else if(e.type==='chance'){realisticShot(side,shooter,{kind:'chance',keeperNode:gk,event:e});later(()=>eventSceneActive=false,3300*scale)}
       else if(e.type==='goal'){
         realisticShot(side,shooter,{kind:'goal',keeperNode:gk,event:e});later(()=>{playGoalAnimation(e,side,shooter)},1900*scale);later(()=>{arrangeKickoff(other,'Wiederanstoß');eventSceneActive=false},4300*scale);
-      }else{setBallAtNode(shooter);showScene(title,true)}
+      }else{setBallAtNode(shooter);showScene(title,true);later(()=>eventSceneActive=false,1700*scale)}
     });
     nextAmbientAction=simSecond+50;
   }
@@ -2656,12 +2685,12 @@ function setLineupSlot(m,side,pid,index){
   m.lineups[`${side}Bench`]=fullBenchIds(t,m.lineups[side],m.lineups[`${side}Bench`]);
   t.defaultLineup=[...m.lineups[side]];t.defaultFormation=t.defaultFormation||'4-3-2-1';
   saveState({label:'Aufstellung geändert'});
-  document.querySelector('[data-tab="lineups"]')?.click();
+  if(el('#preMatchLineupBody'))renderPreMatchLineupBody(m);else document.querySelector('[data-tab="lineups"]')?.click();
 }
 function moveLineupPlayer(m,pid,side,target){
   if(target===side){const free=Math.max(0,(m.lineups?.[side]||[]).findIndex(x=>!x));return setLineupSlot(m,side,pid,free>=0?free:10)}
   const t=team(side==='home'?m.homeId:m.awayId),start=(m.lineups?.[side]||[]).filter(id=>Number(id)!==Number(pid));
-  m.lineups[side]=start; m.lineups[`${side}Bench`]=fullBenchIds(t,start,m.lineups[`${side}Bench`]);saveState({label:'Aufstellung geändert'});document.querySelector('[data-tab="lineups"]')?.click();
+  m.lineups[side]=start; m.lineups[`${side}Bench`]=fullBenchIds(t,start,m.lineups[`${side}Bench`]);saveState({label:'Aufstellung geändert'});if(el('#preMatchLineupBody'))renderPreMatchLineupBody(m);else document.querySelector('[data-tab="lineups"]')?.click();
 }
 function bindLineupDrag(m){
   let payload=null,touch=null;

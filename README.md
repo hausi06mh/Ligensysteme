@@ -1,3 +1,3 @@
-Fantasy Liga Elite V64 – Tactical Lineup Studio
+Fantasy Liga Elite V65 – Clock + Pre-Match Lineup + Cards Fix
 
-Simulieren startet direkt. Aufstellungen werden automatisch vervollständigt und blockieren die Simulation nicht. Neue Drag-&-Drop-Aufstellung auf einem Spielfeld für Match-Aufstellung, Team-Standardelf und Halbzeit. Mobile Touch-Unterstützung enthalten.
+Fix: Live-Uhr stoppt nicht mehr nach Chancen/Paraden. Simulieren öffnet zuerst den taktischen Drag-&-Drop-Aufstellungseditor. Gelbe, Gelb-Rote und Rote Karten bleiben sichtbare Live-Szenen und Tickerereignisse.
