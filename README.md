@@ -1,3 +1,3 @@
-Fantasy Liga Elite V63.3 – Startfehler behoben
+Fantasy Liga Elite V64 – Tactical Lineup Studio
 
-Fix: doppelte const-Deklaration controlHome in simulateMatch entfernt/umbenannt. Alle JavaScript-Dateien wurden mit node --check geprüft. V63-Funktionen wie Wahrscheinlichkeitsmodell, Aufstellungsprüfung und Live-/Endstatistik bleiben enthalten.
+Simulieren startet direkt. Aufstellungen werden automatisch vervollständigt und blockieren die Simulation nicht. Neue Drag-&-Drop-Aufstellung auf einem Spielfeld für Match-Aufstellung, Team-Standardelf und Halbzeit. Mobile Touch-Unterstützung enthalten.
