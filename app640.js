@@ -1714,13 +1714,13 @@ function openPreMatchLineup(matchId){
   if(!h||!a)return toast('Heim- oder Auswärtsteam fehlt');
   if(!ensureSimulationLineups(m))return toast('Für mindestens ein Team stehen nicht 11 Spieler zur Verfügung.');
   el('#overlay').innerHTML=`<div class="modal"><div class="sheet prematch-lineup-sheet">
-    <div class="sheet-head"><div><div class="eyebrow">Spieltag ${m.matchday||''}</div><h2>${h.short} – ${a.short}</h2><p class="muted">Aufstellung vor dem Spiel · Spieler auf dem Feld verschieben</p></div><button class="iconbtn" id="closePreMatchLineup">×</button></div>
+    <div class="sheet-head"><div><div class="eyebrow">Spieltag ${m.matchday||''}</div><h2>${h.short} – ${a.short}</h2><p class="muted">Formation wählen · Spieler antippen und Position antippen</p></div><button class="iconbtn" id="closePreMatchLineup">×</button></div>
     <div id="preMatchLineupBody"></div>
     <div class="prematch-lineup-actions"><button class="btn ghost" id="autoPreMatchLineup">↻ Automatisch auffüllen</button><button class="btn primary" id="confirmPreMatchSimulation">▶ Mit diesen Aufstellungen simulieren</button></div>
   </div></div>`;
   renderPreMatchLineupBody(m);
   el('#closePreMatchLineup').onclick=closeOverlay;
-  el('#autoPreMatchLineup').onclick=()=>{m.lineups={home:[],away:[],homeBench:[],awayBench:[]};ensureSimulationLineups(m);renderPreMatchLineupBody(m);toast('Aufstellungen automatisch aufgefüllt')};
+  el('#autoPreMatchLineup').onclick=()=>{const hf=lineupFormation(m,'home'),af=lineupFormation(m,'away');m.lineups={home:[],away:[],homeBench:[],awayBench:[],homeFormation:hf,awayFormation:af};ensureSimulationLineups(m);renderPreMatchLineupBody(m);toast('Aufstellungen automatisch aufgefüllt')};
   el('#confirmPreMatchSimulation').onclick=()=>{
     if(!ensureSimulationLineups(m)||new Set(m.lineups.home||[]).size!==11||new Set(m.lineups.away||[]).size!==11)return toast('Beide Teams brauchen 11 verschiedene Spieler.');
     saveState({label:'Aufstellungen vor Simulation bestätigt'});
@@ -2542,7 +2542,7 @@ function openLiveSimulation(matchId){
     if(!halftimePanel)return;paused=true;syncPauseLabels();ensureSimulationLineups(m);
     let tempHome=[...(m.lineups.home||[])].slice(0,11),tempAway=[...(m.lineups.away||[])].slice(0,11);
     const draw=()=>{
-      const editor=(side,t,ids)=>{const used=new Set(ids.map(Number)),rest=sortPlayersByPosition((t.players||[]).filter(p=>!used.has(Number(p.id))));return `<section class="halftime-team tactical-halftime-team"><div class="halftime-team-head">${badge(t)}<div><b>${t.name}</b><span>Startelf 2. Halbzeit · ziehen</span></div></div>${tacticalPitchMarkup(ids,`half-${side}`)}<div class="compact-squad"><div class="compact-squad-title"><b>Bank / Kader</b><span>${rest.length}</span></div><div class="compact-squad-list">${rest.map(p=>`<button type="button" class="compact-squad-card" draggable="true" data-half-player="${p.id}" data-half-side="${side}"><b>${p.shirtNumber||'–'}</b><span>${p.name}<small>${p.position||'SP'}</small></span></button>`).join('')}</div></div></section>`};
+      const editor=(side,t,ids)=>{const used=new Set(ids.map(Number)),rest=sortPlayersByPosition((t.players||[]).filter(p=>!used.has(Number(p.id))));return `<section class="halftime-team tactical-halftime-team"><div class="halftime-team-head">${badge(t)}<div><b>${t.name}</b><span>Startelf 2. Halbzeit · ziehen</span></div></div>${tacticalPitchMarkup(ids,`half-${side}`,m.lineups?.[`${side}Formation`]||t.defaultFormation||'4-3-3')}<div class="compact-squad"><div class="compact-squad-title"><b>Bank / Kader</b><span>${rest.length}</span></div><div class="compact-squad-list">${rest.map(p=>`<button type="button" class="compact-squad-card" draggable="true" data-half-player="${p.id}" data-half-side="${side}"><b>${p.shirtNumber||'–'}</b><span>${p.name}<small>${p.position||'SP'}</small></span></button>`).join('')}</div></div></section>`};
       halftimePanel.hidden=false;halftimePanel.innerHTML=`<div class="halftime-sheet tactical-halftime-sheet"><div class="halftime-head"><div><small>45:00 · HALBZEIT</small><h3>Aufstellung ändern</h3><p>Ziehe Spieler auf die gewünschte Position.</p></div></div><div class="halftime-grid">${editor('home',h,tempHome)}${editor('away',a,tempAway)}</div><div class="halftime-actions"><button class="btn secondary" id="halftimeContinue">Ohne Änderung weiter</button><button class="btn primary" id="halftimeSave">Änderungen übernehmen</button></div></div>`;
       const bindHalf=(side,arrRef)=>{
         let drag=null,touch=null;
@@ -2645,14 +2645,24 @@ function openLiveSimulation(matchId){
   setTempo();arrangeKickoff(possessionSide,'Anstoß');raf=requestAnimationFrame(tick);
 }
 
-function lineupSlotMarkup(p,side,index){
-  return `<div class="tactical-slot ${p?'filled':''}" data-lineup-slot="${side}" data-lineup-index="${index}" style="--slot:${index}">
-    ${p?`<button type="button" class="tactical-player" draggable="true" data-lineup-player="${p.id}" data-player-side="${side}"><b>${p.shirtNumber||'–'}</b><small>${p.name}</small><em>${p.position||'SP'}</em></button>`:`<span class="slot-plus">+</span><small>${formationSlotLabel(index)}</small>`}
-  </div>`;
+const TACTICAL_FORMATIONS=['4-3-3','4-2-3-1','4-4-2','3-5-2','3-4-3','5-3-2'];
+function lineupFormation(m,side){
+  const t=team(side==='home'?m.homeId:m.awayId);
+  return m.lineups?.[`${side}Formation`]||t?.defaultFormation||'4-3-3';
 }
-function tacticalPitchMarkup(ids,side){
-  const arr=Array.from({length:11},(_,i)=>playerById(ids?.[i])).map((p,i)=>lineupSlotMarkup(p,side,i)).join('');
-  return `<div class="tactical-pitch" data-lineup-pitch="${side}"><div class="pitch-box left"></div><div class="pitch-box right"></div><div class="pitch-center"></div>${arr}</div>`;
+function formationSelectMarkup(value,side){
+  return `<label class="formation-control"><span>Formation</span><select data-lineup-formation="${side}">${TACTICAL_FORMATIONS.map(f=>`<option value="${f}" ${f===value?'selected':''}>${f}</option>`).join('')}</select></label>`;
+}
+function lineupSlotMarkup(p,side,index,slot){
+  const [label,x,y]=slot||['SP',50,50];
+  return `<button type="button" class="tactical-slot ${p?'filled':''}" data-lineup-slot="${side}" data-lineup-index="${index}" data-slot-label="${label}" style="left:${x}%;top:${y}%">
+    ${p?`<span class="tactical-player" draggable="true" data-lineup-player="${p.id}" data-player-side="${side}"><b>${p.shirtNumber||'–'}</b><small>${p.name}</small><em>${p.position||'SP'} · ${label}</em></span>`:`<span class="slot-plus">+</span><small>${label}</small>`}
+  </button>`;
+}
+function tacticalPitchMarkup(ids,side,formation='4-3-3'){
+  const slots=formationSlots(formation), list=(ids||[]).slice(0,11);
+  const arr=slots.map((slot,i)=>lineupSlotMarkup(playerById(list[i]),side,i,slot)).join('');
+  return `<div class="tactical-pitch" data-lineup-pitch="${side}" data-formation="${formation}"><div class="pitch-box left"></div><div class="pitch-box right"></div><div class="pitch-center"></div>${arr}</div>`;
 }
 function compactSquadCard(p,side){
   return `<button type="button" class="compact-squad-card" draggable="true" data-lineup-player="${p.id}" data-player-side="${side}"><b>${p.shirtNumber||'–'}</b><span>${p.name}<small>${p.position||'SP'} · ${Number(p.rating||0).toFixed(1)}</small></span></button>`;
@@ -2660,52 +2670,63 @@ function compactSquadCard(p,side){
 function lineupView(m){
   ensureSimulationLineups(m);
   const board=(side,t)=>{
-    const ids=(m.lineups?.[side]||[]).slice(0,11), used=new Set(ids.map(Number));
+    const ids=(m.lineups?.[side]||[]).slice(0,11), used=new Set(ids.map(Number)), formation=lineupFormation(m,side);
     const rest=sortPlayersByPosition((t.players||[]).filter(p=>!used.has(Number(p.id))));
     return `<section class="card tactical-lineup-board" data-lineup-board="${side}">
-      <div class="tactical-lineup-head"><div>${badge(t)}<span><b>${t.name}</b><small>${t.defaultFormation||'4-3-2-1'} · Spieler auf das Feld ziehen</small></span></div><strong>${ids.length}/11</strong></div>
-      ${tacticalPitchMarkup(ids,side)}
-      <div class="compact-squad"><div class="compact-squad-title"><b>Kader & Bank</b><span>ziehen oder antippen</span></div><div class="compact-squad-list">${rest.map(p=>compactSquadCard(p,side)).join('')}</div></div>
+      <div class="tactical-lineup-head"><div>${badge(t)}<span><b>${t.name}</b><small>Spieler antippen und Position antippen</small></span></div><strong>${ids.length}/11</strong></div>
+      ${formationSelectMarkup(formation,side)}
+      ${tacticalPitchMarkup(ids,side,formation)}
+      <div class="compact-squad"><div class="compact-squad-title"><b>Bank & Kader</b><span>Antippen oder ziehen</span></div><div class="compact-squad-list">${rest.map(p=>compactSquadCard(p,side)).join('')}</div></div>
     </section>`;
   };
-  return `<div class="lineup-instruction tactical-note">Ziehe einen Spieler aus dem Kader auf eine Position. Ziehst du einen Spieler auf einen besetzten Platz, werden die Spieler getauscht.</div><div class="grid tactical-lineup-grid">${board('home',team(m.homeId))}${board('away',team(m.awayId))}</div>`;
+  return `<div class="lineup-instruction tactical-note"><b>Einfach auf dem Handy:</b> Spieler antippen → gewünschte Position antippen. Bankspieler ersetzen dabei direkt den Feldspieler.</div><div class="grid tactical-lineup-grid">${board('home',team(m.homeId))}${board('away',team(m.awayId))}</div>`;
 }
 function lineupPlayerCard(p,side){return compactSquadCard(p,side)}
 function setLineupSlot(m,side,pid,index){
   ensureSimulationLineups(m);
   const arr=[...(m.lineups?.[side]||[])];
+  while(arr.length<11)arr.push(null);
   const oldIndex=arr.findIndex(id=>Number(id)===Number(pid));
   const displaced=arr[index];
   if(oldIndex>=0&&oldIndex!==index)arr[oldIndex]=displaced;
   arr[index]=Number(pid);
-  const clean=[];for(const id of arr){if(id!=null&&!clean.includes(Number(id)))clean.push(Number(id));}
+  const clean=[];for(const id of arr){if(id!=null&&!clean.includes(Number(id)))clean.push(Number(id));else if(id==null)clean.push(null)}
+  while(clean.length<11)clean.push(null);
   const t=team(side==='home'?m.homeId:m.awayId);
-  for(const p of sortPlayersByPosition(t.players||[])){if(clean.length>=11)break;if(!clean.includes(Number(p.id)))clean.push(Number(p.id));}
+  // Keep empty slots empty while editing; only simulation auto-fill may fill them.
   m.lineups[side]=clean.slice(0,11);
-  m.lineups[`${side}Bench`]=fullBenchIds(t,m.lineups[side],m.lineups[`${side}Bench`]);
-  t.defaultLineup=[...m.lineups[side]];t.defaultFormation=t.defaultFormation||'4-3-2-1';
+  m.lineups[`${side}Bench`]=fullBenchIds(t,m.lineups[side].filter(Boolean),m.lineups[`${side}Bench`]);
+  t.defaultLineup=[...m.lineups[side]].filter(Boolean);t.defaultFormation=lineupFormation(m,side);
   saveState({label:'Aufstellung geändert'});
   if(el('#preMatchLineupBody'))renderPreMatchLineupBody(m);else document.querySelector('[data-tab="lineups"]')?.click();
 }
 function moveLineupPlayer(m,pid,side,target){
-  if(target===side){const free=Math.max(0,(m.lineups?.[side]||[]).findIndex(x=>!x));return setLineupSlot(m,side,pid,free>=0?free:10)}
-  const t=team(side==='home'?m.homeId:m.awayId),start=(m.lineups?.[side]||[]).filter(id=>Number(id)!==Number(pid));
-  m.lineups[side]=start; m.lineups[`${side}Bench`]=fullBenchIds(t,start,m.lineups[`${side}Bench`]);saveState({label:'Aufstellung geändert'});if(el('#preMatchLineupBody'))renderPreMatchLineupBody(m);else document.querySelector('[data-tab="lineups"]')?.click();
+  if(target===side){const arr=m.lineups?.[side]||[],free=arr.findIndex(x=>!x);return setLineupSlot(m,side,pid,free>=0?free:10)}
+  const t=team(side==='home'?m.homeId:m.awayId),start=(m.lineups?.[side]||[]).map(id=>Number(id)===Number(pid)?null:id);
+  m.lineups[side]=start;m.lineups[`${side}Bench`]=fullBenchIds(t,start.filter(Boolean),m.lineups[`${side}Bench`]);saveState({label:'Aufstellung geändert'});if(el('#preMatchLineupBody'))renderPreMatchLineupBody(m);else document.querySelector('[data-tab="lineups"]')?.click();
 }
 function bindLineupDrag(m){
-  let payload=null,touch=null;
+  let payload=null,touch=null,selected=null;
+  const cards=()=>[...document.querySelectorAll('[data-lineup-player]')];
+  const clearSelected=()=>{cards().forEach(c=>c.classList.remove('tap-selected'));selected=null};
+  const selectCard=card=>{cards().forEach(c=>c.classList.remove('tap-selected'));selected={pid:Number(card.dataset.lineupPlayer),side:card.dataset.playerSide};card.classList.add('tap-selected')};
   const refreshPayload=card=>({pid:Number(card.dataset.lineupPlayer),side:card.dataset.playerSide});
-  document.querySelectorAll('[data-lineup-player]').forEach(card=>{
+  cards().forEach(card=>{
     card.ondragstart=e=>{payload=refreshPayload(card);e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',JSON.stringify(payload));card.classList.add('is-dragging')};
     card.ondragend=()=>card.classList.remove('is-dragging');
-    card.onclick=()=>openLineupQuickActions(m,Number(card.dataset.lineupPlayer),card.dataset.playerSide);
-    card.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;touch={...refreshPayload(card),card,x:e.clientX,y:e.clientY,moved:false};card.setPointerCapture?.(e.pointerId)});
-    card.addEventListener('pointermove',e=>{if(!touch)return;const d=Math.hypot(e.clientX-touch.x,e.clientY-touch.y);if(d>9){touch.moved=true;touch.card.classList.add('is-dragging');const z=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('[data-lineup-slot]');document.querySelectorAll('[data-lineup-slot]').forEach(x=>x.classList.toggle('drag-over',x===z));}});
-    card.addEventListener('pointerup',e=>{if(!touch)return;const z=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('[data-lineup-slot]');document.querySelectorAll('[data-lineup-slot]').forEach(x=>x.classList.remove('drag-over'));touch.card.classList.remove('is-dragging');if(touch.moved&&z&&z.dataset.lineupSlot===touch.side){setLineupSlot(m,touch.side,touch.pid,Number(z.dataset.lineupIndex));}touch=null;});
-    card.addEventListener('pointercancel',()=>{if(touch?.card)touch.card.classList.remove('is-dragging');touch=null});
+    card.onclick=e=>{e.stopPropagation();selectCard(card)};
+    card.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;touch={...refreshPayload(card),card,x:e.clientX,y:e.clientY,moved:false};});
+    card.addEventListener('pointermove',e=>{if(!touch||touch.card!==card)return;if(Math.hypot(e.clientX-touch.x,e.clientY-touch.y)>12){touch.moved=true;card.classList.add('is-dragging');const z=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('[data-lineup-slot]');document.querySelectorAll('[data-lineup-slot]').forEach(x=>x.classList.toggle('drag-over',x===z));}});
+    card.addEventListener('pointerup',e=>{if(!touch||touch.card!==card)return;const z=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('[data-lineup-slot]');document.querySelectorAll('[data-lineup-slot]').forEach(x=>x.classList.remove('drag-over'));card.classList.remove('is-dragging');if(touch.moved&&z&&z.dataset.lineupSlot===touch.side){setLineupSlot(m,touch.side,touch.pid,Number(z.dataset.lineupIndex));}touch=null;});
   });
   document.querySelectorAll('[data-lineup-slot]').forEach(slot=>{
+    slot.onclick=e=>{if(e.target.closest('[data-lineup-player]'))return;if(selected&&selected.side===slot.dataset.lineupSlot){setLineupSlot(m,selected.side,selected.pid,Number(slot.dataset.lineupIndex));clearSelected()}};
     slot.ondragover=e=>{e.preventDefault();slot.classList.add('drag-over')};slot.ondragleave=()=>slot.classList.remove('drag-over');slot.ondrop=e=>{e.preventDefault();slot.classList.remove('drag-over');let p=payload;try{p=JSON.parse(e.dataTransfer.getData('text/plain'))||p}catch{}if(p&&p.side===slot.dataset.lineupSlot)setLineupSlot(m,p.side,p.pid,Number(slot.dataset.lineupIndex));};
+  });
+  document.querySelectorAll('[data-lineup-formation]').forEach(sel=>sel.onchange=()=>{
+    const side=sel.dataset.lineupFormation;m.lineups||={};m.lineups[`${side}Formation`]=sel.value;
+    const t=team(side==='home'?m.homeId:m.awayId);if(t)t.defaultFormation=sel.value;saveState({label:'Formation geändert'});
+    if(el('#preMatchLineupBody'))renderPreMatchLineupBody(m);else document.querySelector('[data-tab="lineups"]')?.click();
   });
 }
 function openLineupQuickActions(m,pid,side){
@@ -2986,20 +3007,22 @@ function teamSquad(t){
 function bindTeamSquad(t){
   const add=el("#addPlayer");if(add)add.onclick=()=>openPlayerEditor(t.id,null);
   const edit=el("#editDefaultLineup");if(edit)edit.onclick=()=>openDefaultLineupEditor(t.id);
-  const auto=el("#saveDefaultLineup");if(auto)auto.onclick=async()=>{t.defaultLineup=[];chooseLineup(t);t.defaultFormation="4-3-2-1";await saveState({label:"Standardelf vorgeschlagen"});toast("4-3-2-1 wurde vorgeschlagen – du kannst sie manuell ändern");openTeam(t.id);};
+  const auto=el("#saveDefaultLineup");if(auto)auto.onclick=async()=>{t.defaultLineup=[];chooseLineup(t);t.defaultFormation=t.defaultFormation||"4-3-3";await saveState({label:"Standardelf vorgeschlagen"});toast("Startelf wurde vorgeschlagen – Formation kannst du frei ändern");openTeam(t.id);};
   document.querySelectorAll("[data-player]").forEach(r=>r.onclick=()=>openPlayerEditor(t.id,Number(r.dataset.player)));
 }
 function openDefaultLineupEditor(teamId){
   const t=team(teamId);if(!t)return;
-  let selected=(Array.isArray(t.defaultLineup)?t.defaultLineup:[]).filter(id=>t.players.some(p=>Number(p.id)===Number(id))).slice(0,11);
+  let selected=(Array.isArray(t.defaultLineup)?t.defaultLineup:[]).filter(id=>t.players.some(p=>Number(p.id)===Number(id))).slice(0,11),formation=t.defaultFormation||'4-3-3';
   if(selected.length!==11)selected=chooseLineup(t).map(p=>p.id).slice(0,11);
-  const save=async()=>{if(selected.length!==11||new Set(selected).size!==11)return toast('Bitte 11 verschiedene Spieler aufstellen');t.defaultFormation='4-3-2-1';t.defaultLineup=[...selected];for(const m of season().matches||[]){if(m.status==='played')continue;m.lineups||={home:[],away:[],homeBench:[],awayBench:[]};if(m.homeId===t.id){m.lineups.home=[...selected];m.lineups.homeBench=fullBenchIds(t,selected,m.lineups.homeBench)}if(m.awayId===t.id){m.lineups.away=[...selected];m.lineups.awayBench=fullBenchIds(t,selected,m.lineups.awayBench)}}await saveState({label:'Startaufstellung gespeichert'});toast('Startelf gespeichert');openTeam(teamId)};
+  const save=async()=>{if(selected.length!==11||new Set(selected).size!==11)return toast('Bitte 11 verschiedene Spieler aufstellen');t.defaultFormation=formation;t.defaultLineup=[...selected];for(const m of season().matches||[]){if(m.status==='played')continue;m.lineups||={home:[],away:[],homeBench:[],awayBench:[]};if(m.homeId===t.id){m.lineups.home=[...selected];m.lineups.homeBench=fullBenchIds(t,selected,m.lineups.homeBench)}if(m.awayId===t.id){m.lineups.away=[...selected];m.lineups.awayBench=fullBenchIds(t,selected,m.lineups.awayBench)}}await saveState({label:'Startaufstellung gespeichert'});toast('Startelf gespeichert');openTeam(teamId)};
   const draw=()=>{
     const used=new Set(selected.map(Number)),rest=sortPlayersByPosition((t.players||[]).filter(p=>!used.has(Number(p.id))));
-    el('#overlay').innerHTML=`<div class="modal"><div class="sheet default-lineup-sheet tactical-default-sheet"><div class="sheet-head"><div><div class="eyebrow">${t.name}</div><h2>Startaufstellung</h2><p class="subtitle">Spieler auf eine Position ziehen · 4-3-2-1</p></div><button class="iconbtn" id="close">×</button></div>${tacticalPitchMarkup(selected,'default')}<div class="compact-squad"><div class="compact-squad-title"><b>Kompletter Kader</b><span>${t.players.length} Spieler</span></div><div class="compact-squad-list">${rest.map(p=>compactSquadCard(p,'default')).join('')}</div></div><div class="actions sticky-lineup-actions"><button id="saveManualLineup" class="btn primary">Startelf speichern</button><button id="autoManualLineup" class="btn secondary">Automatisch</button></div></div></div>`;
-    el('#close').onclick=()=>openTeam(teamId);el('#saveManualLineup').onclick=save;el('#autoManualLineup').onclick=()=>{selected=chooseLineup(t).map(p=>p.id).slice(0,11);draw()};
-    let drag=null,touch=null;document.querySelectorAll('[data-lineup-player]').forEach(card=>{const dat=()=>({pid:Number(card.dataset.lineupPlayer)});card.ondragstart=e=>{drag=dat();e.dataTransfer.setData('text/plain',JSON.stringify(drag));card.classList.add('is-dragging')};card.ondragend=()=>card.classList.remove('is-dragging');card.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;touch={...dat(),card,x:e.clientX,y:e.clientY,moved:false};card.setPointerCapture?.(e.pointerId)});card.addEventListener('pointermove',e=>{if(!touch)return;if(Math.hypot(e.clientX-touch.x,e.clientY-touch.y)>9){touch.moved=true;touch.card.classList.add('is-dragging')}});card.addEventListener('pointerup',e=>{if(!touch)return;const z=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('[data-lineup-slot="default"]');touch.card.classList.remove('is-dragging');if(touch.moved&&z){const idx=Number(z.dataset.lineupIndex),old=selected.indexOf(touch.pid),disp=selected[idx];if(old>=0&&old!==idx)selected[old]=disp;selected[idx]=touch.pid;draw()}touch=null})});
-    document.querySelectorAll('[data-lineup-slot="default"]').forEach(z=>{z.ondragover=e=>{e.preventDefault();z.classList.add('drag-over')};z.ondragleave=()=>z.classList.remove('drag-over');z.ondrop=e=>{e.preventDefault();z.classList.remove('drag-over');let d=drag;try{d=JSON.parse(e.dataTransfer.getData('text/plain'))||d}catch{}if(!d)return;const idx=Number(z.dataset.lineupIndex),old=selected.indexOf(Number(d.pid)),disp=selected[idx];if(old>=0&&old!==idx)selected[old]=disp;selected[idx]=Number(d.pid);draw()}});
+    el('#overlay').innerHTML=`<div class="modal"><div class="sheet default-lineup-sheet tactical-default-sheet"><div class="sheet-head"><div><div class="eyebrow">${t.name}</div><h2>Startaufstellung</h2><p class="subtitle">Formation wählen · Spieler antippen und Position antippen</p></div><button class="iconbtn" id="close">×</button></div>${formationSelectMarkup(formation,'default')}${tacticalPitchMarkup(selected,'default',formation)}<div class="compact-squad"><div class="compact-squad-title"><b>Kompletter Kader</b><span>${t.players.length} Spieler</span></div><div class="compact-squad-list">${rest.map(p=>compactSquadCard(p,'default')).join('')}</div></div><div class="actions sticky-lineup-actions"><button id="saveManualLineup" class="btn primary">Startelf speichern</button><button id="autoManualLineup" class="btn secondary">Automatisch</button></div></div></div>`;
+    el('#close').onclick=()=>openTeam(teamId);const fs=el('[data-lineup-formation="default"]');if(fs)fs.onchange=()=>{formation=fs.value;draw()};el('#saveManualLineup').onclick=save;el('#autoManualLineup').onclick=()=>{selected=chooseLineup(t).map(p=>p.id).slice(0,11);draw()};
+    let drag=null,touch=null,tapPid=null;const allCards=()=>[...document.querySelectorAll('[data-lineup-player]')];
+    const applyPid=(pid,idx)=>{const old=selected.indexOf(Number(pid)),disp=selected[idx];if(old>=0&&old!==idx)selected[old]=disp;selected[idx]=Number(pid);draw()};
+    allCards().forEach(card=>{const dat=()=>({pid:Number(card.dataset.lineupPlayer)});card.onclick=e=>{e.stopPropagation();tapPid=Number(card.dataset.lineupPlayer);allCards().forEach(x=>x.classList.toggle('tap-selected',x===card))};card.ondragstart=e=>{drag=dat();e.dataTransfer.setData('text/plain',JSON.stringify(drag));card.classList.add('is-dragging')};card.ondragend=()=>card.classList.remove('is-dragging');card.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;touch={...dat(),card,x:e.clientX,y:e.clientY,moved:false}});card.addEventListener('pointermove',e=>{if(!touch||touch.card!==card)return;if(Math.hypot(e.clientX-touch.x,e.clientY-touch.y)>12){touch.moved=true;touch.card.classList.add('is-dragging')}});card.addEventListener('pointerup',e=>{if(!touch||touch.card!==card)return;const z=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('[data-lineup-slot="default"]');touch.card.classList.remove('is-dragging');if(touch.moved&&z)applyPid(touch.pid,Number(z.dataset.lineupIndex));touch=null})});
+    document.querySelectorAll('[data-lineup-slot="default"]').forEach(z=>{z.onclick=e=>{if(e.target.closest('[data-lineup-player]'))return;if(tapPid!=null)applyPid(tapPid,Number(z.dataset.lineupIndex))};z.ondragover=e=>{e.preventDefault();z.classList.add('drag-over')};z.ondragleave=()=>z.classList.remove('drag-over');z.ondrop=e=>{e.preventDefault();z.classList.remove('drag-over');let d=drag;try{d=JSON.parse(e.dataTransfer.getData('text/plain'))||d}catch{}if(d)applyPid(d.pid,Number(z.dataset.lineupIndex))}});
   };draw();
 }
 function topTeamPlayers(t){return `<div class="card"><h3>Top-Spieler</h3>${t.players.slice().sort((a,b)=>b.stats.goals-a.stats.goals).slice(0,8).map(p=>`<div class="player-row"><div class="player-num">${p.shirtNumber}</div><div><b>${p.name}</b><div class="player-pos">${p.position}</div></div><span>⚽ ${p.stats.goals} · 🎯 ${p.stats.assists}</span></div>`).join("")}</div>`}
@@ -3628,10 +3651,12 @@ function openLineupStudio(){
 
 function formationSlots(name){
   const maps={
-    "4-3-3":[["GK",50,88],["LB",14,70],["CB1",38,72],["CB2",62,72],["RB",86,70],["CM1",25,50],["CM2",50,45],["CM3",75,50],["LW",18,23],["ST",50,13],["RW",82,23]],
-    "4-2-3-1":[["GK",50,88],["LB",14,70],["CB1",38,72],["CB2",62,72],["RB",86,70],["DM1",35,55],["DM2",65,55],["LAM",20,34],["CAM",50,31],["RAM",80,34],["ST",50,13]],
-    "4-4-2":[["GK",50,88],["LB",14,70],["CB1",38,72],["CB2",62,72],["RB",86,70],["LM",18,45],["CM1",40,48],["CM2",60,48],["RM",82,45],["ST1",38,17],["ST2",62,17]],
-    "3-5-2":[["GK",50,88],["CB1",25,70],["CB2",50,73],["CB3",75,70],["LWB",12,48],["CM1",35,50],["CAM",50,37],["CM2",65,50],["RWB",88,48],["ST1",38,16],["ST2",62,16]]
+    "4-3-3":[["TW",7,50],["LV",25,16],["IV",23,38],["IV",23,62],["RV",25,84],["ZM",49,24],["ZM",45,50],["ZM",49,76],["LA",73,18],["ST",86,50],["RA",73,82]],
+    "4-2-3-1":[["TW",7,50],["LV",25,16],["IV",23,38],["IV",23,62],["RV",25,84],["ZDM",45,38],["ZDM",45,62],["LA",66,20],["ZOM",66,50],["RA",66,80],["ST",86,50]],
+    "4-4-2":[["TW",7,50],["LV",25,16],["IV",23,38],["IV",23,62],["RV",25,84],["LM",52,15],["ZM",48,39],["ZM",48,61],["RM",52,85],["ST",82,38],["ST",82,62]],
+    "3-5-2":[["TW",7,50],["IV",25,26],["IV",23,50],["IV",25,74],["LAV",50,10],["ZM",48,34],["ZOM",60,50],["ZM",48,66],["RAV",50,90],["ST",82,38],["ST",82,62]],
+    "3-4-3":[["TW",7,50],["IV",25,25],["IV",23,50],["IV",25,75],["LM",50,15],["ZM",47,40],["ZM",47,60],["RM",50,85],["LA",76,20],["ST",86,50],["RA",76,80]],
+    "5-3-2":[["TW",7,50],["LV",27,9],["IV",24,31],["IV",23,50],["IV",24,69],["RV",27,91],["ZM",50,28],["ZM",47,50],["ZM",50,72],["ST",82,38],["ST",82,62]]
   };
   return maps[name]||maps["4-3-3"];
 }
