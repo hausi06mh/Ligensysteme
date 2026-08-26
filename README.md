@@ -1,3 +1,3 @@
-Fantasy Liga Elite V68 – Coherent Match Flow
+Fantasy Liga Elite V69 – Coherent Live Match Engine
 
-V68 verbessert die sichtbare Spiellogik: Ecken haben eine erkennbare Ursache, keine direkte Gegen-Ecke ohne Ballbesitzphase, ruhigere Passwege, klarere Abschlüsse/Paraden und seltene echte Comeback-Torfolgen. Enthält alle V67-Funktionen.
+V69 baut auf V68 auf und synchronisiert Feld, Ticker und Statistiken. Vorab erzeugte Fake-Chancen/Ecken wurden entfernt. Chancen erscheinen erst nach einer sichtbar abgespielten Abschluss-Szene. Torwartparaden setzen korrekten Ballbesitz; abgewehrte Schüsse können nachvollziehbar zur Ecke führen. Flanken enden direkt in Kopfballaktionen ohne Zurückspringen des Empfängers. Ballbesitzphasen werden nach wenigen Pässen automatisch vertikal, um endlose Querpass-Schleifen zu vermeiden.
