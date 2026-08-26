@@ -1635,6 +1635,56 @@ function weightedFormScore(teamId,day){
   });
   return possible?earned/possible:.5;
 }
+
+// V63: Ein gemeinsames Leistungsmodell für Ergebnis, Chancen und sichtbare Dominanz.
+// Ein Tabellenplatz ist am 3. Spieltag nur ein Hinweis, am 26. Spieltag aber echte Saisonleistung.
+function simulationPowerModel(homeTeam,awayTeam,matchObj){
+  const hs=Number(teamAverage(homeTeam))||65, as=Number(teamAverage(awayTeam))||65;
+  const ctx=simulationSeasonContext(homeTeam.id,awayTeam.id,matchObj.matchday);
+  const formH=weightedFormScore(homeTeam.id,ctx.dayBefore), formA=weightedFormScore(awayTeam.id,ctx.dayBefore);
+  const games=Math.min(Number(ctx.home.p||0),Number(ctx.away.p||0));
+  const evidence=clamp(games/22,.08,1); // ab ca. Spieltag 22 ist die Tabelle voll aussagekräftig
+  const ratingGap=clamp(hs-as,-8,8);
+  const rankPlaces=Number(ctx.away.rank||10)-Number(ctx.home.rank||10); // + = Heim steht besser
+  const rankEffect=clamp(rankPlaces/4,-4.75,4.75)*evidence;
+  const ppgH=ctx.home.p?Number(ctx.home.pts||0)/ctx.home.p:1.35, ppgA=ctx.away.p?Number(ctx.away.pts||0)/ctx.away.p:1.35;
+  const gdH=ctx.home.p?(Number(ctx.home.gf||0)-Number(ctx.home.ga||0))/ctx.home.p:0, gdA=ctx.away.p?(Number(ctx.away.gf||0)-Number(ctx.away.ga||0))/ctx.away.p:0;
+  const ppgEffect=clamp((ppgH-ppgA)*.82,-1.8,1.8)*evidence;
+  const gdEffect=clamp((gdH-gdA)*.32,-1.0,1.0)*evidence;
+  const formEffect=clamp((formH-formA)*2.35,-1.5,1.5);
+  const homeEffect=.62;
+  const fatigueEffect=clamp((fatigueScore(awayTeam.id,matchObj)-fatigueScore(homeTeam.id,matchObj))*.42,-.55,.55);
+  const effectiveGap=ratingGap+rankEffect+ppgEffect+gdEffect+formEffect+homeEffect+fatigueEffect;
+  // Gesamt-Torlevel bleibt realistisch, bekommt aber selten offene/extreme Spiele.
+  let totalXg=2.62 + Math.abs(effectiveGap)*.055 + randomNormal()*.16;
+  const styleRoll=Math.random();
+  let style='normal';
+  if(styleRoll<.025){totalXg*=1.90;style='festival'}
+  else if(styleRoll<.15){totalXg*=1.34;style='open'}
+  else if(styleRoll>.88){totalXg*=.72;style='defensive'}
+  totalXg=clamp(totalXg,1.35,5.65);
+  const share=1/(1+Math.exp(-effectiveGap/2.55));
+  let lambdaHome=clamp(totalXg*share,.18,4.9),lambdaAway=clamp(totalXg*(1-share),.16,4.7);
+  return {hs,as,ctx,formH,formA,evidence,ratingGap,rankEffect,ppgEffect,gdEffect,formEffect,homeEffect,fatigueEffect,effectiveGap,totalXg,lambdaHome,lambdaAway,style};
+}
+function simulateScoreFromPower(model){
+  let hg=clamp(poisson(model.lambdaHome),0,9),ag=clamp(poisson(model.lambdaAway),0,9),guard=0;
+  while(hg+ag>10&&guard++<20){hg=clamp(poisson(model.lambdaHome),0,9);ag=clamp(poisson(model.lambdaAway),0,9)}
+  // 0:0 bleibt möglich. In normalen/offenen Spielen wird ein torloses Spiel aber nicht künstlich häufig.
+  if(hg===0&&ag===0&&model.style!=='defensive'&&Math.random()<.58){
+    if(Math.random()<(model.lambdaHome/(model.lambdaHome+model.lambdaAway)))hg=1;else ag=1;
+  }
+  return [hg,ag];
+}
+function ensureSimulationLineups(m){
+  const h=team(m.homeId),a=team(m.awayId); if(!h||!a)return false;
+  m.lineups ||= {home:[],away:[],homeBench:[],awayBench:[]};
+  if((m.lineups.home||[]).length!==11)m.lineups.home=[...(h.defaultLineup||chooseLineup(h).map(p=>p.id))].slice(0,11);
+  if((m.lineups.away||[]).length!==11)m.lineups.away=[...(a.defaultLineup||chooseLineup(a).map(p=>p.id))].slice(0,11);
+  m.lineups.homeBench=fullBenchIds(h,m.lineups.home,m.lineups.homeBench);
+  m.lineups.awayBench=fullBenchIds(a,m.lineups.away,m.lineups.awayBench);
+  return m.lineups.home.length===11&&m.lineups.away.length===11;
+}
 async function simulateMatch(matchId){
   const m=season()?.matches?.find(x=>x.id===matchId);
   if(!m)return toast("Spiel wurde nicht gefunden");
@@ -1646,74 +1696,38 @@ async function simulateMatch(matchId){
   h.players=Array.isArray(h.players)?h.players.filter(Boolean):[];
   a.players=Array.isArray(a.players)?a.players.filter(Boolean):[];
   if(!h.players.length||!a.players.length)return toast("Beide Teams brauchen mindestens einen Spieler");
+  if(!ensureSimulationLineups(m))return toast("Bitte zuerst für beide Teams eine vollständige Startelf festlegen.");
+  if(!m.__lineupConfirmedForSimulation){
+    m.__awaitingSimulationLineup=true;
+    saveState({label:"Aufstellung vor Simulation prüfen"});
+    openMatch(matchId);
+    setTimeout(()=>document.querySelector('[data-tab="lineups"]')?.click(),60);
+    toast("Bitte die Aufstellungen prüfen und anschließend die Simulation starten.");
+    return;
+  }
+  delete m.__lineupConfirmedForSimulation;delete m.__awaitingSimulationLineup;
 
   const previous=deepClone(m);
   m.__simulationBusy=true;
   try{
     pushUndo("Spiel simuliert");
-    const hXI=chooseLineup(h),aXI=chooseLineup(a);
-    if(!hXI.length||!aXI.length)throw new Error("Keine gültige Aufstellung verfügbar");
+    const hXI=(m.lineups.home||[]).map(playerById).filter(Boolean),aXI=(m.lineups.away||[]).map(playerById).filter(Boolean);
+    if(hXI.length!==11||aXI.length!==11)throw new Error("Keine vollständige Aufstellung verfügbar");
 
     m.events=[];
     h.defaultLineup=hXI.map(p=>p.id).filter(Number.isFinite);a.defaultLineup=aXI.map(p=>p.id).filter(Number.isFinite);h.defaultFormation=h.defaultFormation||"4-3-2-1";a.defaultFormation=a.defaultFormation||"4-3-2-1";
-    m.lineups={
-      home:hXI.map(p=>p.id).filter(Number.isFinite),
-      away:aXI.map(p=>p.id).filter(Number.isFinite),
-      homeBench:fullBenchIds(h,hXI.map(x=>x.id)),
-      awayBench:fullBenchIds(a,aXI.map(x=>x.id))
-    };
+    m.lineups.home=hXI.map(p=>p.id);m.lineups.away=aXI.map(p=>p.id);
+    m.lineups.homeBench=fullBenchIds(h,m.lineups.home,m.lineups.homeBench);
+    m.lineups.awayBench=fullBenchIds(a,m.lineups.away,m.lineups.awayBench);
 
-    const hs=Number(teamAverage(h))||65,as=Number(teamAverage(a))||65;
-    const context=simulationSeasonContext(h.id,a.id,m.matchday);
-    const formH=weightedFormScore(h.id,context.dayBefore);
-    const formA=weightedFormScore(a.id,context.dayBefore);
-
-    // V32: Jeder Stärkepunkt ist sichtbar. Grundstärke dominiert; Form und Tabelle dürfen verschieben,
-    // aber einen Qualitätsunterschied nur bei klarer Saisonleistung wirklich ausgleichen.
-    const ratingGap=clamp(hs-as,-8,8);
+    const power=simulationPowerModel(h,a,m);
+    const {hs,as,ctx:context,formH,formA,evidence,ratingGap,rankEffect,ppgEffect,gdEffect,formEffect,effectiveGap,lambdaHome,lambdaAway,style}=power;
+    const seasonGap=clamp((rankEffect+ppgEffect+gdEffect)/4.2,-1,1);
     const formGap=clamp(formH-formA,-1,1);
-    const seasonGap=clamp(context.seasonGap,-1,1);
     const derby=isDerbyMatch(m);
     const fatigueH=fatigueScore(h.id,m),fatigueA=fatigueScore(a.id,m);
-    const fatigueGap=fatigueA-fatigueH;
-    const leaderH=context.home.rank===1?.06:0,leaderA=context.away.rank===1?.06:0;
-    const relegationH=context.home.rank>=Math.max(2,activeTeams().length-3)?.035:0,relegationA=context.away.rank>=Math.max(2,activeTeams().length-3)?.035:0;
-    const upsetSwing=randomNormal()*(derby?.09:.07);
-    const homeAdvantage=.075;
-    let baseHome=1.30+homeAdvantage+ratingGap*.235+formGap*.15+seasonGap*.22+fatigueGap*.17+leaderH+relegationH+upsetSwing;
-    let baseAway=1.26-ratingGap*.225-formGap*.14-seasonGap*.20-fatigueGap*.16+leaderA+relegationA-upsetSwing;
-    if(derby){baseHome=(baseHome+1.27)*.5;baseAway=(baseAway+1.24)*.5;}
-    const openMatch=Math.random()<.16;
-    const blowoutMatch=!openMatch&&Math.random()<.045;
-    const defensiveMatch=!openMatch&&!blowoutMatch&&Math.random()<.13;
-    if(openMatch){baseHome*=1.42;baseAway*=1.42}
-    if(blowoutMatch){baseHome*=1.78;baseAway*=1.78}
-    if(defensiveMatch){baseHome*=.78;baseAway*=.78}
-    baseHome=clamp(baseHome,.24,3.45);baseAway=clamp(baseAway,.20,3.25);
-
-    let hg=clamp(poisson(baseHome),0,8),ag=clamp(poisson(baseAway),0,8);
-    // Deutliche Ergebnisse bleiben drin, werden außerhalb eines echten Ausreißers aber selten.
-    if(!blowoutMatch){
-      let guard=0;
-      while((Math.abs(hg-ag)>=4||hg+ag>=8)&&guard++<5){hg=clamp(poisson(baseHome),0,7);ag=clamp(poisson(baseAway),0,7)}
-      if(Math.abs(hg-ag)>=4){
-        if(hg>ag)hg=ag+3;else ag=hg+3;
-      }
-    }
-    // V62: 0:0 bleibt möglich, aber nicht als Standardresultat. Ca. 12 % der ursprünglich torlosen Spiele bleiben 0:0.
-    if(hg===0&&ag===0&&Math.random()>.12){
-      const homeScoreBias=clamp(.50 + ratingGap*.045 + formGap*.08 + seasonGap*.12 + .035,.18,.82);
-      if(Math.random()<homeScoreBias)hg=1;else ag=1;
-      if(openMatch&&Math.random()<.34){if(Math.random()<homeScoreBias)hg++;else ag++;}
-    }
-    // Seltene echte Torfestivals bis maximal 10 Gesamttore.
-    if(openMatch&&Math.random()<.12&&hg+ag<5){
-      const extra=1+Math.floor(Math.random()*3);
-      for(let i=0;i<extra&&hg+ag<10;i++){
-        const homeBias=clamp(.50 + ratingGap*.04 + seasonGap*.10,.2,.8);
-        if(Math.random()<homeBias)hg++;else ag++;
-      }
-    }
+    const controlHome=clamp(1/(1+Math.exp(-effectiveGap/2.8)),.16,.84);
+    let [hg,ag]=simulateScoreFromPower(power);
 
     m.scoreMode="events";
     const usedMinutes=new Set();
@@ -1757,7 +1771,7 @@ async function simulateMatch(matchId){
     // V41: Mehr sichtbare Offensivszenen. Wer mehr Spielkontrolle hat, erzeugt auch mehr
     // Chancen; Außenseiter können aber selten trotz mehr Abschlüssen verlieren.
     const controlHome=clamp(.50 + ratingGap*.035 + seasonGap*.115 + formGap*.07 + .025 - fatigueH*.025 + fatigueA*.025,.20,.80);
-    const chanceVolume=clamp(Math.round(10 + Math.abs(ratingGap)*.7 + Math.abs(seasonGap)*3 + poisson(3.6)),9,19);
+    const chanceVolume=clamp(Math.round(9 + power.totalXg*2.1 + Math.abs(effectiveGap)*.55 + poisson(2.8)),8,22);
     for(let i=0;i<chanceVolume;i++){
       const homeAttack=Math.random()<controlHome,attackers=homeAttack?hXI:aXI,defenders=homeAttack?aXI:hXI;
       const shooter=pickAttacker(attackers);if(!shooter)continue;
@@ -1790,7 +1804,7 @@ async function simulateMatch(matchId){
 
     // V41 Statistikmodell: Tabellenlage, Form und Stärke sollen sich deutlich in der
     // Anzahl der Angriffe/Schüsse spiegeln. Ergebnisse bleiben aber nicht deterministisch.
-    let shotEdge=ratingGap*1.15 + seasonGap*6.0 + formGap*3.3 + 1.2 + randomNormal()*2.0;
+    let shotEdge=effectiveGap*1.65 + randomNormal()*1.8;
     // Seltene statistische Überraschung: der Verlierer kann trotzdem mehr Chancen gehabt haben.
     const statUpset=Math.random()<.085;
     if(statUpset && hg!==ag){
@@ -1807,8 +1821,8 @@ async function simulateMatch(matchId){
     const possH=Math.round(clamp(50 + shotEdge*.72 + ratingGap*.22 + randomNormal()*2.5,31,69));
     const sotH=clamp(Math.max(hg,Math.round(shotsH*(.30+Math.random()*.15))),hg,shotsH);
     const sotA=clamp(Math.max(ag,Math.round(shotsA*(.30+Math.random()*.15))),ag,shotsA);
-    const qualityH=clamp(baseHome*.72 + shotsH*.055 + sotH*.075,.25,5.2);
-    const qualityA=clamp(baseAway*.72 + shotsA*.055 + sotA*.075,.25,5.0);
+    const qualityH=clamp(lambdaHome*.72 + shotsH*.055 + sotH*.075,.25,5.2);
+    const qualityA=clamp(lambdaAway*.72 + shotsA*.055 + sotA*.075,.25,5.0);
     m.statistics={
       possessionHome:possH,possessionAway:100-possH,
       shotsHome:shotsH,shotsAway:shotsA,
@@ -1855,10 +1869,12 @@ async function simulateMatch(matchId){
 
     m.statisticsSource="simulated";
     m.simulationFactors={
-      homeStrength:Number(hs.toFixed(1)),awayStrength:Number(as.toFixed(1)),
-      strengthGap:Number(ratingGap.toFixed(2)),formGap:Number(formGap.toFixed(3)),
-      seasonGap:Number(seasonGap.toFixed(3)),tableEvidence:Number(context.evidence.toFixed(3)),
-      tableDay:context.dayBefore,derby:isDerbyMatch(m),fatigueHome:Number(fatigueScore(h.id,m).toFixed(2)),fatigueAway:Number(fatigueScore(a.id,m).toFixed(2))
+      homeStrength:Number(hs.toFixed(1)),awayStrength:Number(as.toFixed(1)),strengthGap:Number(ratingGap.toFixed(2)),
+      effectiveGap:Number(effectiveGap.toFixed(3)),rankEffect:Number(rankEffect.toFixed(3)),ppgEffect:Number(ppgEffect.toFixed(3)),goalDiffEffect:Number(gdEffect.toFixed(3)),
+      formHome:Number(formH.toFixed(3)),formAway:Number(formA.toFixed(3)),formEffect:Number(formEffect.toFixed(3)),
+      tableEvidence:Number(evidence.toFixed(3)),tableDay:context.dayBefore,matchStyle:style,
+      expectedGoalsHome:Number(lambdaHome.toFixed(3)),expectedGoalsAway:Number(lambdaAway.toFixed(3)),
+      derby:isDerbyMatch(m),fatigueHome:Number(fatigueScore(h.id,m).toFixed(2)),fatigueAway:Number(fatigueScore(a.id,m).toFixed(2))
     };
     const capacity=Math.max(0,Number(h.stadium?.capacity||12000));
     {const tableAppeal=clamp((hs+as-120)/180,-.08,.16);const rivalry=Math.random()<.08?.08:0;const fill=clamp(.62+tableAppeal+rivalry+Math.random()*.23,.42,1);m.attendance=Math.min(capacity,Math.round(capacity*fill));}
@@ -2002,6 +2018,7 @@ function openLiveSimulation(matchId){
       <button class="v50-control gear" id="v50Gear">⚙</button>
       <button class="v50-control close" id="live2dClose">×</button>
     </div>
+    <div class="live2d-halftime-panel" id="live2dHalftimePanel" hidden></div>
     <section class="v50-stadium-wrap v53-stadium-wrap v54-stadium-wrap">
       <div class="v54-stadium-photo" aria-hidden="true"></div>
       <div class="v54-stand-side left" aria-hidden="true"></div><div class="v54-stand-side right" aria-hidden="true"></div>
@@ -2051,7 +2068,7 @@ function openLiveSimulation(matchId){
     </section>
   </div></div>`;
 
-  const shell=document.querySelector('.live2d-shell'),pitch=el('#live2dPitch'),clock=el('#live2dClock'),score=el('#live2dScore'),period=el('#live2dPeriod'),progress=el('#live2dProgress'),ticker=el('#live2dTicker'),scene=el('#live2dScene'),ball=el('#live2dBall'),goalFlash=el('#live2dGoalFlash'),goalName=el('#live2dGoalName'),setpiece=el('#live2dSetpiece'),tickerPanel=el('#live2dTickerPanel'),statsPanel=el('#live2dStatsPanel'),traceMain=el('#live2dTraceMain'),attackBar=el('#live2dAttackBar'),attackTeam=el('#live2dAttackTeam'),possFlash=el('#live2dPossFlash'),actionCard=el('#live2dActionCard'),actionType=el('#live2dActionType'),actionTitle=el('#live2dActionTitle'),actionDetail=el('#live2dActionDetail'),statusRail=el('#live2dStatusRail'),statusType=el('#live2dStatusType'),statusTitle=el('#live2dStatusTitle'),statusDetail=el('#live2dStatusDetail');
+  const shell=document.querySelector('.live2d-shell'),pitch=el('#live2dPitch'),clock=el('#live2dClock'),score=el('#live2dScore'),period=el('#live2dPeriod'),progress=el('#live2dProgress'),ticker=el('#live2dTicker'),scene=el('#live2dScene'),ball=el('#live2dBall'),goalFlash=el('#live2dGoalFlash'),goalName=el('#live2dGoalName'),setpiece=el('#live2dSetpiece'),tickerPanel=el('#live2dTickerPanel'),statsPanel=el('#live2dStatsPanel'),traceMain=el('#live2dTraceMain'),attackBar=el('#live2dAttackBar'),attackTeam=el('#live2dAttackTeam'),possFlash=el('#live2dPossFlash'),actionCard=el('#live2dActionCard'),actionType=el('#live2dActionType'),actionTitle=el('#live2dActionTitle'),actionDetail=el('#live2dActionDetail'),statusRail=el('#live2dStatusRail'),statusType=el('#live2dStatusType'),statusTitle=el('#live2dStatusTitle'),statusDetail=el('#live2dStatusDetail'),halftimePanel=el('#live2dHalftimePanel');
   let simSecond=0,lastFrame=performance.now(),paused=false,speed=1,eventIndex=0,raf=0,ended=false,sequenceTimers=[],goalTimer=0;
   let ballCarrierNode=null,ballFlightRAF=0,traceTimer=0,actionTimer=0,possTimer=0,statusTimer=0;
   let visibleHomeGoals=0,visibleAwayGoals=0,eventSceneActive=false,eventSceneUntil=0;const visibleGoalEventIds=new Set();
@@ -2112,6 +2129,7 @@ function openLiveSimulation(matchId){
 
   function showSetpiece(text){if(!setpiece)return;setpiece.textContent=text;setpiece.classList.remove('show');void setpiece.offsetWidth;setpiece.classList.add('show');later(()=>setpiece.classList.remove('show'),1700*tempoScale())}
   function teamLabel(side){return side==='home'?(h.short||h.name):(a.short||a.name)}
+  function eventAttackSide(e){if(Number(e?.attackingTeamId||0)===Number(m.homeId))return 'home';if(Number(e?.attackingTeamId||0)===Number(m.awayId))return 'away';return liveSimTeamSideForPlayer(m,e?.shotById||e?.playerId)||possessionSide||'home'}
   function playerLabel(node){return liveSimPlayerLabel(playerById(playerNodeId(node)))}
   function progressFor(node,side=sideOf(node)){const p=currentXY(node);return side==='home'?p.x:100-p.x}
   function weightedNode(nodes,fn){return weightedPick(nodes,n=>Math.max(.025,fn(n)))}
@@ -2399,7 +2417,7 @@ function openLiveSimulation(matchId){
       if(wide&&Math.random()<.58){crossAttack(side,carrier);nextAmbientAction=simSecond+32+Math.random()*18;return}
       if(g==='ST'){
         const roll=Math.random();
-        if(roll<.72){let outcome=roll<.08?'goal':roll<.41?'save':roll<.52?'post':'chance';if(outcome==='goal'){const ge={id:Date.now()+Math.floor(Math.random()*99999),type:'goal',minute:Math.max(1,Math.floor(simSecond/60)),playerId:playerNodeId(carrier),attackingTeamId:side==='home'?m.homeId:m.awayId,source:'open'};realisticShot(side,carrier,{kind:'goal',keeperNode,event:ge});later(()=>playGoalAnimation(ge,side,carrier),1750*tempoScale())}else realisticShot(side,carrier,{kind:outcome,keeperNode});possessionSide=side==='home'?'away':'home';later(()=>{const c=keeper(possessionSide)||chooseCarrier(possessionSide);if(c&&!ballInFlight)setBallAtNode(c)},2800*tempoScale());nextAmbientAction=simSecond+34+Math.random()*18;return}
+        if(roll<.72){let outcome=roll<.39?'save':roll<.52?'post':'chance';realisticShot(side,carrier,{kind:outcome,keeperNode});possessionSide=side==='home'?'away':'home';later(()=>{const c=keeper(possessionSide)||chooseCarrier(possessionSide);if(c&&!ballInFlight)setBallAtNode(c)},2800*tempoScale());nextAmbientAction=simSecond+34+Math.random()*18;return}
         if(roll<.86){oneTwo(side,carrier);nextAmbientAction=simSecond+25+Math.random()*15;return}
         dribble(carrier,side,true);nextAmbientAction=simSecond+22+Math.random()*12;return;
       }
@@ -2459,6 +2477,41 @@ function openLiveSimulation(matchId){
     later(()=>{arrangeKickoff(other,'Wiederanstoß');restartLock=false;eventSceneActive=false},4300*scale);
   }
 
+  function applyLiveLineupSide(side,ids){
+    const nodes=sideNodes(side).slice().sort((a,b)=>slotOf(a)-slotOf(b));
+    const t=side==='home'?h:a;
+    nodes.forEach((node,i)=>{
+      const pid=Number(ids[i]||0),p=playerById(pid);if(!p)return;
+      node.dataset.livePlayer=String(pid);node.classList.remove('sent-off');
+      const dot=node.querySelector('.live2d-dot'),label=node.querySelector('small');
+      if(dot)dot.textContent=String(p.shirtNumber||p.number||i+1).slice(0,2);
+      if(label)label.textContent=liveSimPlayerLabel(p);
+    });
+    const benchKey=side==='home'?'homeBench':'awayBench';
+    m.lineups[side]=ids.map(Number);m.lineups[benchKey]=fullBenchIds(t,m.lineups[side],m.lineups[benchKey]);
+  }
+  function remapFutureEventsAfterHalftime(){
+    const current={home:new Set(m.lineups.home||[]),away:new Set(m.lineups.away||[])};
+    const chooseFor=(side,type)=>{
+      const ids=side==='home'?m.lineups.home:m.lineups.away,players=(ids||[]).map(playerById).filter(Boolean);
+      if(!players.length)return null;
+      if(['goal','penalty','chance','post'].includes(type))return weightedPick(players,p=>{const g=playerPositionGroup(p);return g==='ST'?4:g==='AM'?3:g==='MID'?1.8:.55});
+      if(type==='save')return players.find(p=>String(p.position||'').toUpperCase().includes('TW'))||players[0];
+      if(type==='corner'||type==='freeKick')return weightedPick(players,p=>['AM','MID'].includes(playerPositionGroup(p))?3:.45);
+      return weightedPick(players,()=>1);
+    };
+    const remap=e=>{if(Number(e.minute||0)<=45)return;let side=liveSimTeamSideForPlayer(m,e.playerId)||eventAttackSide(e);if(!side)side=e.attackingTeamId===m.homeId?'home':'away';if(side&&e.playerId&&!current[side].has(Number(e.playerId))){const p=chooseFor(side,e.type);if(p)e.playerId=p.id}if(side&&e.assistId&&!current[side].has(Number(e.assistId))){const p=chooseFor(side,'assist');if(p&&p.id!==e.playerId)e.assistId=p.id}if(side&&e.shotById&&!current[side].has(Number(e.shotById))){const p=chooseFor(side,'chance');if(p)e.shotById=p.id}};
+    (m.events||[]).forEach(remap);events.forEach(remap);
+  }
+  function openHalftimeLineupEditor(){
+    if(!halftimePanel)return;paused=true;syncPauseLabels();
+    const sideEditor=(side,t)=>{const ids=(m.lineups?.[side]||[]).slice(0,11);const roster=sortPlayersByPosition(t.players||[]);return `<section class="halftime-team"><div class="halftime-team-head">${badge(t)}<div><b>${t.name}</b><span>Startelf 2. Halbzeit</span></div></div><div class="halftime-select-grid">${ids.map((id,i)=>`<label><span>${formationSlotLabel(i)}</span><select data-halftime-side="${side}" data-halftime-slot="${i}">${roster.map(p=>`<option value="${p.id}" ${Number(p.id)===Number(id)?'selected':''}>${p.name} · ${p.position||'SP'} · ${Number(p.rating||0).toFixed(1)}</option>`).join('')}</select></label>`).join('')}</div></section>`};
+    halftimePanel.hidden=false;halftimePanel.innerHTML=`<div class="halftime-sheet"><div class="halftime-head"><div><small>45:00 · HALBZEIT</small><h3>Aufstellungen prüfen</h3><p>Du kannst die Startelf für die zweite Halbzeit ändern.</p></div></div><div class="halftime-grid">${sideEditor('home',h)}${sideEditor('away',a)}</div><div class="halftime-actions"><button class="btn secondary" id="halftimeContinue">Ohne Änderung weiter</button><button class="btn primary" id="halftimeSave">Änderungen übernehmen</button></div></div>`;
+    const closeAndResume=()=>{halftimePanel.hidden=true;halftimePanel.innerHTML='';paused=false;lastFrame=performance.now();syncPauseLabels();arrangeKickoff('away','Anstoß 2. Halbzeit');eventSceneActive=false;};
+    el('#halftimeContinue').onclick=closeAndResume;
+    el('#halftimeSave').onclick=()=>{const collect=side=>[...halftimePanel.querySelectorAll(`[data-halftime-side="${side}"]`)].sort((x,y)=>Number(x.dataset.halftimeSlot)-Number(y.dataset.halftimeSlot)).map(x=>Number(x.value));const homeIds=collect('home'),awayIds=collect('away');if(new Set(homeIds).size!==11||new Set(awayIds).size!==11)return toast('Jeder Spieler darf nur einmal in der Startelf stehen.');applyLiveLineupSide('home',homeIds);applyLiveLineupSide('away',awayIds);remapFutureEventsAfterHalftime();saveState({label:'Halbzeit-Aufstellungen geändert'});closeAndResume();};
+  }
+
   function focusEvent(e){
     const side=eventAttackSide(e),other=side==='home'?'away':'home',scale=tempoScale(),title=liveSimEventTitle(e,m);possessionSide=side;restartLock=false;clearActive();updateDynamicShape(true);eventSceneActive=true;
     liveStatAt(Number(e.minute||0));
@@ -2466,7 +2519,7 @@ function openLiveSimulation(matchId){
       const tickerTitle=liveTickerDisplayTitle(e,m);tickerRows.unshift(liveSimTickerRow(e,tickerTitle,side));ticker.innerHTML=tickerRows.slice(0,6).join('');if(tickerPanel){tickerPanel.classList.add('pulse');setTimeout(()=>tickerPanel.classList.remove('pulse'),620)}
     }
     if(['goal','penalty','save','chance','post'].includes(e.type)&&statsPanel){statsPanel.classList.add('pulse');setTimeout(()=>statsPanel.classList.remove('pulse'),620)}
-    if(e.type==='halftime'){cinematicUntil=performance.now()+3300*scale;showSetpiece('HALBZEIT');showScene('⏸ Halbzeitpause',true);later(()=>{arrangeKickoff(side==='home'?'away':'home','Anstoß 2. Halbzeit');eventSceneActive=false},1800*scale);return}
+    if(e.type==='halftime'){cinematicUntil=performance.now()+3300*scale;showSetpiece('HALBZEIT');showScene('⏸ Halbzeitpause',true);later(()=>openHalftimeLineupEditor(),700*scale);return}
     if(e.type==='goal'){guaranteedGoalSequence(side,e);return}
     if(e.type==='corner'){arrangeCorner(side,e);later(()=>eventSceneActive=false,5000*scale);return}
     if(e.type==='freeKick'){arrangeFreeKick(side);later(()=>eventSceneActive=false,5200*scale);return}
@@ -2493,6 +2546,17 @@ function openLiveSimulation(matchId){
     // Nur Tore, die im Live-Spiel tatsächlich sichtbar gefallen sind, bleiben im Spielbericht.
     m.events=(m.events||[]).filter(ev=>!['goal','penalty'].includes(ev.type)||visibleGoalEventIds.has(Number(ev.id||0)));
     m.homeGoals=finalHome;m.awayGoals=finalAway;m.status="played";m.simulated=true;delete m.__livePreview;delete m.__liveFinalHome;delete m.__liveFinalAway;
+    const targetPoss=Number(m.statistics?.possessionHome||50);
+    m.statistics={
+      possessionHome:clamp(Math.round(targetPoss),25,75),possessionAway:100-clamp(Math.round(targetPoss),25,75),
+      shotsHome:liveRuntime.shotsHome,shotsAway:liveRuntime.shotsAway,
+      shotsOnTargetHome:liveRuntime.sotHome,shotsOnTargetAway:liveRuntime.sotAway,
+      bigChancesHome:liveRuntime.bigHome,bigChancesAway:liveRuntime.bigAway,
+      cornersHome:liveRuntime.cornersHome,cornersAway:liveRuntime.cornersAway,
+      foulsHome:liveRuntime.foulsHome,foulsAway:liveRuntime.foulsAway,
+      xgHome:Number(liveRuntime.xgHome.toFixed(2)),xgAway:Number(liveRuntime.xgAway.toFixed(2))
+    };
+    m.statisticsSource="live-simulation";
     try{rebuildPlayerStats();saveState({label:"Live-Simulation beendet"})}catch(err){console.error("Endstand speichern:",err)}
     clock.textContent='90:00';if(period)period.textContent='ENDE';score.textContent=`${finalHome} : ${finalAway}`;progress.style.width='100%';liveStatAt(90);showScene('🏁 Abpfiff',true);showSetpiece('ABPFIFF');tickerRows.unshift(`<div class="live2d-ticker-row full"><b>90'</b><span>🏁 Abpfiff · ${h.short||h.name} ${finalHome}:${finalAway} ${a.short||a.name}</span></div>`);ticker.innerHTML=tickerRows.slice(0,6).join('');if(tickerPanel){tickerPanel.classList.add('pulse');setTimeout(()=>tickerPanel.classList.remove('pulse'),620)}el('#live2dPause').textContent='✓ Beendet';el('#live2dPause').disabled=true;if(el('#v50PauseBottom')){el('#v50PauseBottom').textContent='SIMULATION BEENDET';el('#v50PauseBottom').disabled=true;}setTimeout(()=>{if(document.querySelector('.live2d-shell')){closeOverlay();openMatch(matchId)}},3300)
   }
@@ -2560,7 +2624,7 @@ function lineupView(m){
       </div>
     </section>`;
   };
-  return `<div class="lineup-instruction">Spieler gedrückt halten und in Startelf, Bank oder Kader ziehen. Antippen öffnet Schnellaktionen.</div><div class="grid lineup-grid">${sideBoard("home",team(m.homeId))}${sideBoard("away",team(m.awayId))}</div>`;
+  return `<div class="lineup-instruction">Spieler gedrückt halten und in Startelf, Bank oder Kader ziehen. Antippen öffnet Schnellaktionen.</div><div class="grid lineup-grid">${sideBoard("home",team(m.homeId))}${sideBoard("away",team(m.awayId))}</div>${m.__awaitingSimulationLineup?`<div class="card pregame-lineup-confirm"><div><b>Aufstellungen bereit?</b><span>Diese Startelf wird für die Live-Simulation verwendet.</span></div><button id="confirmLineupAndSim" class="btn primary">▶ Mit diesen Aufstellungen simulieren</button></div>`:""}`;
 }
 
 function lineupPlayerCard(p,side){
@@ -2730,6 +2794,7 @@ function editMatchView(m){
 }
 function bindMatchActions(m){
   bindLineupDrag(m);
+  const pre=el("#confirmLineupAndSim");if(pre)pre.onclick=()=>{if((m.lineups?.home||[]).length!==11||(m.lineups?.away||[]).length!==11)return toast("Beide Startelfen müssen 11 Spieler enthalten");m.__lineupConfirmedForSimulation=true;delete m.__awaitingSimulationLineup;saveState({label:"Aufstellungen bestätigt"});simulateMatch(m.id);};
   document.querySelectorAll("[data-play-chant]").forEach(button=>button.onclick=()=>playCrowdChant(team(Number(button.dataset.playChant))));
   document.querySelectorAll("[data-open-celebration]").forEach(button=>button.onclick=()=>openCelebration(Number(button.dataset.openCelebration)));
   const add=el("#addEvent");if(add)add.onclick=()=>openEventEditor(m.id);

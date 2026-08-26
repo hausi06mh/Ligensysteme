@@ -1,3 +1,3 @@
-Fantasy Liga Elite V62 – Match Event & Scoring Engine
+Fantasy Liga Elite V63 – Performance Probability Model
 
-Tore, Ecken, Freistöße und Elfmeter sind jetzt geplante Live-Ereignisse. Die Match-Uhr wartet an fälligen Ereignissen, damit sie auch bei 8× sichtbar abgespielt werden. 0:0 bleibt möglich, aber normale Ergebnisverteilungen und seltene Torfestivals sind wieder enthalten. Paraden können zu Ecken führen; Ecken enden in Kopfball-/Abschlussszenen. Sichtbare Tore werden direkt ins Endergebnis und den Spielplan übernommen.
+Neu: Stärke + Tabellenlage + Punkte/Spiel + Torverhältnis + letzte 5 Spiele + Heimvorteil + Müdigkeit bilden gemeinsam die Match-Power. Die Aussagekraft der Tabelle wächst im Saisonverlauf. Live-Statistiken werden beim Abpfiff 1:1 als Endstatistiken gespeichert. Vor jeder Simulation müssen die Aufstellungen geprüft/bestätigt werden; zur Halbzeit pausiert die Simulation und die Startelf kann für die zweite Halbzeit geändert werden.
