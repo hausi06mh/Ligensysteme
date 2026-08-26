@@ -10,7 +10,7 @@
   <title>Fantasy Liga Studio Elite V41</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=631">
 </head>
 <body>
   <div id="app">
@@ -24,13 +24,32 @@
   <div id="overlay"></div>
   <div id="toast" class="toast hidden"></div>
   <div id="contextMenu"></div>
-  <script type="module" src="./app.js"></script>
+  <script type="module" src="./app.js?v=631"></script>
   <script>
-    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js", {scope:"./"}).catch(console.error);
-      });
-    }
+    window.__FLE_BOOT_OK__ = false;
+    window.addEventListener("fle:boot-ok", () => { window.__FLE_BOOT_OK__ = true; });
+    window.addEventListener("load", async () => {
+      try {
+        if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          for (const reg of regs) {
+            if (reg.scope.includes(location.pathname.replace(/[^/]*$/, ""))) await reg.unregister();
+          }
+          if ("caches" in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.filter(k => k.startsWith("fantasy-liga-")).map(k => caches.delete(k)));
+          }
+          await navigator.serviceWorker.register("./sw.js?v=631", {scope:"./", updateViaCache:"none"});
+        }
+      } catch (e) { console.warn("Cache-Neustart:", e); }
+      setTimeout(() => {
+        if (window.__FLE_BOOT_OK__) return;
+        const box = document.querySelector("#startupFallback section");
+        if (box) box.innerHTML = `<h1 style="margin-top:0">Fantasy Liga Elite konnte nicht starten</h1>
+          <p>Die App-Datei wurde nicht geladen. Dein Spielstand wurde nicht gelöscht.</p>
+          <button onclick="location.reload()" style="font:inherit;padding:12px 16px;border-radius:12px;border:0;font-weight:800">Neu laden</button>`;
+      }, 7000);
+    });
   </script>
 </body>
 </html>

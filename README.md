@@ -1,3 +1,3 @@
-Fantasy Liga Elite V63 – Performance Probability Model
+Fantasy Liga Elite V63.1 – Start & Cache Fix
 
-Neu: Stärke + Tabellenlage + Punkte/Spiel + Torverhältnis + letzte 5 Spiele + Heimvorteil + Müdigkeit bilden gemeinsam die Match-Power. Die Aussagekraft der Tabelle wächst im Saisonverlauf. Live-Statistiken werden beim Abpfiff 1:1 als Endstatistiken gespeichert. Vor jeder Simulation müssen die Aufstellungen geprüft/bestätigt werden; zur Halbzeit pausiert die Simulation und die Startelf kann für die zweite Halbzeit geändert werden.
+Enthält alle V63-Funktionen. Zusätzlich: robuster App-Start ohne blockierendes Top-Level-Await, Cache-Busting für app.js/styles.css, automatische Entfernung alter Fantasy-Liga-Service-Worker-Caches und Network-First-Service-Worker. Lokale Karrieredaten werden nicht gelöscht.

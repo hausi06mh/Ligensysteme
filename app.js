@@ -36,6 +36,7 @@ async function bootApplication(){
     normalizeState(state());
     upgradeState();
     render();
+    window.dispatchEvent(new Event("fle:boot-ok"));
   }catch(error){
     console.error("Startfehler:",error);
     const appRoot=document.querySelector("#app");
@@ -60,7 +61,11 @@ async function bootApplication(){
     }
   }
 }
-await bootApplication();
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded",()=>{bootApplication();},{once:true});
+}else{
+  bootApplication();
+}
 
 function state(){ return getState(); }
 function league(){ return getLeague(state()); }
