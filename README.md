@@ -1,2 +1,1 @@
-Fantasy Liga Elite V71 – Causal Football Engine
-Freistöße, Elfmeter und Karten entstehen ausschließlich sichtbar aus Fouls. Bewegungen bei 1x geglättet.
+Fantasy Liga Elite V72 – coherent live events. Final event list includes goals, chances, saves/posts and cards. Fouls target the actual ball carrier and create the following free kick/penalty. Goal scenes now include crosses, cutbacks, dribbles, distance shots and normal combinations.
