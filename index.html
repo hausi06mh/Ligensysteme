@@ -33,7 +33,7 @@
       if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k).catch(()=>false)));}
       window.__FLE_BOOT_OK__=false;
       window.addEventListener('fle:boot-ok',()=>window.__FLE_BOOT_OK__=true,{once:true});
-      await import('./app720.js?v=69-20260826');
+      await import('./app730.js?v=69-20260826');
       setTimeout(()=>{if(!window.__FLE_BOOT_OK__ && document.querySelector('#startupFallback')) fallback('Start dauert zu lange','Die neue App-Datei wurde geladen, aber der Start wurde nicht abgeschlossen. Bitte einmal neu laden.');},8000);
     }catch(e){console.error(e);fallback('App-Datei konnte nicht geladen werden','Bitte lade diese Seite einmal neu. Dein lokaler Spielstand wird nicht gelöscht. Fehler: '+String(e&&e.message||e));}
   })();
