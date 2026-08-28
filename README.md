@@ -1,9 +1,12 @@
-Fantasy Liga Elite V74 – Stoppage Time & Chance Sync
+Fantasy Liga Elite V75 – Score Balance
 
-- V73 inklusive der 500+ variablen Aufbauten bleibt enthalten.
-- Jede tatsächlich ausgespielte Chance/Parade/Pfostenaktion wird zuverlässig einzeln in den Live-Statistiken gezählt.
-- Diese Live-Statistiken werden beim Abpfiff 1:1 als Endstatistiken gespeichert.
-- Echte Nachspielzeit: 1. HZ +1 bis +4, 2. HZ +2 bis +7.
-- In der Nachspielzeit läuft die Simulation normal weiter; Chancen, Fouls, Karten, Ecken und Tore können weiterhin passieren.
-- Späte geplante Tore können als 45+X bzw. 90+X fallen.
-- Ticker und Spielbericht zeigen die Nachspielzeit korrekt an.
+Auf Basis von V74.
+
+Neu:
+- Torverteilung der simulierten Spiele deutlich realistischer.
+- Normale Ergebnisse wie 0:0, 1:0, 1:1, 2:0, 2:1, 1:2, 2:2 und 3:1 treten häufiger auf.
+- Offene Spiele und Torfestivals sind seltener.
+- 4:2, 5:1, 1:6, 6:0 usw. bleiben möglich, sind aber echte Ausreißer.
+- Große Stärkeunterschiede können weiterhin klare Siege erzeugen.
+- Tabellenform, Teamstärke, Heimvorteil und Müdigkeit bleiben im Leistungsmodell erhalten.
+- V73/V74-Funktionen wie variable Aufbauten, Chancen-Sync und Nachspielzeit bleiben enthalten.
