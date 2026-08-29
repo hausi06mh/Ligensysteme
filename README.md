@@ -1,15 +1,16 @@
-Fantasy Liga Elite V77 – Broadcast Stadium View
+Fantasy Liga Elite V78 – Clean Match View
 
-V76 ist vollständig enthalten; V77 ersetzt nur dessen Downloadbasis.
+V77.1 wurde visuell verworfen und neu strukturiert.
 
-Visueller Umbau:
-- deutlich stärker am bereitgestellten 2D-Fußball-Referenzbild orientierte TV-/Stadionansicht
-- breite grüne Spielfläche mit hellen Streifen und präziseren Feldmarkierungen
-- kleine nummerierte Spielerpunkte, Spielernamen nur bei Ballbesitz/Aktion
-- kleiner, klar erkennbarer Ball
-- kompakte schwarze Scoreleiste direkt über dem Feld
-- echte seitliche Bedienleisten; vorhandene Pause/Tempo/Kamera/Settings/Taktik/Schließen-Buttons werden dorthin verschoben
-- Tribünen/Seitentribünen als dichter Stadionrahmen um das Spielfeld
-- weniger störende Overlays im Feld
-- V76 Shot Visual Engine bleibt komplett enthalten: Tor, daneben, drüber, Parade, Pfosten, Block, Ecke/Abstoß-Folgen
-- V75 realistischere Ergebnisverteilung, V74 Nachspielzeit/Chancen-Sync und V73 variable Aufbauten bleiben erhalten
+Neu:
+- Spielfeld ist klarer Mittelpunkt der Ansicht.
+- Keine riesige Pause-/Tempo-Leiste mehr.
+- Kleine, unauffällige Seitenbuttons.
+- Kompakte Scoreleiste oberhalb des Spielfelds.
+- Weniger Rahmen und weniger Dashboard-Optik.
+- Live-Szene nur noch als schmale Leiste.
+- Statistik und Ticker standardmäßig verborgen; über ☷ einblendbar.
+- Spielfeld deutlich größer und ruhiger.
+- Spieler und Ball kleiner und näher an der gewünschten Referenzdarstellung.
+- V76 Shot Visual Engine bleibt enthalten.
+- V75 Ergebnisbalance, V74 Nachspielzeit/Chancen-Sync, V73 variable Aufbauten bleiben enthalten.
