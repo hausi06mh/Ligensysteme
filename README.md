@@ -1,12 +1,15 @@
-Fantasy Liga Elite V75 – Score Balance
+Fantasy Liga Elite V77 – Broadcast Stadium View
 
-Auf Basis von V74.
+V76 ist vollständig enthalten; V77 ersetzt nur dessen Downloadbasis.
 
-Neu:
-- Torverteilung der simulierten Spiele deutlich realistischer.
-- Normale Ergebnisse wie 0:0, 1:0, 1:1, 2:0, 2:1, 1:2, 2:2 und 3:1 treten häufiger auf.
-- Offene Spiele und Torfestivals sind seltener.
-- 4:2, 5:1, 1:6, 6:0 usw. bleiben möglich, sind aber echte Ausreißer.
-- Große Stärkeunterschiede können weiterhin klare Siege erzeugen.
-- Tabellenform, Teamstärke, Heimvorteil und Müdigkeit bleiben im Leistungsmodell erhalten.
-- V73/V74-Funktionen wie variable Aufbauten, Chancen-Sync und Nachspielzeit bleiben enthalten.
+Visueller Umbau:
+- deutlich stärker am bereitgestellten 2D-Fußball-Referenzbild orientierte TV-/Stadionansicht
+- breite grüne Spielfläche mit hellen Streifen und präziseren Feldmarkierungen
+- kleine nummerierte Spielerpunkte, Spielernamen nur bei Ballbesitz/Aktion
+- kleiner, klar erkennbarer Ball
+- kompakte schwarze Scoreleiste direkt über dem Feld
+- echte seitliche Bedienleisten; vorhandene Pause/Tempo/Kamera/Settings/Taktik/Schließen-Buttons werden dorthin verschoben
+- Tribünen/Seitentribünen als dichter Stadionrahmen um das Spielfeld
+- weniger störende Overlays im Feld
+- V76 Shot Visual Engine bleibt komplett enthalten: Tor, daneben, drüber, Parade, Pfosten, Block, Ecke/Abstoß-Folgen
+- V75 realistischere Ergebnisverteilung, V74 Nachspielzeit/Chancen-Sync und V73 variable Aufbauten bleiben erhalten
