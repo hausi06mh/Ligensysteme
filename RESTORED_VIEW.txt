@@ -1,0 +1,3 @@
+V79 RESTORED OLD VIEW
+Restored from V75 before the V76/V77/V78 visual redesigns.
+Keeps V75 score balance and prior simulation improvements.
