@@ -1,12 +1,14 @@
-Fantasy Liga Elite V75 – Score Balance
+Fantasy Liga Elite V80 – Simulation Polish
 
-Auf Basis von V74.
+Basis: V79 / alte bewährte Oberfläche.
 
-Neu:
-- Torverteilung der simulierten Spiele deutlich realistischer.
-- Normale Ergebnisse wie 0:0, 1:0, 1:1, 2:0, 2:1, 1:2, 2:2 und 3:1 treten häufiger auf.
-- Offene Spiele und Torfestivals sind seltener.
-- 4:2, 5:1, 1:6, 6:0 usw. bleiben möglich, sind aber echte Ausreißer.
-- Große Stärkeunterschiede können weiterhin klare Siege erzeugen.
-- Tabellenform, Teamstärke, Heimvorteil und Müdigkeit bleiben im Leistungsmodell erhalten.
-- V73/V74-Funktionen wie variable Aufbauten, Chancen-Sync und Nachspielzeit bleiben enthalten.
+Änderungen:
+- Ergebnisgenerator abwechslungsreicher; wiederholte identische Resultate werden bei 3 direkten Wiederholungen meist neu gewürfelt, Doppelungen bleiben möglich.
+- Match-Stile haben etwas mehr Varianz, ohne wieder zu extrem torreich zu werden.
+- Schüsse nach Ecken bekommen eigene Ereignis-IDs und werden zuverlässig als Schuss/Chance/aufs Tor gezählt.
+- Direkte Freistöße bekommen eigene Schussereignisse und werden zuverlässig mitgezählt.
+- Freistoß findet exakt an der Stelle des sichtbaren Fouls statt; gefährlicher Freistoß/Elfmeter wird aus der tatsächlichen Feldposition abgeleitet.
+- Torsequenzen erweitert: Distanz, Flanke/Kopfball, Cutback, Dribbling, Doppelpass, flache Hereingabe, Abpraller, zweiter Ball, Volley und normaler Angriff.
+- Mittelkreis, Mittellinie und Mittelpunkt exakt zentriert.
+- Fehlschüsse unterscheiden klarer zwischen vorbei und drüber.
+- Alte UI wurde bewusst beibehalten.
