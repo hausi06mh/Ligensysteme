@@ -1,14 +1,13 @@
-Fantasy Liga Elite V80 – Simulation Polish
+Fantasy Liga Elite V81 – Attack Variety
 
-Basis: V79 / alte bewährte Oberfläche.
+Basis: V80, alte UI bleibt erhalten.
 
-Änderungen:
-- Ergebnisgenerator abwechslungsreicher; wiederholte identische Resultate werden bei 3 direkten Wiederholungen meist neu gewürfelt, Doppelungen bleiben möglich.
-- Match-Stile haben etwas mehr Varianz, ohne wieder zu extrem torreich zu werden.
-- Schüsse nach Ecken bekommen eigene Ereignis-IDs und werden zuverlässig als Schuss/Chance/aufs Tor gezählt.
-- Direkte Freistöße bekommen eigene Schussereignisse und werden zuverlässig mitgezählt.
-- Freistoß findet exakt an der Stelle des sichtbaren Fouls statt; gefährlicher Freistoß/Elfmeter wird aus der tatsächlichen Feldposition abgeleitet.
-- Torsequenzen erweitert: Distanz, Flanke/Kopfball, Cutback, Dribbling, Doppelpass, flache Hereingabe, Abpraller, zweiter Ball, Volley und normaler Angriff.
-- Mittelkreis, Mittellinie und Mittelpunkt exakt zentriert.
-- Fehlschüsse unterscheiden klarer zwischen vorbei und drüber.
-- Alte UI wurde bewusst beibehalten.
+Neu:
+- Ergebnisse etwas lebendiger: etwas höheres Torlevel und häufiger offene Spiele, ohne wieder dauernd 4:2/1:6 zu erzeugen.
+- Sichtbare Fouls deutlich reduziert (ca. 4–11 statt 7–17 geplant).
+- Gefährliche Freistöße und Elfmeter seltener.
+- Elfmeter komplett eigene Szene: Anlauf, Keeper-Reaktion, Tor / Parade / Pfosten / vorbei.
+- Jeder Elfmeter zählt exakt als ein Schuss; verwandelter Elfmeter zusätzlich als Schuss aufs Tor.
+- Viel mehr Open-Play-Angriffe: Solo-Dribbling, Durchbruch, allein aufs Tor, Steckpass, Strafraumkombination, Rückraumabschluss, Distanzschuss, Flügelangriff, Konter, Doppelpass, lange Torwart-Eröffnung.
+- Weniger Pass-Schablonen und weniger Standard-Unterbrechungen.
+- V80: Ecken-/Freistoßschüsse zählen, Foulort = Freistoßort, mehr Torsequenzen.
