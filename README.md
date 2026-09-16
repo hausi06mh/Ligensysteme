@@ -1,13 +1,11 @@
-Fantasy Liga Elite V81 – Attack Variety
+Fantasy Liga Elite V82 – Match Engine Overhaul
 
-Basis: V80, alte UI bleibt erhalten.
-
-Neu:
-- Ergebnisse etwas lebendiger: etwas höheres Torlevel und häufiger offene Spiele, ohne wieder dauernd 4:2/1:6 zu erzeugen.
-- Sichtbare Fouls deutlich reduziert (ca. 4–11 statt 7–17 geplant).
-- Gefährliche Freistöße und Elfmeter seltener.
-- Elfmeter komplett eigene Szene: Anlauf, Keeper-Reaktion, Tor / Parade / Pfosten / vorbei.
-- Jeder Elfmeter zählt exakt als ein Schuss; verwandelter Elfmeter zusätzlich als Schuss aufs Tor.
-- Viel mehr Open-Play-Angriffe: Solo-Dribbling, Durchbruch, allein aufs Tor, Steckpass, Strafraumkombination, Rückraumabschluss, Distanzschuss, Flügelangriff, Konter, Doppelpass, lange Torwart-Eröffnung.
-- Weniger Pass-Schablonen und weniger Standard-Unterbrechungen.
-- V80: Ecken-/Freistoßschüsse zählen, Foulort = Freistoßort, mehr Torsequenzen.
+- Alte Oberfläche bleibt.
+- Ballflug stabilisiert: keine alten Timer/Passaktionen mehr, die in neue Angriffe springen.
+- Laufende Ballflüge werden bei Szenenwechsel sauber beendet.
+- Passempfänger wird nur begrenzt nachgeführt.
+- Mehr Aktionen pro Spiel und deutlich mehr Solo-/1-gegen-1-/Strafraum-/Steckpass-Szenen.
+- Neue Torsequenz: Durchbruch + allein auf den Torwart.
+- Ergebnisniveau etwas offensiver; seltene 6:0/6:1/7:2 etc. werden weniger weggeglättet.
+- Stärke, Tabelle, PPG, Tordifferenz, Form, Heimvorteil und Müdigkeit bleiben zentral.
+- Kleine Tagesform-Varianz erlaubt glaubwürdige Außenseitersiege.
