@@ -4,6 +4,7 @@ export function getLeague(state){
   return state.leagues.find(l=>l.id===state.activeLeagueId) || state.leagues[0];
 }
 export function getSeason(state, league=getLeague(state)){
+  if(!league||!Array.isArray(league.seasons)||!league.seasons.length)throw new Error("Aktive Liga enthält keine gültige Saison");
   return league.seasons.find(s=>s.id===state.activeSeasonId) || league.seasons.find(s=>s.status==="active") || league.seasons[0];
 }
 export function getTeam(state,id){ return state.teams.find(t=>t.id===Number(id)); }

@@ -46,3 +46,12 @@ HOTFIX V100.2 – START/RECOVERY
 - Defekte Daten werden nicht blind gelöscht.
 - Kein Klick auf "Lokale Daten zurücksetzen" erforderlich.
 - app1002.js + Cache-Busting v=100.2.
+
+HOTFIX V100.3 – KOMPLETTER START-AUDIT
+- Eigentlicher Architekturfehler gefunden: V89–V100 verwendeten getSeason() wie einen parameterlosen Helper,
+  obwohl die echte Core-Funktion zwingend state + league erwartet.
+- Fehlende Kompatibilitätshelper getTeams(), getMyTeamId() und buildTable() ergänzt.
+- season.matches wird für die neuen Module als fixtures gespiegelt.
+- Legacy-Save wird bei Migration nicht mehr vorschnell aus localStorage gelöscht.
+- Alle JavaScript-Dateien werden statisch geprüft.
+- app1003.js + neues Cache-Busting.

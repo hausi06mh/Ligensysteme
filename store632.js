@@ -264,7 +264,7 @@ function migrateLegacy(){
     const raw=localStorage.getItem(LEGACY_KEY);
     if(!raw)return null;
     const parsed=JSON.parse(raw);
-    localStorage.removeItem(LEGACY_KEY);
+    // Keep the legacy source intact until the migrated career has booted successfully.
     return parsed;
   }catch{return null}
 }
