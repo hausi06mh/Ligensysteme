@@ -1,5 +1,6 @@
 
 export function getLeague(state){
+  if(!state||!Array.isArray(state.leagues)||!state.leagues.length)throw new Error("Spielstand enthält keine gültigen Ligen");
   return state.leagues.find(l=>l.id===state.activeLeagueId) || state.leagues[0];
 }
 export function getSeason(state, league=getLeague(state)){

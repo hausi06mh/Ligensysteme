@@ -38,3 +38,11 @@ HOTFIX 100.1
 - Legacy-Modalprofil behält openPlayerProfile.
 - Neue aktive Datei app1001.js + Cache-Busting ?v=100.1.
 - Bestehender lokaler Spielstand wird nicht gelöscht.
+
+HOTFIX V100.2 – START/RECOVERY
+- Behebt den Startfehler "undefined is not an object (evaluating state.leagues)".
+- Prüft den geladenen Karriere-Spielstand vor dem Start auf leagues + teams.
+- Recovery-Reihenfolge: letzter guter IndexedDB-Save -> Auto-Backup -> V97/V100 Save-Slot -> Legacy-Save -> seed.json.
+- Defekte Daten werden nicht blind gelöscht.
+- Kein Klick auf "Lokale Daten zurücksetzen" erforderlich.
+- app1002.js + Cache-Busting v=100.2.

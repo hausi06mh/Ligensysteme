@@ -299,6 +299,30 @@ async function writeCareerStateSafely(snapshot){
   }
 }
 
+
+function hasCoreCareerShape(value){
+  return Boolean(value && typeof value==="object" && Array.isArray(value.leagues) && value.leagues.length && Array.isArray(value.teams) && value.teams.length);
+}
+function recoverFromV97LocalStorage(){
+  try{
+    const index=JSON.parse(localStorage.getItem("fantasyLigaSaveIndexV97")||"null");
+    const active=localStorage.getItem("fantasyLigaActiveSlotV97");
+    const ids=[];
+    if(active)ids.push(active);
+    for(const item of index?.slots||[])if(item?.id&&!ids.includes(item.id))ids.push(item.id);
+    for(const id of ids){
+      for(const key of [`fantasyLigaSaveV97:${id}`,`fantasyLigaSaveV97:${id}:backup`]){
+        try{
+          const wrapper=JSON.parse(localStorage.getItem(key)||"null");
+          const candidate=wrapper?.payload?.state;
+          if(hasCoreCareerShape(candidate))return candidate;
+        }catch{}
+      }
+    }
+  }catch{}
+  return null;
+}
+
 async function loadCareerStateSafely(){
   try{
     const primary=await idbGetKey(STATE_KEY);
@@ -322,13 +346,42 @@ export async function initStore(){
   await requestPersistentStorage();
   state=await loadCareerStateSafely();
 
-  if(!state)state=migrateLegacy();
+  // V100.2: Never boot a structurally incomplete/corrupt career.
+  // Keep the bad IndexedDB data untouched until a valid replacement is found.
+  if(!hasCoreCareerShape(state)){
+    let recovered=null;
+    try{
+      const lastGood=await idbGetKey(LAST_GOOD_STATE_KEY);
+      if(hasCoreCareerShape(lastGood))recovered=lastGood;
+    }catch{}
+    if(!recovered){
+      try{
+        const meta=(await idbGetKey(AUTO_BACKUP_META))||{items:[]};
+        for(const item of meta.items||[]){
+          const backup=await idbGetKey(item.key);
+          if(hasCoreCareerShape(backup?.state)){recovered=backup.state;break}
+        }
+      }catch{}
+    }
+    if(!recovered)recovered=recoverFromV97LocalStorage();
+    if(!recovered){
+      const legacy=migrateLegacy();
+      if(hasCoreCareerShape(legacy))recovered=legacy;
+    }
+    if(recovered){
+      state=recovered;
+      try{await writeCareerStateSafely(snapshotWithoutImages(state))}catch{}
+      queueMicrotask(()=>window.dispatchEvent(new CustomEvent("flm:recovered")));
+    }else state=null;
+  }
+
   if(!state){
     state=await fetch("./seed.json").then(r=>{
       if(!r.ok)throw new Error("Startdaten konnten nicht geladen werden");
       return r.json();
     });
   }
+  if(!hasCoreCareerShape(state))throw new Error("Startdaten enthalten keine gültige Liga/Kader-Struktur");
 
   // One-time migration from V25: capture embedded images before stripping them.
   rememberRuntimeImages(state);
