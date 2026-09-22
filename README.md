@@ -31,3 +31,10 @@ V100
 - Bestehende Legacy-Saves bleiben unangetastet/kompatibel.
 - Save-Exporte erhalten Release-Metadaten 1.0.0.
 - Keine neue experimentelle Großfunktion kurz vor Release.
+
+HOTFIX 100.1
+- Kritischen Startfehler behoben: doppelte Top-Level-Funktion openPlayerProfile.
+- V90-Seitenprofil heißt intern nun openV90PlayerProfile.
+- Legacy-Modalprofil behält openPlayerProfile.
+- Neue aktive Datei app1001.js + Cache-Busting ?v=100.1.
+- Bestehender lokaler Spielstand wird nicht gelöscht.
