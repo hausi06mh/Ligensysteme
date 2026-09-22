@@ -1,11 +1,33 @@
-Fantasy Liga Elite V82 – Match Engine Overhaul
+FANTASY LIGA ELITE 1.0 – V100
+================================
+Finaler integrierter Release auf Basis von V99.
 
-- Alte Oberfläche bleibt.
-- Ballflug stabilisiert: keine alten Timer/Passaktionen mehr, die in neue Angriffe springen.
-- Laufende Ballflüge werden bei Szenenwechsel sauber beendet.
-- Passempfänger wird nur begrenzt nachgeführt.
-- Mehr Aktionen pro Spiel und deutlich mehr Solo-/1-gegen-1-/Strafraum-/Steckpass-Szenen.
-- Neue Torsequenz: Durchbruch + allein auf den Torwart.
-- Ergebnisniveau etwas offensiver; seltene 6:0/6:1/7:2 etc. werden weniger weggeglättet.
-- Stärke, Tabelle, PPG, Tordifferenz, Form, Heimvorteil und Müdigkeit bleiben zentral.
-- Kleine Tagesform-Varianz erlaubt glaubwürdige Außenseitersiege.
+ENTHALTEN
+- V83 Match Engine 2.0
+- V84 kohärentes Angriffssystem
+- V85 Taktik & Spielstand
+- V86 Spieler-Identität
+- V87 Abschlüsse & Torhüter
+- V88 Match-Atmosphäre
+- V89 Manager-Zentrale
+- V90 Vereinswelt
+- V91 Fußballwelt
+- V92 Pokal & Auf-/Abstieg
+- V93 Historie
+- V94 Statistik-Zentrale
+- V95 News-System
+- V96 Mobile App Polish
+- V97 Save-System 2.0
+- V98 Transfers & Spielerentwicklung
+- V99 Balance & QA
+- V100 Release-Integration
+
+V100
+- Eigene Release-Zentrale mit Systemcheck.
+- V98 Transferbewegungen werden in die sichtbare V100-Kaderstruktur integriert.
+- Verkaufte Spieler verschwinden aus dem aktiven Kader-Overlay.
+- Verpflichtete Spieler werden im eigenen Kader-Overlay geführt.
+- Entwicklungswerte fließen in die V100-Kaderstärke ein.
+- Bestehende Legacy-Saves bleiben unangetastet/kompatibel.
+- Save-Exporte erhalten Release-Metadaten 1.0.0.
+- Keine neue experimentelle Großfunktion kurz vor Release.
