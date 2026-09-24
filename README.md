@@ -1,57 +1,23 @@
-FANTASY LIGA ELITE 1.0 – V100
-================================
-Finaler integrierter Release auf Basis von V99.
+FANTASY LIGA ELITE V100.4 – FULL MERGED BUILD
 
-ENTHALTEN
-- V83 Match Engine 2.0
-- V84 kohärentes Angriffssystem
-- V85 Taktik & Spielstand
-- V86 Spieler-Identität
-- V87 Abschlüsse & Torhüter
-- V88 Match-Atmosphäre
-- V89 Manager-Zentrale
-- V90 Vereinswelt
-- V91 Fußballwelt
-- V92 Pokal & Auf-/Abstieg
-- V93 Historie
-- V94 Statistik-Zentrale
-- V95 News-System
-- V96 Mobile App Polish
-- V97 Save-System 2.0
-- V98 Transfers & Spielerentwicklung
-- V99 Balance & QA
-- V100 Release-Integration
+Basis: V100.3 stabiler Start-Fix.
 
-V100
-- Eigene Release-Zentrale mit Systemcheck.
-- V98 Transferbewegungen werden in die sichtbare V100-Kaderstruktur integriert.
-- Verkaufte Spieler verschwinden aus dem aktiven Kader-Overlay.
-- Verpflichtete Spieler werden im eigenen Kader-Overlay geführt.
-- Entwicklungswerte fließen in die V100-Kaderstärke ein.
-- Bestehende Legacy-Saves bleiben unangetastet/kompatibel.
-- Save-Exporte erhalten Release-Metadaten 1.0.0.
-- Keine neue experimentelle Großfunktion kurz vor Release.
+Enthält zusätzlich ALLE bisher gebauten V101-Funktionen:
+- Vereinsauswahl auf Home per Pfeile + Liste
+- Accrington als bevorzugter Startverein, sofern vorhanden
+- Vereinsauswahl im Vereinsprofil
+- Stadionname + Fassungsvermögen sichtbar
+- Verein/Stadion/Kapazität/Teamstärke bearbeitbar
+- Spielername, Position und Stärke bearbeitbar
+- 4 zusätzliche Welt-Ligen konfigurierbar
+- Ligennamen bearbeitbar
+- Anzahl Teams pro Welt-Liga einstellbar
+- Mannschaftsnamen und Teamstärken der Welt-Ligen bearbeitbar
+- Welt-Spieltag orientiert sich am Hauptspielstand
 
-HOTFIX 100.1
-- Kritischen Startfehler behoben: doppelte Top-Level-Funktion openPlayerProfile.
-- V90-Seitenprofil heißt intern nun openV90PlayerProfile.
-- Legacy-Modalprofil behält openPlayerProfile.
-- Neue aktive Datei app1001.js + Cache-Busting ?v=100.1.
-- Bestehender lokaler Spielstand wird nicht gelöscht.
+Zusätzlich V100.4 Statistik-Fixes:
+- Topscorer/Assists verwenden echte Match-/Spielerstatistiken
+- Spielerstatistiken werden vor Öffnen der Statistik-Zentrale neu aufgebaut
+- Letzte 5/10 werden chronologisch nach Spieltag/Datum sortiert
 
-HOTFIX V100.2 – START/RECOVERY
-- Behebt den Startfehler "undefined is not an object (evaluating state.leagues)".
-- Prüft den geladenen Karriere-Spielstand vor dem Start auf leagues + teams.
-- Recovery-Reihenfolge: letzter guter IndexedDB-Save -> Auto-Backup -> V97/V100 Save-Slot -> Legacy-Save -> seed.json.
-- Defekte Daten werden nicht blind gelöscht.
-- Kein Klick auf "Lokale Daten zurücksetzen" erforderlich.
-- app1002.js + Cache-Busting v=100.2.
-
-HOTFIX V100.3 – KOMPLETTER START-AUDIT
-- Eigentlicher Architekturfehler gefunden: V89–V100 verwendeten getSeason() wie einen parameterlosen Helper,
-  obwohl die echte Core-Funktion zwingend state + league erwartet.
-- Fehlende Kompatibilitätshelper getTeams(), getMyTeamId() und buildTable() ergänzt.
-- season.matches wird für die neuen Module als fixtures gespiegelt.
-- Legacy-Save wird bei Migration nicht mehr vorschnell aus localStorage gelöscht.
-- Alle JavaScript-Dateien werden statisch geprüft.
-- app1003.js + neues Cache-Busting.
+Damit muss V101 NICHT separat hochgeladen werden.
