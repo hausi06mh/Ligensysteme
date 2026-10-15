@@ -1,0 +1,9 @@
+Fantasy Liga Elite V101.6 – Cup Studio
+Neue Konfiguration: 4–128 Teams, direkte K.-o.-Runde oder Gruppenphase,
+Gruppenanzahl, Gruppeneinteilung, Einfach-/Doppelrunde, direkte Aufsteiger,
+beste Gruppendritte, Playoffs, Hin-/Rückspiel für Playoffs/K.-o./Finale,
+Auswärtstorregel, Verlängerung und Elfmeterschießen.
+Speichert Konfiguration und Pokalfortschritt lokal.
+Bereits vorhandene Pokale im alten Format bleiben weiter spielbar.
+Gruppenphase und Runden werden aktuell manuell per Button simuliert.
+Keine vollständige iPhone-/GitHub-Pages-Laufzeitprüfung durchgeführt.
