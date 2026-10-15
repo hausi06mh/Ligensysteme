@@ -1561,7 +1561,7 @@ function v1013SimRound(c){
  return c;
 }
 function v1013RoundName(n){return n===2?'Finale':n===4?'Halbfinale':n===8?'Viertelfinale':n===16?'Achtelfinale':`Runde der ${n*2}`}
-function renderCrossCup(){
+function renderCrossCupLegacy(){
  const all=v1013Entrants(),cup=v1013CupLoad(),season=v91WorldSeason();
  const byLeague=[...new Set(all.map(t=>t.league))];
  const oldKeys=new Set(cup?.entrants||[]);
